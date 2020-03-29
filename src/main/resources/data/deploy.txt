@@ -1,0 +1,11 @@
+cd /Users/datskopetrunov/Downloads/trains
+cd /Users/datskopetrunov/Downloads
+psql -U root trains
+rm -rf trains
+rm -rf trains.zip
+tar -zxvf trains.tar.gz
+tar -zcvf trains.tar.gz /trains
+ssh -p 3224 skodat@78.90.10.189
+scp -P 3224 trains.tar.gz skodat@78.90.10.189:/home/skodat/
+mvn com.github.eirslett:frontend-maven-plugin:1.7.6:install-node-and-npm -DnodeVersion="v12.14.0"
+ps auxwww | grep java

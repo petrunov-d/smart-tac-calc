@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/trains?useSSL=false
+    username: root
+    password: password
+    driver-class-name: org.postgresql.Driver
+    tomcat:
+      max-active: 10
+      initial-size: 3
+      max-idle: 4
+      min-idle: 2
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1
+      time-between-eviction-runs-millis: 5000
+      min-evictable-idle-time-millis: 5000
+  servlet:
+    multipart:
+      enabled: false
