@@ -1,6 +1,6 @@
 package com.dp.trains.ui.layout;
 
-import com.dp.trains.services.vaadin.ResourceBundleService;
+import com.dp.trains.services.vaadin.I18NProviderImpl;
 import com.dp.trains.ui.components.LanguageSelect;
 import com.dp.trains.ui.views.*;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
@@ -61,7 +61,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                 () -> MainLayout.class.getResourceAsStream("/" + KPMG_LOGO)),
                 getTranslation(MAIN_LAYOUT_IMG_ALT_KPMG_LOGO));
 
-        LanguageSelect languageSelect = new LanguageSelect(Locale.ENGLISH, ResourceBundleService.LOCALE_SERBIAN);
+        LanguageSelect languageSelect = new LanguageSelect(Locale.ENGLISH, I18NProviderImpl.LOCALE_SERBIAN);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout(new H5(getTranslation(MAIN_LAYOUT_SELECT_LANGUAGE)), languageSelect);
 

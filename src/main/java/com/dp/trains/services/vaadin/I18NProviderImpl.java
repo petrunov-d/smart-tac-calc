@@ -1,66 +1,82 @@
 package com.dp.trains.services.vaadin;
 
 
-import com.google.common.base.Joiner;
+import com.dp.trains.event.LocaleChanged;
+import com.dp.trains.utils.EventBusHolder;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.i18n.I18NProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
+import static java.util.Locale.ENGLISH;
 import static java.util.Locale.ROOT;
-import static java.util.Objects.isNull;
-import static org.rapidpm.frp.matcher.Case.match;
-import static org.rapidpm.frp.matcher.Case.matchCase;
-import static org.rapidpm.frp.model.Result.failure;
-import static org.rapidpm.frp.model.Result.success;
+import static java.util.ResourceBundle.getBundle;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class I18NProviderImpl implements I18NProvider {
 
-    @Autowired
-    private final ResourceBundleService resourceBundleService;
+    public static final Locale LOCALE_SERBIAN = new Locale("sr", "RS");
 
-    public static final String NULL_KEY = "###-NULL-KEY-###";
-    public static final String EMPTY_KEY = "###-EMPTY-KEY-###";
+    public static final String RESOURCE_BUNDLE_NAME = "labels";
+
+    private static final ResourceBundle RESOURCE_BUNDLE_ROOT = getBundle(RESOURCE_BUNDLE_NAME, ROOT);
+    private static final ResourceBundle RESOURCE_BUNDLE_ENGLISH = getBundle(RESOURCE_BUNDLE_NAME, ENGLISH);
+    private static final ResourceBundle RESOURCE_BUNDLE_SERBIAN = getBundle(RESOURCE_BUNDLE_NAME, LOCALE_SERBIAN);
+
+    private Locale locale;
 
     @Override
     public List<Locale> getProvidedLocales() {
 
-        List<Locale> locales = resourceBundleService.providedLocalesAsList();
-
-        log.info("Provided locales: " + Joiner.on(",").join(locales.stream()
-                .map(Locale::getISO3Country)
-                .collect(Collectors.toSet())));
-
-        return locales;
+        return Lists.newArrayList(ROOT, ENGLISH, LOCALE_SERBIAN);
     }
 
     @Override
     public String getTranslation(String key, Locale locale, Object... params) {
 
-        log.debug("VaadinI18NProvider translation for key : " + key + " - " + locale);
+        ResourceBundle resourceBundle = null;
 
-        final ResourceBundle resourceBundle = resourceBundleService
-                .resourceBundleToUse()
-                .apply(locale != null ? locale : ROOT);
+        if (this.locale != null) {
 
+            log.info("Get Translation for key:" + key + " locale = " + locale.toString());
 
-        return match(
-                matchCase(() -> failure("###-" + key + "-###-" + locale)),
-                matchCase(() -> isNull(key), () -> failure(NULL_KEY)),
-                matchCase(key::isEmpty, () -> failure(EMPTY_KEY)),
-                matchCase(() -> resourceBundle.containsKey(key), () ->
-                        success(new String(resourceBundle.getString(key)
-                                .getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)))
-        ).ifFailed(log::warn).getOrElse(() -> "Key not found: " + key + " - " + locale + " .");
+            if (locale.equals(ENGLISH)) {
+
+                resourceBundle = RESOURCE_BUNDLE_ENGLISH;
+            } else if (locale.equals(LOCALE_SERBIAN)) {
+                resourceBundle = RESOURCE_BUNDLE_SERBIAN;
+            }
+        } else {
+            resourceBundle = RESOURCE_BUNDLE_ROOT;
+        }
+
+        assert resourceBundle != null;
+
+        return (resourceBundle.containsKey(key)) ? new String(resourceBundle.getString(key)
+                .getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8) : key;
+    }
+
+    @PostConstruct
+    public void postInit() {
+
+        EventBusHolder.getEventBus().register(this);
+    }
+
+    @Subscribe
+    public void localeChanged(LocaleChanged localeChanged) {
+
+        locale = localeChanged.getLocale();
+
+        log.info("locale changed here, current locale is " + locale.toString());
     }
 }

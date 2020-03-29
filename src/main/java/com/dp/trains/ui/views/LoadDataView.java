@@ -17,6 +17,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.upload.SucceededEvent;
@@ -100,6 +101,7 @@ public class LoadDataView extends BaseSmartTacCalcView {
         verticalLayout.add(dataTypeSelect);
         verticalLayout.add(upload);
         verticalLayout.setSizeFull();
+        verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         add(verticalLayout, getFooter());
     }

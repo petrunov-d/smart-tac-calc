@@ -8,13 +8,11 @@ import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.services.StrategicCoefficientService;
 import com.dp.trains.services.TrainTypeService;
 import com.dp.trains.ui.components.CalculatePricePerTrainLayout;
-import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -181,18 +179,8 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
                     true, sectionsService, serviceChargesPerTrainService);
         });
 
-        calculateFinalTax.addClickListener(event -> {
-            if (strategicCoefficientEntityComboBox.getValue() == null) {
-                Dialog dialog = new BasicInfoDialog(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_WARNING_SELECT_COEFFICIENT));
-                dialog.open();
-            } else {
-                calculateFinalTax();
-            }
-        });
-
-        doNewCalculation.addClickListener(e -> {
-            resetPageState();
-        });
+        calculateFinalTax.addClickListener(event -> calculateFinalTax());
+        doNewCalculation.addClickListener(e -> resetPageState());
 
         return buttonLayout;
     }
