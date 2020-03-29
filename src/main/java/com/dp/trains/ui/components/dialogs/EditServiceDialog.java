@@ -5,16 +5,16 @@ import com.dp.trains.model.entities.ServiceEntity;
 import com.dp.trains.services.ServiceService;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.BindingValidationStatus;
@@ -28,9 +28,10 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddServiceDialog extends AddDialogBase {
+public class EditServiceDialog extends AddDialogBase {
 
-    public AddServiceDialog(Grid currentlyActiveGrid, ServiceService serviceService) {
+    public EditServiceDialog(Grid currentlyActiveGrid, ServiceService serviceService, ServiceEntity serviceEntity) {
+
         super(currentlyActiveGrid);
 
         FormLayout layoutWithBinder = new FormLayout();
@@ -39,30 +40,35 @@ public class AddServiceDialog extends AddDialogBase {
         ServiceDto serviceDto = new ServiceDto();
 
         IntegerField code = new IntegerField();
-
         code.addValueChangeListener(event -> binder.validate());
         code.setRequiredIndicatorVisible(true);
+        code.setValue(serviceEntity.getCode());
 
-        TextArea metric = new TextArea();
+        TextField metric = new TextField();
 
         metric.setValueChangeMode(ValueChangeMode.EAGER);
         metric.addValueChangeListener(event -> binder.validate());
         metric.setRequiredIndicatorVisible(true);
+        metric.setValue(serviceEntity.getMetric());
 
         NumberField unitPrice = new NumberField();
 
         unitPrice.setValueChangeMode(ValueChangeMode.EAGER);
         unitPrice.addValueChangeListener(event -> binder.validate());
         unitPrice.setRequiredIndicatorVisible(true);
+        unitPrice.setValue(serviceEntity.getUnitPrice());
 
-        TextArea name = new TextArea();
+        TextField name = new TextField();
 
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
+        name.setValue(serviceEntity.getName());
 
-        Select<String> serviceType = new Select<>();
+        ComboBox<String> serviceType = new ComboBox<>();
         serviceType.setItems(serviceService.getServiceTypes());
+        serviceType.setClearButtonVisible(true);
+        serviceType.setValue(serviceEntity.getType());
 
         binder.forField(code)
                 .asRequired()
@@ -90,7 +96,6 @@ public class AddServiceDialog extends AddDialogBase {
                 .bind(ServiceDto::getType, ServiceDto::setType);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
-        Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         layoutWithBinder.addFormItem(code, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
@@ -100,7 +105,7 @@ public class AddServiceDialog extends AddDialogBase {
         layoutWithBinder.addFormItem(serviceType, getTranslation(DIALOG_ADD_SERVICE_FORM_ITEM_SERVICE_TYPE));
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, reset, cancel);
+        actions.add(save, cancel);
 
         save.addClickListener(event -> {
 
@@ -109,8 +114,9 @@ public class AddServiceDialog extends AddDialogBase {
                 ListDataProvider<ServiceEntity> dataProvider =
                         (ListDataProvider<ServiceEntity>) currentlyActiveGrid.getDataProvider();
 
-                ServiceEntity serviceEntity = serviceService.add(serviceDto);
-                dataProvider.getItems().add(serviceEntity);
+                ServiceEntity serviceEntityUpdated = serviceService.update(serviceDto, serviceEntity.getId());
+                dataProvider.getItems().remove(serviceEntity);
+                dataProvider.getItems().add(serviceEntityUpdated);
                 dataProvider.refreshAll();
                 this.close();
 
@@ -131,7 +137,6 @@ public class AddServiceDialog extends AddDialogBase {
         cancel.addClickListener(event -> {
 
             binder.readBean(null);
-            code.setValue(null);
             metric.setValue("");
             unitPrice.setValue(null);
             name.setValue("");
@@ -139,17 +144,7 @@ public class AddServiceDialog extends AddDialogBase {
             this.close();
         });
 
-        reset.addClickListener(event -> {
-
-            binder.readBean(null);
-            code.setValue(null);
-            metric.setValue("");
-            unitPrice.setValue(null);
-            name.setValue("");
-            serviceType.setValue("");
-        });
-
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_SERVICE_TITLE), layoutWithBinder, actions);
+        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

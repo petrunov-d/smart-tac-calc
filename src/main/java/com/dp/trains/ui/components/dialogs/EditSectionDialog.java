@@ -163,7 +163,7 @@ public class EditSectionDialog extends AddDialogBase {
             this.close();
         });
 
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation("Editing Section"), layoutWithBinder, actions);
+        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

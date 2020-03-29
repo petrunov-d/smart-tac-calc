@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddStrategicCoefficientDialog extends AddDialogBase {
+public class EditStrategicCoefficientDialog extends AddDialogBase {
 
-    public AddStrategicCoefficientDialog(Grid currentlyActiveGrid, StrategicCoefficientService strategicCoefficientService) {
-
+    public EditStrategicCoefficientDialog(Grid currentlyActiveGrid, StrategicCoefficientService strategicCoefficientService,
+                                          StrategicCoefficientEntity strategicCoefficientEntity) {
         super(currentlyActiveGrid);
 
         FormLayout layoutWithBinder = new FormLayout();
@@ -43,15 +43,18 @@ public class AddStrategicCoefficientDialog extends AddDialogBase {
         code.setValueChangeMode(ValueChangeMode.EAGER);
         code.addValueChangeListener(event -> binder.validate());
         code.setRequiredIndicatorVisible(true);
+        code.setValue(strategicCoefficientEntity.getCode());
 
         TextArea name = new TextArea();
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
+        name.setValue(strategicCoefficientEntity.getName());
 
         NumberField coefficient = new NumberField();
         coefficient.setValueChangeMode(ValueChangeMode.EAGER);
         coefficient.addValueChangeListener(event -> binder.validate());
+        coefficient.setValue(strategicCoefficientEntity.getCoefficient());
 
         binder.forField(code)
                 .asRequired()
@@ -71,7 +74,6 @@ public class AddStrategicCoefficientDialog extends AddDialogBase {
                 .bind(StrategicCoefficientDto::getCoefficient, StrategicCoefficientDto::setCoefficient);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
-        Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         layoutWithBinder.addFormItem(code, getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_CODE));
@@ -79,7 +81,7 @@ public class AddStrategicCoefficientDialog extends AddDialogBase {
         layoutWithBinder.addFormItem(coefficient, getTranslation(GRID_STRATEGIC_COEFFICIENT_COLUMN_HEADER_COEFFICIENT));
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, reset, cancel);
+        actions.add(save, cancel);
 
         save.addClickListener(event -> {
 
@@ -88,9 +90,11 @@ public class AddStrategicCoefficientDialog extends AddDialogBase {
                 ListDataProvider<StrategicCoefficientEntity> dataProvider =
                         (ListDataProvider<StrategicCoefficientEntity>) currentlyActiveGrid.getDataProvider();
 
-                StrategicCoefficientEntity strategicCoefficientEntity = strategicCoefficientService
-                        .add(strategicCoefficientDto);
-                dataProvider.getItems().add(strategicCoefficientEntity);
+                StrategicCoefficientEntity strategicCoefficientEntityUpdated = strategicCoefficientService
+                        .update(strategicCoefficientDto, strategicCoefficientEntity.getId());
+
+                dataProvider.getItems().remove(strategicCoefficientEntity);
+                dataProvider.getItems().add(strategicCoefficientEntityUpdated);
                 dataProvider.refreshAll();
                 this.close();
 
@@ -117,15 +121,7 @@ public class AddStrategicCoefficientDialog extends AddDialogBase {
             this.close();
         });
 
-        reset.addClickListener(event -> {
-
-            binder.readBean(null);
-            code.setValue(null);
-            name.setValue("");
-            coefficient.setValue(null);
-        });
-
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_STRATEGIC_COEFFICIENT_TITLE), layoutWithBinder, actions);
+        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

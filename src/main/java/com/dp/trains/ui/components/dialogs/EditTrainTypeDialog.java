@@ -1,8 +1,8 @@
 package com.dp.trains.ui.components.dialogs;
 
-import com.dp.trains.model.dto.LineTypeDto;
-import com.dp.trains.model.entities.LineTypeEntity;
-import com.dp.trains.services.LineTypeService;
+import com.dp.trains.model.dto.TrainTypeDto;
+import com.dp.trains.model.entities.TrainTypeEntity;
+import com.dp.trains.services.TrainTypeService;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -11,7 +11,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
@@ -26,63 +26,64 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditLineTypeDialog extends AddDialogBase {
+public class EditTrainTypeDialog extends AddDialogBase {
 
-    public EditLineTypeDialog(Grid currentlyActiveGrid, LineTypeService lineTypeService, LineTypeEntity lineTypeEntity) {
-
+    public EditTrainTypeDialog(Grid currentlyActiveGrid, TrainTypeService trainTypeService, TrainTypeEntity trainTypeEntity) {
         super(currentlyActiveGrid);
 
         FormLayout layoutWithBinder = new FormLayout();
-        Binder<LineTypeDto> binder = new Binder<>();
+        Binder<TrainTypeDto> binder = new Binder<>();
 
-        LineTypeDto lineTypeDto = new LineTypeDto();
+        TrainTypeDto trainTypeDto = new TrainTypeDto();
 
-        Select<String> lineType = new Select<>();
-        lineType.setItems(lineTypeService.getLineTypes());
-        lineType.setValue(lineTypeEntity.getLineType());
+        IntegerField code = new IntegerField();
+
+        code.setValueChangeMode(ValueChangeMode.EAGER);
+        code.addValueChangeListener(event -> binder.validate());
+        code.setRequiredIndicatorVisible(true);
+        code.setValue(trainTypeEntity.getCode());
 
         TextArea name = new TextArea();
-
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
-        name.setValue(lineTypeEntity.getName());
+        name.setValue(trainTypeEntity.getName());
 
-        binder.forField(lineType)
+        binder.forField(code)
                 .asRequired()
-                .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(DIALOG_ADD_LINE_TYPE_INPUT_LINE_TYPE_ERROR)))
-                .bind(LineTypeDto::getLineType, LineTypeDto::setLineType);
+                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(INVALID_VALUE_FOR_CODE)))
+                .bind(TrainTypeDto::getCode, TrainTypeDto::setCode);
 
         binder.forField(name)
                 .asRequired()
-                .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(DIALOG_ADD_LINE_TYPE_INPUT_NAME_ERROR)))
-                .bind(LineTypeDto::getName, LineTypeDto::setName);
+                .withValidator(ValidatorFactory.requiredVarcharStringValidator(getTranslation(DIALOG_ADD_LINE_TYPE_INPUT_NAME_ERROR)))
+                .bind(TrainTypeDto::getName, TrainTypeDto::setName);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
-        layoutWithBinder.addFormItem(lineType, getTranslation(DIALOG_ADD_LINE_TYPE_FORM_ITEM_LABEL_LINE_TYPE));
-        layoutWithBinder.addFormItem(name, getTranslation(DIALOG_ADD_LINE_TYPE_FORM_ITEM_LABEL_NAME));
+        layoutWithBinder.addFormItem(code, getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_CODE));
+        layoutWithBinder.addFormItem(name, getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_NAME));
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.add(save, cancel);
 
         save.addClickListener(event -> {
 
-            if (binder.writeBeanIfValid(lineTypeDto)) {
+            if (binder.writeBeanIfValid(trainTypeDto)) {
 
-                ListDataProvider<LineTypeEntity> dataProvider =
-                        (ListDataProvider<LineTypeEntity>) currentlyActiveGrid.getDataProvider();
+                ListDataProvider<TrainTypeEntity> dataProvider =
+                        (ListDataProvider<TrainTypeEntity>) currentlyActiveGrid.getDataProvider();
 
-                LineTypeEntity lineTypeEntityUpdated = lineTypeService.update(lineTypeDto, lineTypeEntity.getId());
-                dataProvider.getItems().remove(lineTypeEntity);
-                dataProvider.getItems().add(lineTypeEntityUpdated);
+                TrainTypeEntity trainTypeEntityUpdated = trainTypeService.update(trainTypeDto, trainTypeEntity.getId());
+                dataProvider.getItems().remove(trainTypeEntity);
+                dataProvider.getItems().add(trainTypeEntityUpdated);
                 dataProvider.refreshAll();
                 this.close();
 
             } else {
 
-                BinderValidationStatus<LineTypeDto> validate = binder.validate();
+                BinderValidationStatus<TrainTypeDto> validate = binder.validate();
 
                 String errorText = validate.getFieldValidationStatuses()
                         .stream().filter(BindingValidationStatus::isError)
@@ -97,8 +98,8 @@ public class EditLineTypeDialog extends AddDialogBase {
         cancel.addClickListener(event -> {
 
             binder.readBean(null);
+            code.setValue(null);
             name.setValue("");
-            lineType.setValue("M");
             this.close();
         });
 

@@ -27,9 +27,10 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddSubSectionDialog extends AddDialogBase {
+public class EditSubSectionDialog extends AddDialogBase {
 
-    public AddSubSectionDialog(Grid currentlyActiveGrid, SubSectionService subSectionService, SectionEntity sectionEntity) {
+    public EditSubSectionDialog(Grid currentlyActiveGrid, SubSectionService subSectionService,
+                                SectionEntity sectionEntity, SubSectionEntity subSectionEntity) {
 
         super(currentlyActiveGrid);
 
@@ -43,11 +44,13 @@ public class AddSubSectionDialog extends AddDialogBase {
         kilometers.setValueChangeMode(ValueChangeMode.EAGER);
         kilometers.addValueChangeListener(event -> binder.validate());
         kilometers.setRequiredIndicatorVisible(true);
+        kilometers.setValue(subSectionEntity.getKilometers());
 
         TextArea nonKeyStation = new TextArea();
         nonKeyStation.setValueChangeMode(ValueChangeMode.EAGER);
         nonKeyStation.addValueChangeListener(event -> binder.validate());
         nonKeyStation.setRequiredIndicatorVisible(true);
+        nonKeyStation.setValue(subSectionEntity.getNonKeyStation());
 
         binder.forField(kilometers)
                 .asRequired()
@@ -60,14 +63,13 @@ public class AddSubSectionDialog extends AddDialogBase {
                 .bind(SubSectionDto::getNonKeyStation, SubSectionDto::setNonKeyStation);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
-        Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         layoutWithBinder.addFormItem(kilometers, getTranslation(DIALOG_ADD_SUB_SECTION_FORM_ITEM_KILOMETERS));
         layoutWithBinder.addFormItem(nonKeyStation, getTranslation(DIALOG_ADD_SUB_SECTION_FORM_ITEM_NON_KEY_STATION));
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, reset, cancel);
+        actions.add(save, cancel);
 
         save.addClickListener(event -> {
 
@@ -76,8 +78,9 @@ public class AddSubSectionDialog extends AddDialogBase {
                 ListDataProvider<SubSectionEntity> dataProvider =
                         (ListDataProvider<SubSectionEntity>) currentlyActiveGrid.getDataProvider();
 
-                SubSectionEntity subSectionEntity = subSectionService.add(subSectionDto, sectionEntity);
-                dataProvider.getItems().add(subSectionEntity);
+                SubSectionEntity subSectionEntityUpdated = subSectionService.update(subSectionDto, subSectionEntity.getId());
+                dataProvider.getItems().remove(subSectionEntity);
+                dataProvider.getItems().add(subSectionEntityUpdated);
                 dataProvider.refreshAll();
                 this.close();
 
@@ -103,14 +106,7 @@ public class AddSubSectionDialog extends AddDialogBase {
             this.close();
         });
 
-        reset.addClickListener(event -> {
-
-            binder.readBean(null);
-            kilometers.setValue(null);
-            nonKeyStation.setValue("");
-        });
-
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_SUB_SECTION_TITLE), layoutWithBinder, actions);
+        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

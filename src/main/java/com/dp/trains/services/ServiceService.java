@@ -80,7 +80,7 @@ public class ServiceService implements ExcelImportService {
 
         log.info("About to update item " + serviceEntityFromDb.toString() + " to " + serviceEntity.toString());
 
-        serviceEntityFromDb.setLineNumber(serviceEntity.getLineNumber());
+        serviceEntityFromDb.setCode(serviceEntity.getCode());
         serviceEntityFromDb.setName(serviceEntity.getName());
         serviceEntityFromDb.setMetric(serviceEntity.getMetric());
         serviceEntityFromDb.setType(serviceEntity.getType());
@@ -107,5 +107,24 @@ public class ServiceService implements ExcelImportService {
     public void deleteAll() {
 
         serviceRepository.deleteAll();
+    }
+
+    @Transactional
+    public ServiceEntity update(ServiceDto serviceDto, Long id) {
+
+        Optional<ServiceEntity> optional = Optional.of(serviceRepository
+                .findById(id)).orElseThrow(IllegalStateException::new);
+
+        ServiceEntity serviceEntityFromDb = optional.get();
+
+        log.info("About to update item " + serviceEntityFromDb.toString() + " to " + serviceDto.toString());
+
+        serviceEntityFromDb.setCode(serviceDto.getCode());
+        serviceEntityFromDb.setName(serviceDto.getName());
+        serviceEntityFromDb.setMetric(serviceDto.getMetric());
+        serviceEntityFromDb.setType(serviceDto.getType());
+        serviceEntityFromDb.setUnitPrice(serviceDto.getUnitPrice());
+
+        return serviceRepository.save(serviceEntityFromDb);
     }
 }

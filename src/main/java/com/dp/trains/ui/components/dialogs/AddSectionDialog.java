@@ -81,7 +81,6 @@ public class AddSectionDialog extends AddDialogBase {
 
         binder.forField(lineNumber)
                 .asRequired()
-                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
                 .bind(SectionsDto::getLineNumber, SectionsDto::setLineNumber);
 
         binder.forField(lineType)

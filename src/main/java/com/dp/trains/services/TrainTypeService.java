@@ -105,4 +105,20 @@ public class TrainTypeService implements ExcelImportService {
 
         trainTypeRepository.deleteAll();
     }
+
+    @Transactional
+    public TrainTypeEntity update(TrainTypeDto trainTypeDto, Long id) {
+
+        Optional<TrainTypeEntity> optional = Optional.of(trainTypeRepository
+                .findById(id)).orElseThrow(IllegalStateException::new);
+
+        TrainTypeEntity trainTypeEntityFromDb = optional.get();
+
+        log.info("About to update item " + trainTypeEntityFromDb.toString() + " to " + trainTypeDto.toString());
+
+        trainTypeEntityFromDb.setCode(trainTypeDto.getCode());
+        trainTypeEntityFromDb.setName(trainTypeDto.getName());
+
+        return trainTypeRepository.save(trainTypeEntityFromDb);
+    }
 }

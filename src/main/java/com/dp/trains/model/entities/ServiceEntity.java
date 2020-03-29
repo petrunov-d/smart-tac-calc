@@ -18,7 +18,7 @@ public class ServiceEntity extends YearDiscriminatingEntity {
     private Long id;
 
     @Column(name = "code")
-    private Integer lineNumber;
+    private Integer code;
 
     @Column(name = "metric")
     private String metric;

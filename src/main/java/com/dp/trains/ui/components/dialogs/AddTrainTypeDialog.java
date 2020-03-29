@@ -12,7 +12,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.BindingValidationStatus;
@@ -43,7 +43,7 @@ public class AddTrainTypeDialog extends AddDialogBase {
         code.addValueChangeListener(event -> binder.validate());
         code.setRequiredIndicatorVisible(true);
 
-        TextField name = new TextField();
+        TextArea name = new TextArea();
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);

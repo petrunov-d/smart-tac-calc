@@ -15,7 +15,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.BindingValidationStatus;
@@ -90,7 +89,6 @@ public class AddRailStationDialog extends AddDialogBase {
 
         binder.forField(country)
                 .asRequired()
-                .withValidator(ValidatorFactory.requiredStringValidator(getTranslation("Country is required.")))
                 .bind(RailStationDto::getCountry, RailStationDto::setCountry);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));

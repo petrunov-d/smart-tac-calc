@@ -101,4 +101,22 @@ public class StrategicCoefficientService implements ExcelImportService {
 
         strategicCoefficientRepostiory.deleteAll();
     }
+
+    @Transactional
+    public StrategicCoefficientEntity update(StrategicCoefficientDto strategicCoefficientDto, Long id) {
+
+        Optional<StrategicCoefficientEntity> optional = Optional.of(strategicCoefficientRepostiory
+                .findById(id)).orElseThrow(IllegalStateException::new);
+
+        StrategicCoefficientEntity strategicCoefficientEntityFromDb = optional.get();
+
+        log.info("About to update item " + strategicCoefficientEntityFromDb.toString() +
+                " to " + strategicCoefficientDto.toString());
+
+        strategicCoefficientEntityFromDb.setCode(strategicCoefficientDto.getCode());
+        strategicCoefficientEntityFromDb.setCoefficient(strategicCoefficientDto.getCoefficient());
+        strategicCoefficientEntityFromDb.setName(strategicCoefficientDto.getName());
+
+        return strategicCoefficientRepostiory.save(strategicCoefficientEntityFromDb);
+    }
 }

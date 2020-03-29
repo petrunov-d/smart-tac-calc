@@ -56,7 +56,7 @@ public class EditableDataGridFactory {
 
     public Grid<SectionEntity> getSectionEntityGrid() {
 
-        return new SectionGrid(sectionsService, subSectionService, lineNumberService);
+        return new SectionGrid(sectionsService, subSectionService, lineNumberService, lineTypeService);
     }
 
     public Grid<LineNumberEntity> getLineNumberGrid() {

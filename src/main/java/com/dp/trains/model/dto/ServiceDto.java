@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class ServiceDto implements ExcelImportDto {
 
     @ExcelCell(0)
-    @JMap(value = "lineNumber", classes = ServiceEntity.class)
-    private Integer lineNumber;
+    @JMap(value = "code", classes = ServiceEntity.class)
+    private Integer code;
 
     @ExcelCell(1)
     @JMap(value = "metric", classes = ServiceEntity.class)

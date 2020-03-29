@@ -83,4 +83,20 @@ public class SubSectionService {
 
         return subSectionRepository.save(subSectionEntityFromDb);
     }
+
+    @Transactional
+    public SubSectionEntity update(SubSectionDto subSectionDto, Long id) {
+
+        Optional<SubSectionEntity> optional = Optional.of(subSectionRepository
+                .findById(id)).orElseThrow(IllegalStateException::new);
+
+        SubSectionEntity subSectionEntityFromDb = optional.get();
+
+        log.info("About to update item " + subSectionEntityFromDb.toString() + " to " + subSectionDto.toString());
+
+        subSectionEntityFromDb.setKilometers(subSectionDto.getKilometers());
+        subSectionEntityFromDb.setNonKeyStation(subSectionDto.getNonKeyStation());
+
+        return subSectionRepository.save(subSectionEntityFromDb);
+    }
 }

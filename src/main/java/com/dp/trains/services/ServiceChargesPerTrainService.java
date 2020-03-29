@@ -1,5 +1,6 @@
 package com.dp.trains.services;
 
+import com.dp.trains.model.dto.ServiceChargesPerTrainDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.repository.ServiceChargesPerTrainRepository;
@@ -92,6 +93,22 @@ public class ServiceChargesPerTrainService {
                 + " to " + serviceChargesPerTrainEntity.toString());
 
         serviceChargesPerTrainEntityFromDb.setServiceCount(serviceChargesPerTrainEntity.getServiceCount());
+
+        return serviceChargesPerTrainRepository.save(serviceChargesPerTrainEntityFromDb);
+    }
+
+    @Transactional
+    public ServiceChargesPerTrainEntity update(ServiceChargesPerTrainDto serviceDto, Long id) {
+
+        Optional<ServiceChargesPerTrainEntity> optional = Optional.of(serviceChargesPerTrainRepository
+                .findById(id)).orElseThrow(IllegalStateException::new);
+
+        ServiceChargesPerTrainEntity serviceChargesPerTrainEntityFromDb = optional.get();
+
+        log.info("About to update item " + serviceChargesPerTrainEntityFromDb.toString()
+                + " to " + serviceDto.toString());
+
+        serviceChargesPerTrainEntityFromDb.setServiceCount(serviceDto.getServiceCount());
 
         return serviceChargesPerTrainRepository.save(serviceChargesPerTrainEntityFromDb);
     }

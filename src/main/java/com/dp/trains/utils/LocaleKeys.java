@@ -38,6 +38,9 @@ public class LocaleKeys {
     public static final String EDIT_DATA_VIEW_IMPORT_LABEL_TAX_FOR_SERVICES_PER_TRAIN = "load.data.view.import.label.tax.for.services.per.train";
     public static final String EDIT_DATA_VIEW_IMPORT_LABEL_UNIT_PRICE = "load.data.view.import.label.unit.price";
     public static final String EDIT_DATA_VIEW_BUTTON_TEXT_ADD_ITEM = "edit.data.view.button.text.add.item";
+    public static final String CONFIRM_IMPORT_DIALOG_TITLE = "confirm.import.dialog.title";
+    public static final String CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA = "confirm.import.dialog.delete.old.data";
+    public static final String CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA_SUCCESS = "confirm.import.dialog.delete.old.data.success";
 
     public static final String GRID_SECTION_COLUMN_HEADER_KILOMETERS_BETWEEN_STATIONS = "grid.section.column.header.kilometers.between.stations";
     public static final String GRID_SECTION_COLUMN_HEADER_KILOMETERS_BETWEEN_STATIONS_VALIDATION = "grid.section.column.header.kilometers.between.stations.validation";
@@ -67,6 +70,10 @@ public class LocaleKeys {
     public static final String DIALOG_ADD_SUB_SECTION_FORM_ITEM_KILOMETERS_ERROR = "dialog.add.sub.section.form.item.kilometers.error";
     public static final String DIALOG_ADD_SUB_SECTION_FORM_ITEM_NON_KEY_STATION_ERROR = "dialog.add.sub.section.form.item.non.key.station.error";
     public static final String DIALOG_ADD_SUB_SECTION_TITLE = "dialog.add.sub.section.title";
+
+    public static final String SERVICE_CHARGES_PER_TRAIN_GRID_COLUMN_HEADER_SERVICE = "service.charges.per.train.grid.column.header.service";
+    public static final String SERVICE_CHARGES_PER_TRAIN_GRID_COLUMN_HEADER_SERVICE_COUNT = "service.charges.per.train.grid.column.header.service.count";
+    public static final String SERVICE_CHARGES_PER_TRAIN_GRID_COLUMN_HEADER_TRAIN_NUMBER = "service.charges.per.train.grid.column.header.train.number";
 
     public static final String ADD_USER_DIALOG_VALIDATION_ERROR_USERNAME = "add.user.dialog.validation.error.username";
     public static final String ADD_USER_DIALOG_VALIDATION_ERROR_PASSWORD = "add.user.dialog.validation.error.password";

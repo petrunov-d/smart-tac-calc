@@ -107,7 +107,7 @@ public class EditLineNumberDialog extends AddDialogBase {
             this.close();
         });
 
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_LINE_NUMBER_LABEL),
+        VerticalLayout verticalLayout = getDefaultDialogLayout("",
                 layoutWithBinder, actions);
 
         this.add(verticalLayout);

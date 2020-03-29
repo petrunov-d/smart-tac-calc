@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Set;
 
+import static com.dp.trains.utils.LocaleKeys.GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER;
+
 @Slf4j
 public class CalculatePricePerTrainRow extends HorizontalLayout {
 
@@ -102,7 +104,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private void initializeLineNumberSelect(Set<SectionNeighboursDto> neighbours) {
 
         lineNumbers = new Select<>();
-        lineNumbers.setLabel("Line Number");
+        lineNumbers.setLabel(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
         lineNumbers.setItems(neighbours);
         lineNumbers.setItemLabelGenerator(sectionNeighboursDto -> String.valueOf(sectionNeighboursDto.getLineNumber()));
     }

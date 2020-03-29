@@ -147,7 +147,7 @@ public class EditRailStationDialog extends AddDialogBase {
             this.close();
         });
 
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation("Editing Rail Station"), layoutWithBinder, actions);
+        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }
