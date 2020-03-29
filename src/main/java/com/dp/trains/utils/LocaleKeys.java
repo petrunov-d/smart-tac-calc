@@ -158,4 +158,29 @@ public class LocaleKeys {
     public static final String CALCULATE_SINGLE_PRICE_GRID_COLUMN_HEADER_NAME = "calculate.single.price.grid.column.header.name";
     public static final String CALCULATE_SINGLE_PRICE_GRID_COLUMN_HEADER_MEASURE = "calculate.single.price.grid.column.header.measure";
     public static final String CALCULATE_SINGLE_PRICE_GRID_COLUMN_HEADER_UNIT_PRICE = "calculate.single.price.grid.column.header.unit.price";
+
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_NUMBER = "calculate.price.per.train.view.train.number";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_TYPE = "calculate.price.per.train.view.train.type";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE = "calculate.price.per.train.view.tonnage";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT = "calculate.price.per.train.view.strategic.coefficient";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX = "calculate.price.per.train.view.final.tax";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS = "calculate.price.per.train.view.total.kilometers";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS = "calculate.price.per.train.view.total.brutto.tonne.kilometers";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD = "calculate.price.per.train.view.button.add";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD_FINAL_STATION = "calculate.price.per.train.view.button.add.final.station";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_CALCULATE_FINAL_TAX = "calculate.price.per.train.view.button.calculate.final.tax";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_DO_NEW_CALCULATION = "calculate.price.per.train.view.button.do.new.calculation";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_WARNING_SELECT_COEFFICIENT = "calculate.price.per.train.view.warning.select.coefficient";
+
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_REMOVE = "calculate.price.per.train.row.button.remove";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES = "calculate.price.per.train.row.service.charges";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_DONE = "calculate.price.per.train.row.button.done";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_FILL_IN_ALL_WARNING = "calculate.price.per.train.row.fill.in.all.warning";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_STATION = "calculate.price.per.train.row.station";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL = "calculate.price.per.train.row.service.charges.lbl";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FIRST_STATION = "calculate.price.per.train.row.title.first.station";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_N_STATION = "calculate.price.per.train.row.title.n.station";
+    public static final String CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FINAL_STATION = "calculate.price.per.train.row.title.final.station";
+
+    public static final String MAIN_LAYOUT_SELECT_LANGUAGE = "main.layout.select.language";
 }

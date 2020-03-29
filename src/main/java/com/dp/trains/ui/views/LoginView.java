@@ -1,14 +1,18 @@
 package com.dp.trains.ui.views;
 
+import com.dp.trains.services.vaadin.ResourceBundleService;
+import com.dp.trains.ui.components.LanguageSelect;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.CommonConstants;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -18,9 +22,9 @@ import com.vaadin.flow.server.StreamResource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
+import java.util.Locale;
 
-import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
-import static com.dp.trains.utils.LocaleKeys.SHARED_VIEW_BACKGROUND_PICTURE_ALT;
+import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
 @PageTitle("Login")
@@ -51,8 +55,13 @@ public class LoginView extends Composite<Div> implements BeforeEnterObserver {
 
         H1 headerText = new H1(getTranslation(SHARED_APP_TITLE));
 
+        LanguageSelect languageSelect = new LanguageSelect(Locale.ENGLISH, ResourceBundleService.LOCALE_SERBIAN);
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout(new H5(getTranslation(MAIN_LAYOUT_SELECT_LANGUAGE)), languageSelect);
+
         verticalLayout.add(img);
         verticalLayout.add(headerText);
+        verticalLayout.add(horizontalLayout);
         verticalLayout.add(login);
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 

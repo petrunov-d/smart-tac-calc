@@ -1,5 +1,6 @@
 package com.dp.trains.ui.components;
 
+import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.event.CPPTRowRemovedEvent;
 import com.dp.trains.event.CPPTStationChangedEvent;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
@@ -7,6 +8,7 @@ import com.dp.trains.model.dto.SectionNeighboursDto;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
+import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.ViewServiceChargesForTrainDialog;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.collect.Lists;
@@ -23,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Set;
 
-import static com.dp.trains.utils.LocaleKeys.GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER;
+import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
 public class CalculatePricePerTrainRow extends HorizontalLayout {
@@ -37,6 +39,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private IntegerField tonnage;
     private Button serviceButton;
     private Button removeButton;
+    private Button doneButton;
     private H5 serviceChargesLabel;
     private H5 rowTitle;
 
@@ -60,7 +63,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         initalizeStationSelect(i, trainNumber, serviceChargesPerTrainService, neighbours);
         initializeLineNumberSelect(neighbours);
 
-        tonnage = new IntegerField("Tonnage");
+        tonnage = new IntegerField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
 
         serviceChargesLabel = new H5();
         serviceChargesLabel.setWidth("100%");
@@ -68,12 +71,12 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.add(rowTitle, station, lineNumbers, tonnage);
 
-        removeButton = new Button("Remove", VaadinIcon.CLOSE_SMALL.create());
+        removeButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_REMOVE), VaadinIcon.CLOSE_SMALL.create());
         removeButton.setWidth("100%");
         removeButton.addClickListener(event -> EventBusHolder.getEventBus().post(CPPTRowRemovedEvent.builder()
                 .rowIndex(getRowIndex()).build()));
 
-        serviceButton = new Button("View Service Charges", VaadinIcon.TRAIN.create());
+        serviceButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES), VaadinIcon.TRAIN.create());
         serviceButton.setEnabled(false);
         serviceButton.setWidth("100%");
 
@@ -83,13 +86,29 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
             servicesDialog.open();
         });
 
+        doneButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_DONE), VaadinIcon.CHECK_CIRCLE_O.create());
+        doneButton.setWidth("100%");
+        doneButton.setEnabled(false);
+        doneButton.addClickListener(event -> {
+            if (station.getValue() != null && lineNumbers.getValue() != null && tonnage.getValue() != null) {
+                disableRow();
+            } else {
+                Dialog dialog = new BasicInfoDialog(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_FILL_IN_ALL_WARNING));
+                dialog.open();
+            }
+        });
+
+        station.addValueChangeListener(event -> checkRowDone());
+        lineNumbers.addValueChangeListener(event -> checkRowDone());
+        tonnage.addValueChangeListener(event -> checkRowDone());
+
         HorizontalLayout serviceLayout = new HorizontalLayout();
         serviceLayout.setSizeFull();
         serviceLayout.setPadding(false);
         serviceLayout.setMargin(false);
         serviceLayout.setWidth("100%");
 
-        serviceLayout.add(serviceButton, removeButton, serviceChargesLabel);
+        serviceLayout.add(serviceButton, doneButton, removeButton, serviceChargesLabel);
 
         VerticalLayout serviceButtonLayout = new VerticalLayout();
         serviceButtonLayout.add(serviceLayout);
@@ -99,6 +118,33 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         horizontalLayout.add(serviceButtonLayout);
         this.add(horizontalLayout);
+    }
+
+    private void checkRowDone() {
+        if (station.getValue() != null && lineNumbers.getValue() != null && tonnage.getValue() != null) {
+            doneButton.setEnabled(true);
+        }
+    }
+
+    private void disableRow() {
+
+        this.station.setEnabled(false);
+        this.lineNumbers.setEnabled(false);
+        this.tonnage.setEnabled(false);
+        this.serviceButton.setEnabled(false);
+        this.removeButton.setEnabled(false);
+        this.doneButton.setEnabled(false);
+
+        EventBusHolder.getEventBus().post(CPPTRowDoneEvent.builder().rowIndex(getRowIndex()).isFinal(getIsFinal()).build());
+    }
+
+    public void enableRow() {
+        this.station.setEnabled(true);
+        this.lineNumbers.setEnabled(true);
+        this.tonnage.setEnabled(true);
+        this.serviceButton.setEnabled(true);
+        this.removeButton.setEnabled(true);
+        this.doneButton.setEnabled(true);
     }
 
     private void initializeLineNumberSelect(Set<SectionNeighboursDto> neighbours) {
@@ -113,7 +159,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
                                         ServiceChargesPerTrainService serviceChargesPerTrainService,
                                         Set<SectionNeighboursDto> neighbours) {
         station = new Select<>();
-        station.setLabel(String.format("%d - key station", i));
+        station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
         station.setItems(neighbours);
         station.setItemLabelGenerator(SectionNeighboursDto::getKeyStation);
         station.addValueChangeListener(event -> {
@@ -131,8 +177,9 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
                 serviceChargesPerTrainEntityList = serviceChargesPerTrainService
                         .findByTrainNumberAndRailRoadStation(trainNumber, this.currentKeyStation);
 
-                serviceChargesLabel.setText(String.format("Total service charges: %f", serviceChargesPerTrainService
-                        .getTotalServiceChargesForTrainNumberAndRailStation(serviceChargesPerTrainEntityList)));
+                serviceChargesLabel.setText(String.format("%s %.3f",
+                        getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL), serviceChargesPerTrainService
+                                .getTotalServiceChargesForTrainNumberAndRailStation(serviceChargesPerTrainEntityList)));
 
                 serviceButton.setEnabled(true);
             } else {
@@ -167,12 +214,12 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         if (this.rowIndex == 1) {
 
-            rowTitleString = "First Station";
+            rowTitleString = getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FIRST_STATION);
         } else if (isFinal) {
 
-            rowTitleString = "Final Station";
+            rowTitleString = getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FINAL_STATION);
         } else {
-            rowTitleString = String.format("%d - key station", this.rowIndex);
+            rowTitleString = String.format("%d - %s", this.rowIndex, getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_N_STATION));
         }
 
         rowTitle.setText(rowTitleString);

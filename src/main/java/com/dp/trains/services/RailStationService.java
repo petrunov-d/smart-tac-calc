@@ -102,7 +102,7 @@ public class RailStationService implements ExcelImportService {
     }
 
     @Transactional(readOnly = true)
-    public List<RailStationEntity> getByRailStationName(String station) {
+    public RailStationEntity getByRailStationName(String station) {
 
         return this.railStationRepository.findByStation(station);
     }

@@ -1,5 +1,7 @@
 package com.dp.trains.ui.layout;
 
+import com.dp.trains.services.vaadin.ResourceBundleService;
+import com.dp.trains.ui.components.LanguageSelect;
 import com.dp.trains.ui.views.*;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;
@@ -11,7 +13,9 @@ import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.impl.ImmutableEmptyStyle;
 import com.vaadin.flow.server.StreamResource;
@@ -20,6 +24,7 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Locale;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -56,7 +61,14 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                 () -> MainLayout.class.getResourceAsStream("/" + KPMG_LOGO)),
                 getTranslation(MAIN_LAYOUT_IMG_ALT_KPMG_LOGO));
 
-        return AppBarBuilder.get().add(img).build();
+        LanguageSelect languageSelect = new LanguageSelect(Locale.ENGLISH, ResourceBundleService.LOCALE_SERBIAN);
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout(new H5(getTranslation(MAIN_LAYOUT_SELECT_LANGUAGE)), languageSelect);
+
+        return AppBarBuilder.get()
+                .add(horizontalLayout)
+                .add(img)
+                .build();
     }
 
     private Component appMenu() {

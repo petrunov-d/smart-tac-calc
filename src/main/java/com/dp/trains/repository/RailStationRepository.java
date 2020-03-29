@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface RailStationRepository extends JpaRepository<RailStationEntity, Long> {
 
-    List<RailStationEntity> findByStation(String station);
+    RailStationEntity findByStation(String station);
 }

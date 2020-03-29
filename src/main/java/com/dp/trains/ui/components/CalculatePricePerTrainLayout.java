@@ -1,5 +1,6 @@
 package com.dp.trains.ui.components;
 
+import com.dp.trains.event.CPPTFinalRowRemovedEvent;
 import com.dp.trains.event.CPPTRowRemovedEvent;
 import com.dp.trains.event.CPPTStationChangedEvent;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
@@ -23,7 +24,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
 @Slf4j
 public class CalculatePricePerTrainLayout extends VerticalLayout {
 
-    private int i = 1;
+    private int nextRowIdex = 1;
     private String currentKeyStation;
 
     private List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
@@ -44,9 +45,9 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     public void addRow(Integer trainNumber, boolean isFinal, SectionsService sectionsService,
                        ServiceChargesPerTrainService serviceChargesPerTrainService) {
 
-        this.add(new CalculatePricePerTrainRow(i, isFinal, trainNumber,
+        this.add(new CalculatePricePerTrainRow(nextRowIdex, isFinal, trainNumber,
                 sectionsService, serviceChargesPerTrainService, currentKeyStation));
-        i++;
+        nextRowIdex++;
     }
 
     @Override
@@ -64,8 +65,9 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     public void resetContainer() {
 
         this.getChildren().filter(x -> x instanceof CalculatePricePerTrainRow).forEach(this::remove);
-        i = 1;
+        nextRowIdex = 1;
         currentKeyStation = null;
+        calculatePricePerTrainRows.clear();
     }
 
     public void updateTrainNumberForRows(Integer trainNumber) {
@@ -85,15 +87,26 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
                 .filter(x -> ((CalculatePricePerTrainRow) x).getRowIndex() == cpptRowRemovedEvent.getRowIndex())
                 .findFirst().get();
 
+        if (toRemove.getIsFinal()) {
+
+            EventBusHolder.getEventBus().post(new CPPTFinalRowRemovedEvent());
+        }
+
         this.remove(toRemove);
 
-        i = 1;
+        nextRowIdex = 1;
 
         for (CalculatePricePerTrainRow row : calculatePricePerTrainRows) {
 
-            row.setRowIndex(i, row.getIsFinal());
-            i++;
+            row.setRowIndex(nextRowIdex, row.getIsFinal());
+            nextRowIdex++;
         }
+
+        if (calculatePricePerTrainRows.size() > 0) {
+
+            calculatePricePerTrainRows.get(calculatePricePerTrainRows.size() - 1).enableRow();
+        }
+
     }
 
     @Subscribe

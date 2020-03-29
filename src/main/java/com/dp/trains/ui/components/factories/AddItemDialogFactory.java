@@ -34,7 +34,7 @@ public class AddItemDialogFactory {
 
         } else if (clazz == ServiceEntity.class) {
 
-            return new AddServiceDialog(currentlyActiveGrid, serviceService, lineNumberService);
+            return new AddServiceDialog(currentlyActiveGrid, serviceService);
 
         } else if (clazz == LineTypeEntity.class) {
 

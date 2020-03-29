@@ -4,6 +4,7 @@ import com.dp.trains.model.dto.ServiceChargesPerTrainDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.repository.ServiceChargesPerTrainRepository;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,15 @@ public class ServiceChargesPerTrainService {
     public List<ServiceChargesPerTrainEntity> findByTrainNumberAndRailRoadStation(Integer trainNumber,
                                                                                   String railRoadStation) {
 
-        List<RailStationEntity> railStationEntity = this.railStationService.getByRailStationName(railRoadStation);
+        RailStationEntity railStationEntity = this.railStationService.getByRailStationName(railRoadStation);
 
         if (railStationEntity == null) {
 
-            throw new IllegalStateException("Unknown Rail Station! " + railRoadStation);
+            return Lists.newArrayList();
         }
 
         return this.serviceChargesPerTrainRepository
-                .findByTrainNumberAndRailStationEntity(trainNumber, railStationEntity.get(0));
+                .findByTrainNumberAndRailStationEntity(trainNumber, railStationEntity);
     }
 
     public Double getTotalServiceChargesForTrainNumberAndRailStation(List<ServiceChargesPerTrainEntity>
