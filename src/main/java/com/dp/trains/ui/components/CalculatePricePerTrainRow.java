@@ -116,6 +116,10 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         serviceButtonLayout.setPadding(true);
         serviceButtonLayout.setMargin(true);
 
+        setMargin(false);
+        setPadding(false);
+        setSpacing(false);
+
         horizontalLayout.add(serviceButtonLayout);
         this.add(horizontalLayout);
     }

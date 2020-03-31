@@ -59,12 +59,12 @@ public class AddLineNumberDialog extends AddDialogBase {
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(DIALOG_ADD_LINE_NUMBER_FORM_ITEM_DESCRIPTION_VALIDATION)))
                 .bind(LineNumberDto::getDescription, LineNumberDto::setDescription);
 
+        layoutWithBinder.addFormItem(lineNumber, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
+        layoutWithBinder.addFormItem(description, getTranslation(GRID_RAIL_STATION_COLUMN_HEADER_STATION));
+
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
-
-        layoutWithBinder.addFormItem(lineNumber, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
-        layoutWithBinder.addFormItem(description, getTranslation(GRID_RAIL_STATION_COLUMN_HEADER_STATION));
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.add(save, reset, cancel);

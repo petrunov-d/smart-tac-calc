@@ -11,6 +11,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -25,7 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
+import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
 @UIScope
@@ -46,21 +47,23 @@ public class CalculateSinglePriceView extends BaseSmartTacCalcView {
 
         VerticalLayout verticalLayout = new VerticalLayout();
 
-        Integer currentYear = SelectedYearPerUserHolder.getForUser(SecurityContextHolder.getContext().getAuthentication().getName());
+        Integer currentYear = SelectedYearPerUserHolder.getForUser(SecurityContextHolder.getContext()
+                .getAuthentication().getName());
 
-        H3 h3 = new H3("Calculate single price for current year: " + currentYear + " based on the average of the last n years");
+        H3 h3 = new H3(String.format("%s %d %s", getTranslation(CALCULATE_SINGLE_PRICE_DESCRIPTION_ONE), currentYear,
+                getTranslation(CALCULATE_SINGLE_PRICE_DESCRIPTION_TWO)));
 
-        H3 backtrackTitle = new H3("Input the amount of years to go back: ");
-        IntegerField backtrackYearsField = new IntegerField("Input years");
+        H3 backtrackTitle = new H3(getTranslation(CALCULATE_SINGLE_PRICE_INPUT_AMOUNT_OF_YEARS_TO_GO_BACK));
+        IntegerField backtrackYearsField = new IntegerField(getTranslation(CALCULATE_SINGLE_PRICE_INPUT_YEARS_LABEL));
         backtrackYearsField.setValue(1);
         backtrackYearsField.setHasControls(true);
         backtrackYearsField.setMin(1);
-        backtrackYearsField.setMax(10);
+        backtrackYearsField.setMax(20);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.add(backtrackTitle, backtrackYearsField);
 
-        Button calculate = new Button("Calculate");
+        Button calculate = new Button(getTranslation(CALCULATE_SINGLE_PRICE_INPUT_YEARS_BUTTON_CALCULATE), VaadinIcon.CALC_BOOK.create());
         calculate.addClickListener(e -> {
 
             Integer yearsToGoBack = backtrackYearsField.getValue();
@@ -69,19 +72,20 @@ public class CalculateSinglePriceView extends BaseSmartTacCalcView {
 
             if (validationResult.entrySet().size() > 0) {
 
-                String message = "There is no Unit Price data for the following year(s): "
-                        + Joiner.on(", ").join(validationResult.keySet()) +
-                        " Please provide data for the missing years before calculating.";
+                Dialog dialog = new BasicInfoDialog(String.format("%s %s %s",
+                        getTranslation(CALCULATE_SINGLE_PRICE_ERROR_NO_DATA_FOR_PROVIDED_YEARS),
+                        Joiner.on(", ").join(validationResult.keySet()),
+                        getTranslation(CALCULATE_SINGLE_PRICE_ERROR_NO_DATA_FOR_PROVIDED_YEARS_HINT)));
 
-                Dialog dialog = new BasicInfoDialog(message);
                 dialog.open();
 
             } else {
 
-                Collection<UnitPriceDto> unitPriceDtoList = unitPriceService.calculateSinglePriceForYears(yearsToGoBack, currentYear);
+                Collection<UnitPriceDto> unitPriceDtoList = unitPriceService
+                        .calculateSinglePriceForYears(yearsToGoBack, currentYear);
                 this.unitPriceService.add(unitPriceDtoList);
 
-                Dialog dialog = new BasicInfoDialog("Successfuly calculated new unit prices. Go to View Unit Prices to see the result");
+                Dialog dialog = new BasicInfoDialog(getTranslation(CALCULATE_SINGLE_PRICE_CALCULATION_SUCCESS));
                 dialog.open();
             }
         });

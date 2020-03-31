@@ -1,10 +1,12 @@
 package com.dp.trains.services;
 
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.dto.TaxForServicesPerTrainDto;
 import com.dp.trains.model.entities.TaxForServicesPerTrainEntity;
 import com.dp.trains.repository.TaxForServicesPerTrainRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TaxForServicesPerTrainService implements ExcelImportService {
+public class TaxForServicesPerTrainService implements BaseImportService {
+
+    private final ObjectMapper defaultObjectMapper;
+    private final TaxForServicesPerTrainRepository taxForServicesPerTrainRepository;
 
     @Qualifier("taxForServicesPerTrainMapper")
     private final DefaultDtoEntityMapperService<TaxForServicesPerTrainDto,
             TaxForServicesPerTrainEntity> taxForServicesPerTrainMapper;
-
-    private final TaxForServicesPerTrainRepository taxForServicesPerTrainRepository;
 
     @Transactional
     public void add(Collection<TaxForServicesPerTrainDto> trainTypeDto) {
@@ -51,5 +54,21 @@ public class TaxForServicesPerTrainService implements ExcelImportService {
     public void deleteAll() {
 
         taxForServicesPerTrainRepository.deleteAll();
+    }
+
+    @Override
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+        return null;
+    }
+
+    @Override
+    public int countByYear(int year) {
+        return -1;
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
     }
 }

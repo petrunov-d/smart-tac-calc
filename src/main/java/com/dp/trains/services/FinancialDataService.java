@@ -2,6 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.FinancialDataDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.entities.FinancialDataEntity;
 import com.dp.trains.repository.FinancialDataRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
@@ -15,7 +16,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class FinancialDataService implements ExcelImportService {
+@SuppressWarnings("unchecked")
+public class FinancialDataService implements BaseImportService {
 
     private final FinancialDataRepository financialDataRepository;
 
@@ -45,9 +47,26 @@ public class FinancialDataService implements ExcelImportService {
     }
 
     @Override
+    public int countByYear(int year) {
+        return -1;
+    }
+
+    @Override
     @Transactional
     public void deleteAll() {
 
         financialDataRepository.deleteAll();
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+
+        return null;
     }
 }

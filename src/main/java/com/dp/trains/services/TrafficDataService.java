@@ -1,10 +1,13 @@
 package com.dp.trains.services;
 
+import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.dto.TrafficDataDto;
 import com.dp.trains.model.entities.TrafficDataEntity;
 import com.dp.trains.repository.TrafficDataRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,12 +18,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TrafficDataService implements ExcelImportService {
+public class TrafficDataService implements BaseImportService {
+
+    private final TrafficDataRepository trafficDataRepository;
+    private final ObjectMapper defaultObjectMapper;
 
     @Qualifier("trafficDataMapper")
     private final DefaultDtoEntityMapperService<TrafficDataDto, TrafficDataEntity> trafficDataMapper;
-
-    private final TrafficDataRepository trafficDataRepository;
 
     @Transactional
     public void add(Collection<TrafficDataDto> trafficDataDtos) {
@@ -48,5 +52,24 @@ public class TrafficDataService implements ExcelImportService {
     public void deleteAll() {
 
         trafficDataRepository.deleteAll();
+    }
+
+    @Override
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+        return null;
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public int countByYear(int year) {
+
+        return this.trafficDataRepository.countByYear(year);
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
     }
 }

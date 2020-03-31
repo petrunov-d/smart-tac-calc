@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -20,7 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
 @RequiredArgsConstructor
-@SuppressWarnings({"ConfusingArgumentToVarargsMethod", "UnstableApiUsage"})
+@SuppressWarnings({"UnstableApiUsage"})
 public class AppConfig {
 
     private ApplicationContext applicationContext;
@@ -30,7 +31,7 @@ public class AppConfig {
         MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
         methodInvokingFactoryBean.setTargetClass(SecurityContextHolder.class);
         methodInvokingFactoryBean.setTargetMethod("setStrategyName");
-        methodInvokingFactoryBean.setArguments(new String[]{SecurityContextHolder.MODE_INHERITABLETHREADLOCAL});
+        methodInvokingFactoryBean.setArguments((Object) new String[]{SecurityContextHolder.MODE_INHERITABLETHREADLOCAL});
         return methodInvokingFactoryBean;
     }
 
@@ -38,7 +39,7 @@ public class AppConfig {
     @Bean(name = "json-jackson")
     public ObjectMapper objectMapper() {
 
-        return new ObjectMapper()
+        ObjectMapper defaultObjectMapper = new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
                 .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
@@ -48,6 +49,18 @@ public class AppConfig {
                 .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
                 .enable(JsonGenerator.Feature.STRICT_DUPLICATE_DETECTION)
                 .findAndRegisterModules();
+
+        Hibernate5Module module = new Hibernate5Module();
+        module.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true);
+
+        defaultObjectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        defaultObjectMapper.disable(MapperFeature.USE_GETTERS_AS_SETTERS);
+        defaultObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        defaultObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+        defaultObjectMapper.registerModule(module);
+
+        return defaultObjectMapper;
     }
 
     @Bean("trainTypeMapper")

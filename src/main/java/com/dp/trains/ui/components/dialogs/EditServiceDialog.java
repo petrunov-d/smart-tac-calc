@@ -12,7 +12,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -38,11 +37,6 @@ public class EditServiceDialog extends AddDialogBase {
         Binder<ServiceDto> binder = new Binder<>();
 
         ServiceDto serviceDto = new ServiceDto();
-
-        IntegerField code = new IntegerField();
-        code.addValueChangeListener(event -> binder.validate());
-        code.setRequiredIndicatorVisible(true);
-        code.setValue(serviceEntity.getCode());
 
         TextField metric = new TextField();
 
@@ -70,11 +64,6 @@ public class EditServiceDialog extends AddDialogBase {
         serviceType.setClearButtonVisible(true);
         serviceType.setValue(serviceEntity.getType());
 
-        binder.forField(code)
-                .asRequired()
-                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_CODE_MESSAGE)))
-                .bind(ServiceDto::getCode, ServiceDto::setCode);
-
         binder.forField(metric)
                 .asRequired()
                 .withValidator(ValidatorFactory.requiredVarcharStringValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_METRIC)))
@@ -98,7 +87,6 @@ public class EditServiceDialog extends AddDialogBase {
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
-        layoutWithBinder.addFormItem(code, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
         layoutWithBinder.addFormItem(name, getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_NAME));
         layoutWithBinder.addFormItem(metric, getTranslation(GRID_SERVICE_COLUMN_HEADER_METRIC));
         layoutWithBinder.addFormItem(unitPrice, getTranslation(GRID_SERVICE_COLUMN_HEADER_UNIT_PRICE));

@@ -1,6 +1,5 @@
 package com.dp.trains.ui.validators;
 
-
 import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;

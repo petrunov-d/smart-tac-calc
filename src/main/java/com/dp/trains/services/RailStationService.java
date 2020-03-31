@@ -1,10 +1,14 @@
 package com.dp.trains.services;
 
+import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.dto.RailStationDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.repository.RailStationRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,13 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RailStationService implements ExcelImportService {
+public class RailStationService implements BaseImportService {
 
     private final RailStationRepository railStationRepository;
+    private final ObjectMapper defaultObjectMapper;
 
     @Qualifier("railStationMapper")
     private final DefaultDtoEntityMapperService<RailStationDto, RailStationEntity> railStationMapper;
@@ -124,5 +130,49 @@ public class RailStationService implements ExcelImportService {
         railstationEntityFromDb.setCountry(railStationDto.getCountry());
 
         return railStationRepository.save(railstationEntityFromDb);
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+
+        List<RailStationEntity> clones = this.railStationRepository.findAllByYear(previousYear).stream().map(x -> {
+            try {
+
+                RailStationEntity railStationEntity =
+                        defaultObjectMapper.readValue(defaultObjectMapper.writeValueAsString(x), RailStationEntity.class);
+                railStationEntity.setId(null);
+                railStationEntity.setYear(previousYear + 1);
+                railStationEntity.setShouldUpdateYear(false);
+                return railStationEntity;
+
+            } catch (JsonProcessingException e) {
+
+                log.error("Error deep copying:" + x.toString() + " Exception: ", e);
+            }
+            return null;
+        }).collect(Collectors.toList());
+
+        this.railStationRepository.saveAll(clones);
+
+        return PreviousYearCopyingResultDto.builder()
+                .displayName(getDisplayName())
+                .copyCount(clones.size())
+                .build();
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public int countByYear(int year) {
+
+        return this.railStationRepository.countByYear(year);
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
     }
 }

@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components.dialogs;
 
-import com.dp.trains.services.ExcelImportService;
+import com.dp.trains.services.BaseImportService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
@@ -17,13 +17,13 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 public class ConfirmImportDialog extends Dialog {
 
-    public ConfirmImportDialog(ExcelImportService excelImportService, Select<String> select) {
+    public ConfirmImportDialog(BaseImportService baseImportService, Select<String> select) {
 
         H3 h3 = new H3(CONFIRM_IMPORT_DIALOG_TITLE);
 
         Button ok = new Button(CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA, new Icon(VaadinIcon.DEL_A));
         ok.addClickListener(e -> {
-            excelImportService.deleteAll();
+            baseImportService.deleteAll();
             Notification.show(getTranslation(CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA_SUCCESS),
                     5000, Notification.Position.MIDDLE);
         });

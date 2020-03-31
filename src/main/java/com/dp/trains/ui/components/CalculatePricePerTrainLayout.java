@@ -40,6 +40,10 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         this.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         EventBusHolder.getEventBus().register(this);
+
+        setMargin(false);
+        setPadding(false);
+        setSpacing(false);
     }
 
     public void addRow(Integer trainNumber, boolean isFinal, SectionsService sectionsService,

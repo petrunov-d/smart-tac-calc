@@ -1,10 +1,14 @@
 package com.dp.trains.services;
 
+import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.LineNumberDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.entities.LineNumberEntity;
 import com.dp.trains.repository.LineNumberRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,9 +24,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LineNumberService implements ExcelImportService {
+public class LineNumberService implements BaseImportService {
 
     private final LineNumberRepository lineNumberRepository;
+    private final ObjectMapper defaultObjectMapper;
 
     @Qualifier("lineNumberMapper")
     private final DefaultDtoEntityMapperService<LineNumberDto, LineNumberEntity> lineNumberMapper;
@@ -123,5 +128,49 @@ public class LineNumberService implements ExcelImportService {
     public void deleteAll() {
 
         lineNumberRepository.deleteAll();
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+
+        List<LineNumberEntity> clones = this.lineNumberRepository.findAllByYear(previousYear).stream().map(x -> {
+            try {
+
+                LineNumberEntity lineNumberEntity =
+                        defaultObjectMapper.readValue(defaultObjectMapper.writeValueAsString(x), LineNumberEntity.class);
+                lineNumberEntity.setId(null);
+                lineNumberEntity.setYear(previousYear + 1);
+                lineNumberEntity.setShouldUpdateYear(false);
+                return lineNumberEntity;
+
+            } catch (JsonProcessingException e) {
+
+                log.error("Error deep copying:" + x.toString() + " Exception: ", e);
+            }
+            return null;
+        }).collect(Collectors.toList());
+
+        this.lineNumberRepository.saveAll(clones);
+
+        return PreviousYearCopyingResultDto.builder()
+                .displayName(getDisplayName())
+                .copyCount(clones.size())
+                .build();
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public int countByYear(int year) {
+
+        return this.lineNumberRepository.countByYear(year);
     }
 }

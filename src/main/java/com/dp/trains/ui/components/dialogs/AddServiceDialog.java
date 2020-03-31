@@ -12,7 +12,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
@@ -38,11 +37,6 @@ public class AddServiceDialog extends AddDialogBase {
 
         ServiceDto serviceDto = new ServiceDto();
 
-        IntegerField code = new IntegerField();
-
-        code.addValueChangeListener(event -> binder.validate());
-        code.setRequiredIndicatorVisible(true);
-
         TextArea metric = new TextArea();
 
         metric.setValueChangeMode(ValueChangeMode.EAGER);
@@ -63,11 +57,6 @@ public class AddServiceDialog extends AddDialogBase {
 
         Select<String> serviceType = new Select<>();
         serviceType.setItems(serviceService.getServiceTypes());
-
-        binder.forField(code)
-                .asRequired()
-                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_CODE_MESSAGE)))
-                .bind(ServiceDto::getCode, ServiceDto::setCode);
 
         binder.forField(metric)
                 .asRequired()
@@ -93,7 +82,6 @@ public class AddServiceDialog extends AddDialogBase {
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
-        layoutWithBinder.addFormItem(code, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
         layoutWithBinder.addFormItem(name, getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_NAME));
         layoutWithBinder.addFormItem(metric, getTranslation(GRID_SERVICE_COLUMN_HEADER_METRIC));
         layoutWithBinder.addFormItem(unitPrice, getTranslation(GRID_SERVICE_COLUMN_HEADER_UNIT_PRICE));
@@ -131,7 +119,6 @@ public class AddServiceDialog extends AddDialogBase {
         cancel.addClickListener(event -> {
 
             binder.readBean(null);
-            code.setValue(null);
             metric.setValue("");
             unitPrice.setValue(null);
             name.setValue("");
@@ -142,7 +129,6 @@ public class AddServiceDialog extends AddDialogBase {
         reset.addClickListener(event -> {
 
             binder.readBean(null);
-            code.setValue(null);
             metric.setValue("");
             unitPrice.setValue(null);
             name.setValue("");

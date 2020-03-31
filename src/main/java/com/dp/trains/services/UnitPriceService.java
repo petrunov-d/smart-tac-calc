@@ -2,10 +2,13 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.model.entities.UnitPriceEntity;
 import com.dp.trains.repository.UnitPriceRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +28,10 @@ import static java.util.stream.Collectors.groupingBy;
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings({"unchecked", "StreamToLoop", "rawtypes", "OptionalGetWithoutIsPresent"})
-public class UnitPriceService implements ExcelImportService {
+public class UnitPriceService implements BaseImportService {
 
     private final UnitPriceRepository unitPriceRepository;
+    private final ObjectMapper defaultObjectMapper;
 
     @Qualifier("unitPriceMapper")
     private final DefaultDtoEntityMapperService<UnitPriceDto, UnitPriceEntity> unitPriceMapper;
@@ -150,5 +154,49 @@ public class UnitPriceService implements ExcelImportService {
         log.info("Validation result: " + validationResult.toString());
 
         return validationResult;
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+
+        List<UnitPriceEntity> clones = this.unitPriceRepository.findAllByYear(previousYear).stream().map(x -> {
+            try {
+
+                UnitPriceEntity unitPriceEntity =
+                        defaultObjectMapper.readValue(defaultObjectMapper.writeValueAsString(x), UnitPriceEntity.class);
+                unitPriceEntity.setId(null);
+                unitPriceEntity.setYear(previousYear + 1);
+                unitPriceEntity.setShouldUpdateYear(false);
+                return unitPriceEntity;
+
+            } catch (JsonProcessingException e) {
+
+                log.error("Error deep copying:" + x.toString() + " Exception: ", e);
+            }
+            return null;
+        }).collect(Collectors.toList());
+
+        this.unitPriceRepository.saveAll(clones);
+
+        return PreviousYearCopyingResultDto.builder()
+                .displayName(getDisplayName())
+                .copyCount(clones.size())
+                .build();
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public int countByYear(int year) {
+
+        return this.unitPriceRepository.countByYear(year);
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
     }
 }

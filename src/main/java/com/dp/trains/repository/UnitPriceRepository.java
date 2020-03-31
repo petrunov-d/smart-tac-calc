@@ -10,4 +10,8 @@ import java.util.List;
 public interface UnitPriceRepository extends JpaRepository<UnitPriceEntity, Long> {
 
     List<UnitPriceEntity> findAllByYearBetween(int start, int end);
+
+    int countByYear(int year);
+
+    List<UnitPriceEntity> findAllByYear(Integer previousYear);
 }

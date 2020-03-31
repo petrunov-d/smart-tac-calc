@@ -1,0 +1,2 @@
+ALTER TABLE PUBLIC.financial_data
+    ADD COLUMN year INTEGER;

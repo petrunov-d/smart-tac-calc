@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TrafficDataRepository extends JpaRepository<TrafficDataEntity, Long> {
+
+    int countByYear(int year);
 }

@@ -1,10 +1,14 @@
 package com.dp.trains.services;
 
+import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.dto.ServiceDto;
 import com.dp.trains.model.entities.ServiceEntity;
 import com.dp.trains.repository.ServiceRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,9 +24,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ServiceService implements ExcelImportService {
+public class ServiceService implements BaseImportService {
 
     private final ServiceRepository serviceRepository;
+    private final ObjectMapper defaultObjectMapper;
 
     @Qualifier("serviceMapper")
     private final DefaultDtoEntityMapperService<ServiceDto, ServiceEntity> serviceMapper;
@@ -127,4 +132,49 @@ public class ServiceService implements ExcelImportService {
 
         return serviceRepository.save(serviceEntityFromDb);
     }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+
+        List<ServiceEntity> clones = this.serviceRepository.findAllByYear(previousYear).stream().map(x -> {
+            try {
+
+                ServiceEntity serviceEntity =
+                        defaultObjectMapper.readValue(defaultObjectMapper.writeValueAsString(x), ServiceEntity.class);
+                serviceEntity.setId(null);
+                serviceEntity.setYear(previousYear + 1);
+                serviceEntity.setShouldUpdateYear(false);
+                return serviceEntity;
+
+            } catch (JsonProcessingException e) {
+
+                log.error("Error deep copying:" + x.toString() + " Exception: ", e);
+            }
+            return null;
+        }).collect(Collectors.toList());
+
+        this.serviceRepository.saveAll(clones);
+
+        return PreviousYearCopyingResultDto.builder()
+                .displayName(getDisplayName())
+                .copyCount(clones.size())
+                .build();
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public int countByYear(int year) {
+
+        return this.serviceRepository.countByYear(year);
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
+    }
+
 }

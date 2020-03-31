@@ -72,19 +72,21 @@ public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
         serviceCount = new IntegerField();
         serviceCount.setRequiredIndicatorVisible(true);
 
-        H2 h2 = new H2("Add Service Charges for Train Number");
+        H2 h2 = new H2(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_PAGE_TITLE));
 
         HorizontalLayout railStationSelectorLayout = new HorizontalLayout();
-        railStationSelectorLayout.add(new H5("Select Rail Station"), railStationEntitySelect);
+        railStationSelectorLayout.add(new H5(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_SELECT_RAIL_STATION)),
+                railStationEntitySelect);
 
         HorizontalLayout serviceEntitySelectorLayout = new HorizontalLayout();
-        serviceEntitySelectorLayout.add(new H5("Select Service"), serviceEntitySelect);
+        serviceEntitySelectorLayout.add(new H5(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_SELECT_SERVICE)),
+                serviceEntitySelect);
 
         HorizontalLayout trainNumberLayout = new HorizontalLayout();
-        trainNumberLayout.add(new H5("Input Train Number"), trainNumber);
+        trainNumberLayout.add(new H5(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_INPUT_TRAIN_NUMBER)), trainNumber);
 
         HorizontalLayout serviceCountLayout = new HorizontalLayout();
-        serviceCountLayout.add(new H5("Input Service Count"), serviceCount);
+        serviceCountLayout.add(new H5(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_INPUT_SERVICE_COUNT)), serviceCount);
 
         H1 headerText = new H1(getTranslation(SHARED_APP_TITLE));
 
@@ -97,8 +99,9 @@ public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
 
             if (validationErrors.size() > 0) {
 
-                Dialog basicInfoDialog = new BasicInfoDialog("The following values are mandatory:"
-                        + Joiner.on(", ").join(validationErrors));
+                Dialog basicInfoDialog = new BasicInfoDialog(
+                        getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_MANDATORY_VALUES_MESSAGE)
+                                + Joiner.on(", ").join(validationErrors));
 
                 basicInfoDialog.open();
             } else {
@@ -141,19 +144,19 @@ public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
         List<String> validationList = Lists.newArrayList();
 
         if (railStationEntitySelect.getValue() == null) {
-            validationList.add("Rail Station");
+            validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_RAIL_STATION));
         }
 
         if (serviceEntitySelect.getValue() == null) {
-            validationList.add("Service");
+            validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_SERVICE));
         }
 
         if (trainNumber.getValue() == null) {
-            validationList.add("Train Number");
+            validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_TRAIN_NUMBER));
         }
 
         if (serviceCount.getValue() == null) {
-            validationList.add("Service Count");
+            validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_SERVICE_COUNT));
         }
 
         return validationList;

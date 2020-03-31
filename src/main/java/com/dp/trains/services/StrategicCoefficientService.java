@@ -1,10 +1,14 @@
 package com.dp.trains.services;
 
+import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.model.dto.StrategicCoefficientDto;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.repository.StrategicCoefficientRepostiory;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,12 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StrategicCoefficientService implements ExcelImportService {
+public class StrategicCoefficientService implements BaseImportService {
 
+    private final ObjectMapper defaultObjectMapper;
     private final StrategicCoefficientRepostiory strategicCoefficientRepostiory;
 
     @Qualifier("strategicCoefficientsMapper")
@@ -118,5 +124,51 @@ public class StrategicCoefficientService implements ExcelImportService {
         strategicCoefficientEntityFromDb.setName(strategicCoefficientDto.getName());
 
         return strategicCoefficientRepostiory.save(strategicCoefficientEntityFromDb);
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+
+        List<StrategicCoefficientEntity> clones = this.strategicCoefficientRepostiory
+                .findAllByYear(previousYear).stream().map(x -> {
+                    try {
+
+                        StrategicCoefficientEntity strategicCoefficientEntity =
+                                defaultObjectMapper.readValue(defaultObjectMapper.writeValueAsString(x),
+                                        StrategicCoefficientEntity.class);
+                        strategicCoefficientEntity.setId(null);
+                        strategicCoefficientEntity.setYear(previousYear + 1);
+                        strategicCoefficientEntity.setShouldUpdateYear(false);
+                        return strategicCoefficientEntity;
+
+                    } catch (JsonProcessingException e) {
+
+                        log.error("Error deep copying:" + x.toString() + " Exception: ", e);
+                    }
+                    return null;
+                }).collect(Collectors.toList());
+
+        this.strategicCoefficientRepostiory.saveAll(clones);
+
+        return PreviousYearCopyingResultDto.builder()
+                .displayName(getDisplayName())
+                .copyCount(clones.size())
+                .build();
+    }
+
+    @Override
+    @YearAgnostic
+    @Transactional(readOnly = true)
+    public int countByYear(int year) {
+
+        return this.strategicCoefficientRepostiory.countByYear(year);
+    }
+
+    @Override
+    public String getDisplayName() {
+
+        return this.getClass().getSimpleName();
     }
 }

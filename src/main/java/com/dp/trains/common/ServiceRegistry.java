@@ -1,8 +1,11 @@
 package com.dp.trains.common;
 
 import com.dp.trains.services.*;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +23,7 @@ public class ServiceRegistry {
     private final TrainTypeService trainTypeService;
     private final UnitPriceService unitPriceService;
 
-    public ExcelImportService getService(ServiceEnum serviceEnum) {
+    public BaseImportService getService(ServiceEnum serviceEnum) {
 
         switch (serviceEnum) {
             case FINANCIAL_DATA_SERVICE:
@@ -48,5 +51,11 @@ public class ServiceRegistry {
         }
 
         throw new IllegalStateException("Service not found for service enum:" + serviceEnum);
+    }
+
+    public Collection<BaseImportService> getBaseImportServiceList() {
+
+        return Lists.newArrayList(lineNumberService, lineTypeService, railStationService,
+                sectionsService, serviceService, strategicCoefficientService, trainTypeService, unitPriceService);
     }
 }

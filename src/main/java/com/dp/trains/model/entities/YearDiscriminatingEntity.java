@@ -10,6 +10,7 @@ import org.hibernate.annotations.ParamDef;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 @Data
 @FilterDef(name = YearDiscriminatingEntity.YEAR_FILTER,
@@ -26,4 +27,7 @@ public class YearDiscriminatingEntity {
 
     @Column(name = YEAR, columnDefinition = "INTEGER")
     private Integer year;
+
+    @Transient
+    private Boolean shouldUpdateYear = Boolean.TRUE;
 }

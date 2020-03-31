@@ -3,7 +3,7 @@ package com.dp.trains.ui.views;
 import com.dp.trains.common.ServiceEnum;
 import com.dp.trains.common.ServiceRegistry;
 import com.dp.trains.model.dto.*;
-import com.dp.trains.services.ExcelImportService;
+import com.dp.trains.services.BaseImportService;
 import com.dp.trains.ui.components.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.dialogs.ConfirmImportDialog;
 import com.dp.trains.ui.layout.MainLayout;
@@ -13,6 +13,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
 import com.poiji.bind.Poiji;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
@@ -165,6 +166,8 @@ public class LoadDataView extends BaseSmartTacCalcView {
 
             FileUtils.deleteQuietly(tmpFile);
 
+            UI.getCurrent().getPage().reload();
+
         } catch (IOException e) {
 
             log.error("Exception processing file : ", e);
@@ -187,11 +190,11 @@ public class LoadDataView extends BaseSmartTacCalcView {
                 upload.setVisible(true);
                 currentlySelectedPair = importItems.get(event.getValue());
 
-                ExcelImportService excelImportService = serviceRegistry.getService(currentlySelectedPair.getServiceEnum());
+                BaseImportService baseImportService = serviceRegistry.getService(currentlySelectedPair.getServiceEnum());
 
-                if (excelImportService.count() > 0) {
+                if (baseImportService.count() > 0) {
 
-                    Dialog confirmDialog = new ConfirmImportDialog(excelImportService, dataTypeSelect);
+                    Dialog confirmDialog = new ConfirmImportDialog(baseImportService, dataTypeSelect);
                     confirmDialog.open();
                 }
 

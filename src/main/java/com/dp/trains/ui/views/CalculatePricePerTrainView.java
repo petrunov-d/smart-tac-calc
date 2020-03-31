@@ -50,7 +50,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private IntegerField trainNumber;
     private Select<String> trainType;
     private CalculatePricePerTrainLayout calculatePricePerTrainLayout;
-    private Select<StrategicCoefficientEntity> strategicCoefficientEntityComboBox;
+    private Select<StrategicCoefficientEntity> strategicCoefficientSelect;
 
     @Autowired
     private TrainTypeService trainTypeService;
@@ -86,13 +86,13 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         HorizontalLayout buttonLayout = getButtonOptionsBar();
 
-        strategicCoefficientEntityComboBox = new Select();
-        strategicCoefficientEntityComboBox.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
+        strategicCoefficientSelect = new Select<>();
+        strategicCoefficientSelect.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
 
         HorizontalLayout kilometersSummaryLayout = getKilometersSummaryLayout();
         HorizontalLayout finalTaxLayout = getFinalTax();
 
-        VerticalLayout footerContainer = new VerticalLayout(strategicCoefficientEntityComboBox,
+        VerticalLayout footerContainer = new VerticalLayout(strategicCoefficientSelect,
                 kilometersSummaryLayout, finalTaxLayout);
 
         footerContainer.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
@@ -116,8 +116,8 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     public void populateDropDowns() {
 
         trainType.setItems(trainTypeService.getTrainTypes());
-        strategicCoefficientEntityComboBox.setItems(strategicCoefficientService.fetch(0, 0));
-        strategicCoefficientEntityComboBox.setItemLabelGenerator(StrategicCoefficientEntity::getName);
+        strategicCoefficientSelect.setItems(strategicCoefficientService.fetch(0, 0));
+        strategicCoefficientSelect.setItemLabelGenerator(StrategicCoefficientEntity::getName);
         EventBusHolder.getEventBus().register(this);
     }
 
@@ -192,7 +192,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private void resetPageState() {
 
         calculatePricePerTrainLayout.resetContainer();
-        strategicCoefficientEntityComboBox.setValue(null);
+        strategicCoefficientSelect.setValue(null);
         trainType.setValue("");
         trainNumber.setValue(null);
         tonnage.setValue(null);

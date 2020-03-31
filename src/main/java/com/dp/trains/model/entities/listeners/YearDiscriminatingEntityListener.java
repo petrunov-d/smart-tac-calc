@@ -18,9 +18,17 @@ public class YearDiscriminatingEntityListener {
 
         if (object instanceof YearDiscriminatingEntity) {
 
-            log.info("Modifying the following entity:" + object.toString());
+            YearDiscriminatingEntity yearDiscriminatingEntity = (YearDiscriminatingEntity) object;
 
-            ((YearDiscriminatingEntity) object).setYear(SelectedYearPerUserHolder.getForCurrentlyLoggedInUser());
+            if (yearDiscriminatingEntity.getShouldUpdateYear()) {
+                log.info("Modifying the following entity:" + object.toString());
+
+                ((YearDiscriminatingEntity) object).setYear(SelectedYearPerUserHolder.getForCurrentlyLoggedInUser());
+
+            } else {
+
+                log.info("Shouldn't update year for entitiy:" + object.toString());
+            }
         }
     }
 }

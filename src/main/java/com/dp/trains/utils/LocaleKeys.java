@@ -183,4 +183,39 @@ public class LocaleKeys {
     public static final String CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FINAL_STATION = "calculate.price.per.train.row.title.final.station";
 
     public static final String MAIN_LAYOUT_SELECT_LANGUAGE = "main.layout.select.language";
+
+    public static final String CALCULATE_SINGLE_PRICE_DESCRIPTION_ONE = "calculate.single.price.description.one";
+    public static final String CALCULATE_SINGLE_PRICE_DESCRIPTION_TWO = "calculate.single.price.description.two";
+    public static final String CALCULATE_SINGLE_PRICE_INPUT_AMOUNT_OF_YEARS_TO_GO_BACK = "calculate.single.price.input.amount.of.years.to.go.back";
+    public static final String CALCULATE_SINGLE_PRICE_INPUT_YEARS_LABEL = "calculate.single.price.input.years.label";
+    public static final String CALCULATE_SINGLE_PRICE_INPUT_YEARS_BUTTON_CALCULATE = "calculate.single.price.input.years.button.calculate";
+    public static final String CALCULATE_SINGLE_PRICE_ERROR_NO_DATA_FOR_PROVIDED_YEARS = "calculate.single.price.error.no.data.for.provided.years";
+    public static final String CALCULATE_SINGLE_PRICE_ERROR_NO_DATA_FOR_PROVIDED_YEARS_HINT = "calculate.single.price.error.no.data.for.provided.years.hint";
+    public static final String CALCULATE_SINGLE_PRICE_CALCULATION_SUCCESS = "calculate.single.price.calculation.success";
+
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_PAGE_TITLE = "add.service.charges.per.train.page.title";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_SELECT_RAIL_STATION = "add.service.charges.per.train.select.rail.station";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_SELECT_SERVICE = "add.service.charges.per.train.select.service";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_INPUT_TRAIN_NUMBER = "add.service.charges.per.train.input.train.number";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_INPUT_SERVICE_COUNT = "add.service.charges.per.train.input.service.count";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_MANDATORY_VALUES_MESSAGE = "add.service.charges.per.train.mandatory.values.message";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_RAIL_STATION = "add.service.charges.per.train.validation.rail.station";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_SERVICE = "add.service.charges.per.train.validation.service";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_TRAIN_NUMBER = "add.service.charges.per.train.validation.train.number";
+    public static final String ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_SERVICE_COUNT = "add.service.charges.per.train.validation.service.count";
+
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_TITLE = "copy.data.from.previous.year.dialog.title";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK = "copy.data.from.previous.year.dialog.button.ok";
+
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_ONE = "copy.data.from.previous.year.summary.dialog.title.one";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_TWO = "copy.data.from.previous.year.summary.dialog.title.two";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ROW_DESCRIPTION_ONE = "copy.data.from.previous.year.summary.dialog.row.description.one";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ROW_DESCRIPTION_TWO = "copy.data.from.previous.year.summary.dialog.row.description.two";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_LINE_NUMBERS = "copy.data.from.previous.year.summary.dialog.entity.display.name.line.numbers";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_LINE_TYPES = "copy.data.from.previous.year.summary.dialog.entity.display.name.line.types";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_STATIONS = "copy.data.from.previous.year.summary.dialog.entity.display.name.stations";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_SERVICES = "copy.data.from.previous.year.summary.dialog.entity.display.name.services";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_STRATEGIC_COEFFICIENTS = "copy.data.from.previous.year.summary.dialog.entity.display.name.strategic.coefficients";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_TRAIN_TYPES = "copy.data.from.previous.year.summary.dialog.entity.display.name.train.types";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_UNIT_PRICES = "copy.data.from.previous.year.summary.dialog.entity.display.name.unit.prices";
 }
