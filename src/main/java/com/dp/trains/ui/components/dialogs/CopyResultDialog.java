@@ -9,7 +9,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H5;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -18,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -26,32 +26,42 @@ public class CopyResultDialog extends Dialog {
 
     public CopyResultDialog(List<PreviousYearCopyingResultDto> copyResult, Integer selectedYear) {
 
-        Map<String, String> userFriendlyEntitiesMap = getUserFriendlyEntitiesMap();
-
-        H3 h3Heading = new H3(String.format("%s %d %s %d", getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_ONE),
-                selectedYear - 1, getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_TWO), selectedYear));
-
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.add(h3Heading);
 
-        copyResult.forEach(element -> verticalLayout.add(new HorizontalLayout(
-                new H5(String.format("%s %d %s %s", getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ROW_DESCRIPTION_ONE),
-                        element.getCopyCount(), getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ROW_DESCRIPTION_TWO),
-                        userFriendlyEntitiesMap.get(element.getDisplayName()))))));
+        Map<String, String> userFriendlyEntitiesMap = getUserFriendlyEntityNamesMap();
 
-        verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        H3 h3Heading = new H3(String.format("%s %d %s %d",
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_ONE),
+                selectedYear - 1,
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_TWO),
+                selectedYear));
+
+        copyResult.stream()
+                .filter(Objects::nonNull)
+                .forEach(element -> verticalLayout.add(
+                        new HorizontalLayout(new H5(String.format("%s %d %s %s",
+                                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ROW_DESCRIPTION_ONE),
+                                element.getCopyCount(),
+                                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ROW_DESCRIPTION_TWO),
+                                userFriendlyEntitiesMap.get(element.getDisplayName()))))));
 
         Button okButton = new Button(getTranslation(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK)),
-                new Icon(VaadinIcon.CHECK_CIRCLE_O));
+                VaadinIcon.CHECK_CIRCLE_O.create());
 
         okButton.addClickListener(e -> {
 
             this.close();
             UI.getCurrent().navigate(EditDataView.class);
         });
+
+        verticalLayout.add(h3Heading);
+        verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        verticalLayout.add(okButton);
+
+        this.add(verticalLayout);
     }
 
-    private Map<String, String> getUserFriendlyEntitiesMap() {
+    private Map<String, String> getUserFriendlyEntityNamesMap() {
 
         Map<String, String> userFriendlyEntityNames = Maps.newHashMap();
 

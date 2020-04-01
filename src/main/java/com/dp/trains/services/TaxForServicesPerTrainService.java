@@ -8,6 +8,8 @@ import com.dp.trains.repository.TaxForServicesPerTrainRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaxForServicesPerTrainService implements BaseImportService {
@@ -70,5 +73,10 @@ public class TaxForServicesPerTrainService implements BaseImportService {
     public String getDisplayName() {
 
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
     }
 }

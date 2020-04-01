@@ -19,3 +19,9 @@ spring:
   servlet:
     multipart:
       enabled: false
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type: trace

@@ -6,6 +6,7 @@ import com.dp.trains.model.entities.AuthorityEntity;
 import com.dp.trains.model.entities.UserEntity;
 import com.dp.trains.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@ToString
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
 public class TrainsUserDetailService implements UserDetailsService {

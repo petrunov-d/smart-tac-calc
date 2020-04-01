@@ -32,7 +32,7 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
                     if (SelectedYearPerUserHolder.getForUser(SecurityContextHolder
                             .getContext().getAuthentication().getName()) == null) {
 
-                        log.info("Got to a view without having selected a year, redirecting to select year view... "
+                        log.debug("Got to a view without having selected a year, redirecting to select year view... "
                                 + UI.getCurrent().getUIId());
 
                         ui.navigate(MainView.class);
@@ -51,7 +51,7 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 
         if (!LoginView.class.equals(event.getNavigationTarget()) && !SecurityUtils.isUserLoggedIn()) {
 
-            log.info("Routing to Login view user is unauthorized... " + UI.getCurrent().getUIId());
+            log.debug("Routing to Login view user is unauthorized... " + UI.getCurrent().getUIId());
 
             event.rerouteTo(LoginView.class);
         }

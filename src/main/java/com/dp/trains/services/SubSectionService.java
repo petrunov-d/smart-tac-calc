@@ -6,6 +6,7 @@ import com.dp.trains.model.entities.SubSectionEntity;
 import com.dp.trains.repository.SubSectionRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@ToString
 @RequiredArgsConstructor
 public class SubSectionService {
 

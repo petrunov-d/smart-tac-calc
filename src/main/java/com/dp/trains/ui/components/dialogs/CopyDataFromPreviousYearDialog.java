@@ -28,11 +28,13 @@ public class CopyDataFromPreviousYearDialog extends Dialog {
 
         H3 h3Heading = new H3(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_TITLE));
 
-        Button okButton = new Button(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK), VaadinIcon.GRID.create());
+        Button okButton = new Button(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK),
+                VaadinIcon.CHECK_CIRCLE_O.create());
 
         ProgressBar progressBar = new ProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setVisible(false);
+        progressBar.setSizeFull();
 
         okButton.addClickListener(event -> {
 
@@ -44,7 +46,7 @@ public class CopyDataFromPreviousYearDialog extends Dialog {
                     .map(x -> x.copyFromPreviousYear(selectedYear - 1))
                     .collect(Collectors.toList());
 
-            progressBar.setVisible(false);
+                    progressBar.setVisible(false);
 
             Dialog copyImportDialog = new CopyResultDialog(copyResult, selectedYear);
             copyImportDialog.open();

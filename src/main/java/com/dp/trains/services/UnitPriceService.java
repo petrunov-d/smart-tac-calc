@@ -158,7 +158,7 @@ public class UnitPriceService implements BaseImportService {
 
     @Override
     @YearAgnostic
-    @Transactional(readOnly = true)
+    @Transactional
     public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
 
         List<UnitPriceEntity> clones = this.unitPriceRepository.findAllByYear(previousYear).stream().map(x -> {
@@ -198,5 +198,10 @@ public class UnitPriceService implements BaseImportService {
     public String getDisplayName() {
 
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
     }
 }

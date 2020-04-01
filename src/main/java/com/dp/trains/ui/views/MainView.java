@@ -75,8 +75,6 @@ public class MainView extends Composite<Div> {
 
         button.addClickListener(event -> {
 
-            int selectedYear = yearSelect.getValue();
-
             if (yearSelect.getValue() == null || SelectedYearPerUserHolder.getForUser(SecurityContextHolder
                     .getContext().getAuthentication().getName()) == null) {
 
@@ -85,32 +83,42 @@ public class MainView extends Composite<Div> {
 
             } else {
 
+                int selectedYear = yearSelect.getValue();
+
                 if (selectedYear == BEGIN_YEAR) {
 
                     log.info("Selected year is equal to begin year: " + selectedYear + " skipping data import checks");
 
                     UI.getCurrent().navigate(EditDataView.class);
-                }
-
-                Map<BaseImportService, Integer> dataForCurrentYear = dataCopyingService.getDataForCurrentYear();
-
-                log.info("Data For current year: " + Joiner.on(",").withKeyValueSeparator("=").join(dataForCurrentYear));
-
-                if (!dataCopyingService.hasAllData(dataForCurrentYear)) {
-
-                    Map<BaseImportService, Integer> dataForLastYear = dataCopyingService.getDataForLastYear(selectedYear);
-
-                    log.info("Data for current year was missing some static data, trying with data from previous year:"
-                            + Joiner.on(",").withKeyValueSeparator("=").join(dataForLastYear));
-
-                    Dialog dialog = new CopyDataFromPreviousYearDialog(dataCopyingService, dataForLastYear,
-                            dataForCurrentYear, selectedYear);
-
-                    dialog.open();
 
                 } else {
 
-                    UI.getCurrent().navigate(EditDataView.class);
+                    Map<BaseImportService, Integer> dataForCurrentYear = dataCopyingService.getDataForYear(selectedYear);
+
+                    log.info("Data For current year: " + Joiner.on(",").withKeyValueSeparator("=").join(dataForCurrentYear));
+
+                    if (!dataCopyingService.hasAllData(dataForCurrentYear)) {
+
+                        Map<BaseImportService, Integer> dataForLastYear = dataCopyingService.getDataForYear(selectedYear - 1);
+
+                        if (dataCopyingService.isCompletelyEmpty(dataForLastYear)) {
+
+                            log.info("Data for last year is completely empty, nothing to import, proceeding...");
+                            UI.getCurrent().navigate(EditDataView.class);
+                        }
+
+                        log.info("Data for current year was missing some static data, trying with data from previous year: "
+                                + Joiner.on(",").withKeyValueSeparator("=").join(dataForLastYear));
+
+                        Dialog dialog = new CopyDataFromPreviousYearDialog(dataCopyingService, dataForLastYear,
+                                dataForCurrentYear, selectedYear);
+
+                        dialog.open();
+
+                    } else {
+
+                        UI.getCurrent().navigate(EditDataView.class);
+                    }
                 }
             }
         });

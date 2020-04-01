@@ -10,6 +10,7 @@ import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -134,7 +135,7 @@ public class RailStationService implements BaseImportService {
 
     @Override
     @YearAgnostic
-    @Transactional(readOnly = true)
+    @Transactional
     public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
 
         List<RailStationEntity> clones = this.railStationRepository.findAllByYear(previousYear).stream().map(x -> {
@@ -174,5 +175,10 @@ public class RailStationService implements BaseImportService {
     public String getDisplayName() {
 
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
     }
 }

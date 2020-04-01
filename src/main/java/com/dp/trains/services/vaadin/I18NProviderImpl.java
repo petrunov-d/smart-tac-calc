@@ -48,7 +48,7 @@ public class I18NProviderImpl implements I18NProvider {
 
         if (this.locale != null) {
 
-            log.info("Get Translation for key:" + key + " locale = " + locale.toString());
+            log.debug("Get Translation for key:" + key + " locale = " + locale.toString());
 
             if (locale.equals(ENGLISH)) {
 

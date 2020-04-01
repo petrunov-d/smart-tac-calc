@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -220,7 +221,7 @@ public class SectionsService implements BaseImportService {
 
     @Override
     @YearAgnostic
-    @Transactional(readOnly = true)
+    @Transactional
     public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
 
         List<SectionEntity> clones = this.sectionsRepository.findAllByYear(previousYear).stream().map(x -> {
@@ -260,5 +261,10 @@ public class SectionsService implements BaseImportService {
     public String getDisplayName() {
 
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
     }
 }

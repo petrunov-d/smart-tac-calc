@@ -69,4 +69,9 @@ public class FinancialDataService implements BaseImportService {
 
         return null;
     }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

@@ -47,9 +47,23 @@ public class SessionFilterDecoratingAspect {
             }
 
             Session session = entityManager.unwrap(Session.class);
+            log.debug("Enabled filter for method" + methodSignature.getMethod().getName());
 
             session.enableFilter(YearDiscriminatingEntity.YEAR_FILTER).setParameter(YearDiscriminatingEntity.YEAR,
                     SelectedYearPerUserHolder.getForCurrentlyLoggedInUser());
+
+        } else if (isYearAgnosticMethod && methodSignature.getMethod().isAnnotationPresent(Transactional.class)) {
+
+            if (entityManager.unwrap(Session.class) == null) {
+
+                throw new NullPointerException("Session Factory is not a Hibernate Factory");
+            }
+
+            Session session = entityManager.unwrap(Session.class);
+
+            session.disableFilter(YearDiscriminatingEntity.YEAR_FILTER);
+
+            log.debug("Hit year agnostic method:" + methodSignature.getMethod().getName());
         }
     }
 }

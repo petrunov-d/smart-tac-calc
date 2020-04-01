@@ -1,8 +1,8 @@
 package com.dp.trains.ui;
 
 import com.dp.trains.ui.layout.MainLayout;
-import com.dp.trains.ui.views.EditDataView;
 import com.dp.trains.ui.views.LoginView;
+import com.dp.trains.ui.views.MainView;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
@@ -33,7 +33,7 @@ public class VaadinApp extends Composite<Div> {
 
             UI.getCurrent().navigate(LoginView.class);
         } else {
-            UI.getCurrent().navigate(EditDataView.class);
+            UI.getCurrent().navigate(MainView.class);
         }
     }
 }

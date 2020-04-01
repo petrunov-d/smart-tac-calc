@@ -20,14 +20,7 @@ public class DataCopyingService {
 
     private final ServiceRegistry serviceRegistry;
 
-    public Map<BaseImportService, Integer> getDataForCurrentYear() {
-
-        return serviceRegistry.getBaseImportServiceList()
-                .parallelStream()
-                .collect(Collectors.toMap(x -> x, BaseImportService::count));
-    }
-
-    public Map<BaseImportService, Integer> getDataForLastYear(int year) {
+    public Map<BaseImportService, Integer> getDataForYear(int year) {
 
         return serviceRegistry.getBaseImportServiceList()
                 .parallelStream()
@@ -39,6 +32,13 @@ public class DataCopyingService {
         return dataForCurrentYear.entrySet()
                 .stream()
                 .allMatch(x -> x.getValue() > 0);
+    }
+
+    public boolean isCompletelyEmpty(Map<BaseImportService, Integer> data) {
+
+        return data.entrySet()
+                .stream()
+                .allMatch(x -> x.getValue() == 0);
     }
 
     public List<BaseImportService> merge(Map<BaseImportService, Integer> dataForLastYear,
