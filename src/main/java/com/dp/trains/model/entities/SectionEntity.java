@@ -1,5 +1,7 @@
 package com.dp.trains.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "section")
 @EqualsAndHashCode(callSuper = true)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class SectionEntity extends YearDiscriminatingEntity {
 
     @Id
@@ -40,6 +43,6 @@ public class SectionEntity extends YearDiscriminatingEntity {
     private Double unitPrice;
 
     @ToString.Exclude
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "sectionEntity")
+    @OneToMany(cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "sectionEntity")
     private List<SubSectionEntity> subSectionEntities;
 }

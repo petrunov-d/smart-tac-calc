@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -186,7 +185,7 @@ public class SectionsService implements BaseImportService {
                         .lineNumber(x.getLineNumber())
                         .typeOfLine(x.getLineType())
                         .unitPrice(x.getUnitPrice())
-                        .keyStation(x.getLastKeyPoint())
+                        .station(x.getLastKeyPoint())
                         .build())
                 .collect(Collectors.toSet());
     }

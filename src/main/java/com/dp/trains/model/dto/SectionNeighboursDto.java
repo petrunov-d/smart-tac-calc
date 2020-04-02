@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 public class SectionNeighboursDto {
 
     private Integer lineNumber;
     private String typeOfLine;
-    private String keyStation;
+    private String station;
     private Boolean isElectrified;
     private Double unitPrice;
     private int rowCount;

@@ -2,7 +2,8 @@ package com.dp.trains.ui.components.dialogs;
 
 import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
 import com.dp.trains.services.BaseImportService;
-import com.dp.trains.services.DataCopyingService;
+import com.dp.trains.ui.views.EditDataView;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
@@ -13,7 +14,6 @@ import com.vaadin.flow.component.progressbar.ProgressBar;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK;
@@ -22,9 +22,7 @@ import static com.dp.trains.utils.LocaleKeys.COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG
 @Slf4j
 public class CopyDataFromPreviousYearDialog extends Dialog {
 
-    public CopyDataFromPreviousYearDialog(DataCopyingService dataCopyingService,
-                                          Map<BaseImportService, Integer> dataForLastYear,
-                                          Map<BaseImportService, Integer> dataForCurrentYear, Integer selectedYear) {
+    public CopyDataFromPreviousYearDialog(List<BaseImportService> mergeResult, Integer selectedYear) {
 
         H3 h3Heading = new H3(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_TITLE));
 
@@ -38,19 +36,29 @@ public class CopyDataFromPreviousYearDialog extends Dialog {
 
         okButton.addClickListener(event -> {
 
-            progressBar.setVisible(true);
+            try {
 
-            List<PreviousYearCopyingResultDto> copyResult = dataCopyingService
-                    .merge(dataForLastYear, dataForCurrentYear)
-                    .parallelStream()
-                    .map(x -> x.copyFromPreviousYear(selectedYear - 1))
-                    .collect(Collectors.toList());
+                progressBar.setVisible(true);
 
-                    progressBar.setVisible(false);
+                List<PreviousYearCopyingResultDto> copyResult = mergeResult.parallelStream()
+                        .map(x -> x.copyFromPreviousYear(selectedYear - 1))
+                        .collect(Collectors.toList());
 
-            Dialog copyImportDialog = new CopyResultDialog(copyResult, selectedYear);
-            copyImportDialog.open();
-            this.close();
+                progressBar.setVisible(false);
+
+                Dialog copyImportDialog = new CopyResultDialog(copyResult, selectedYear);
+                copyImportDialog.open();
+
+                this.close();
+
+            } catch (Exception exception) {
+
+                log.error("Exception copying old data", exception);
+
+                progressBar.setVisible(false);
+                UI.getCurrent().navigate(EditDataView.class);
+                this.close();
+            }
         });
 
         VerticalLayout verticalLayout = new VerticalLayout();

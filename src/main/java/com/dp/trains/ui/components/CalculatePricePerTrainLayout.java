@@ -120,7 +120,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         log.info("Current Key Station set to:" + currentKeyStation);
     }
 
-    public List<CalculateTaxPerTrainRowDataDto> getRowsData() {
+    public List<CalculateTaxPerTrainRowDataDto> gatherAllRowData() {
 
         return this.calculatePricePerTrainRows.stream()
                 .map(CalculatePricePerTrainRow::getRowData)

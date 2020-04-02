@@ -1,5 +1,7 @@
 package com.dp.trains.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "sub_section")
 @EqualsAndHashCode(callSuper = true)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class SubSectionEntity extends YearDiscriminatingEntity {
 
     @Id
@@ -24,7 +27,7 @@ public class SubSectionEntity extends YearDiscriminatingEntity {
     private String nonKeyStation;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_fk")
+    @ManyToOne(cascade = {CascadeType.ALL},fetch= FetchType.EAGER)
     private SectionEntity sectionEntity;
 }

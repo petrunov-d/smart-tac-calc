@@ -28,13 +28,16 @@ public class CopyResultDialog extends Dialog {
 
         VerticalLayout verticalLayout = new VerticalLayout();
 
-        Map<String, String> userFriendlyEntitiesMap = getUserFriendlyEntityNamesMap();
-
         H3 h3Heading = new H3(String.format("%s %d %s %d",
                 getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_ONE),
                 selectedYear - 1,
                 getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_TITLE_TWO),
                 selectedYear));
+
+
+        verticalLayout.add(h3Heading);
+
+        Map<String, String> userFriendlyEntitiesMap = getUserFriendlyEntityNamesMap();
 
         copyResult.stream()
                 .filter(Objects::nonNull)
@@ -54,7 +57,7 @@ public class CopyResultDialog extends Dialog {
             UI.getCurrent().navigate(EditDataView.class);
         });
 
-        verticalLayout.add(h3Heading);
+
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         verticalLayout.add(okButton);
 
@@ -79,6 +82,8 @@ public class CopyResultDialog extends Dialog {
                 getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_TRAIN_TYPES));
         userFriendlyEntityNames.put(UnitPriceService.class.getSimpleName(),
                 getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_UNIT_PRICES));
+        userFriendlyEntityNames.put(SectionsService.class.getSimpleName(),
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_SECTIONS));
 
         return userFriendlyEntityNames;
     }

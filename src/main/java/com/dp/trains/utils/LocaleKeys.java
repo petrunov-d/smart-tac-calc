@@ -218,4 +218,5 @@ public class LocaleKeys {
     public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_STRATEGIC_COEFFICIENTS = "copy.data.from.previous.year.summary.dialog.entity.display.name.strategic.coefficients";
     public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_TRAIN_TYPES = "copy.data.from.previous.year.summary.dialog.entity.display.name.train.types";
     public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_UNIT_PRICES = "copy.data.from.previous.year.summary.dialog.entity.display.name.unit.prices";
+    public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_SECTIONS = "copy.data.from.previous.year.summary.dialog.entity.display.name.sections";
 }

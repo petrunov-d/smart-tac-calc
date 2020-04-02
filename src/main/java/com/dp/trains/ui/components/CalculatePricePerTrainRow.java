@@ -20,6 +20,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.data.provider.Query;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private Button doneButton;
     private H5 serviceChargesLabel;
     private H5 rowTitle;
+    private SectionsService sectionsService;
 
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
 
@@ -56,6 +58,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.isFinal = isFinal;
         this.currentKeyStation = currentKeyStation;
         this.trainNumber = trainNumber;
+        this.sectionsService = sectionsService;
         this.setRowIndex(i, isFinal);
 
         Set<SectionNeighboursDto> neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation);
@@ -125,6 +128,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     }
 
     private void checkRowDone() {
+
         if (station.getValue() != null && lineNumbers.getValue() != null && tonnage.getValue() != null) {
             doneButton.setEnabled(true);
         }
@@ -155,7 +159,16 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         lineNumbers = new Select<>();
         lineNumbers.setLabel(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
-        lineNumbers.setItems(neighbours);
+
+        if (this.currentKeyStation == null) {
+
+            lineNumbers.setItems(Lists.newArrayList());
+
+        } else {
+
+            lineNumbers.setItems(neighbours);
+        }
+
         lineNumbers.setItemLabelGenerator(sectionNeighboursDto -> String.valueOf(sectionNeighboursDto.getLineNumber()));
     }
 
@@ -165,27 +178,36 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         station = new Select<>();
         station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
         station.setItems(neighbours);
-        station.setItemLabelGenerator(SectionNeighboursDto::getKeyStation);
+        station.setItemLabelGenerator(SectionNeighboursDto::getStation);
         station.addValueChangeListener(event -> {
 
-            String newKeyStation = event.getValue().getKeyStation();
+            String newKeyStation = event.getValue().getStation();
 
             EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder()
-                    .selectedKeyStation(event.getValue().getKeyStation())
+                    .selectedKeyStation(event.getValue().getStation())
                     .build());
 
             this.currentKeyStation = newKeyStation;
 
-            if (this.currentKeyStation != null && this.trainNumber != null) {
+            if (this.currentKeyStation != null) {
 
-                serviceChargesPerTrainEntityList = serviceChargesPerTrainService
-                        .findByTrainNumberAndRailRoadStation(trainNumber, this.currentKeyStation);
+                if (lineNumbers.getDataProvider().size(new Query<>()) == 0) {
 
-                serviceChargesLabel.setText(String.format("%s %.3f",
-                        getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL), serviceChargesPerTrainService
-                                .getTotalServiceChargesForTrainNumberAndRailStation(serviceChargesPerTrainEntityList)));
+                    lineNumbers.setItems(this.sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation));
+                }
 
-                serviceButton.setEnabled(true);
+                if (this.trainNumber != null) {
+
+                    serviceChargesPerTrainEntityList = serviceChargesPerTrainService
+                            .findByTrainNumberAndRailRoadStation(trainNumber, this.currentKeyStation);
+
+                    serviceChargesLabel.setText(String.format("%s %.3f",
+                            getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL), serviceChargesPerTrainService
+                                    .getTotalServiceChargesForTrainNumberAndRailStation(serviceChargesPerTrainEntityList)));
+
+                    serviceButton.setEnabled(true);
+                }
+
             } else {
 
                 serviceButton.setEnabled(false);
@@ -231,6 +253,12 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     public CalculateTaxPerTrainRowDataDto getRowData() {
 
-        return null;
+        return CalculateTaxPerTrainRowDataDto
+                .builder()
+                .section(station.getValue().toBuilder()
+                        .lineNumber(lineNumbers.getValue().getLineNumber()).build())
+                .tonnage(this.tonnage.getValue())
+                .serviceChargesPerTrainEntityList(serviceChargesPerTrainEntityList)
+                .build();
     }
 }

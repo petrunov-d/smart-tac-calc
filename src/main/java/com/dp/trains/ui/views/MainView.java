@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -101,17 +102,18 @@ public class MainView extends Composite<Div> {
 
                         Map<BaseImportService, Integer> dataForLastYear = dataCopyingService.getDataForYear(selectedYear - 1);
 
-                        if (dataCopyingService.isCompletelyEmpty(dataForLastYear)) {
+                        List<BaseImportService> mergeResultList = dataCopyingService.merge(dataForLastYear, dataForCurrentYear);
 
-                            log.info("Data for last year is completely empty, nothing to import, proceeding...");
+                        if (dataCopyingService.isCompletelyEmpty(dataForLastYear) || mergeResultList.isEmpty()) {
+
+                            log.info("Data for last year is empty or merge result produced 0 meaningful records, nothing to copy, proceeding...");
                             UI.getCurrent().navigate(EditDataView.class);
                         }
 
                         log.info("Data for current year was missing some static data, trying with data from previous year: "
                                 + Joiner.on(",").withKeyValueSeparator("=").join(dataForLastYear));
 
-                        Dialog dialog = new CopyDataFromPreviousYearDialog(dataCopyingService, dataForLastYear,
-                                dataForCurrentYear, selectedYear);
+                        Dialog dialog = new CopyDataFromPreviousYearDialog(mergeResultList, selectedYear);
 
                         dialog.open();
 

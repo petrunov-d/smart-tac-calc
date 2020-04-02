@@ -1,14 +1,12 @@
 package com.dp.trains.services;
 
-import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
-import com.dp.trains.model.dto.TaxForServicesPerTrainDto;
+import com.dp.trains.model.dto.*;
+import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.model.entities.TaxForServicesPerTrainEntity;
 import com.dp.trains.repository.TaxForServicesPerTrainRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -78,5 +76,16 @@ public class TaxForServicesPerTrainService implements BaseImportService {
     @Override
     public String toString() {
         return getDisplayName();
+    }
+
+    public CalculateFinalTaxPerTrainDto calculateFinalTaxForTrain(List<CalculateTaxPerTrainRowDataDto> gatherAllRowData,
+                                                                  StrategicCoefficientEntity strategicCoefficientEntity,
+                                                                  Integer trainNumber,
+                                                                  String trainType,
+                                                                  Double tonnage) {
+
+        return CalculateFinalTaxPerTrainDto
+                .builder()
+                .build();
     }
 }

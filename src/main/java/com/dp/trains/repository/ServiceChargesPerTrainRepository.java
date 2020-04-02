@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface ServiceChargesPerTrainRepository extends JpaRepository<ServiceChargesPerTrainEntity, Long> {
 
-    List<ServiceChargesPerTrainEntity> findByTrainNumberAndRailStationEntity(Integer trainNumber, RailStationEntity railStationEntity);
+    List<ServiceChargesPerTrainEntity> findByTrainNumberAndRailStationEntity(Integer trainNumber,
+                                                                             RailStationEntity railStationEntity);
 }
