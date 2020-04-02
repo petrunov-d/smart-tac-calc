@@ -21,6 +21,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -104,6 +105,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         station.addValueChangeListener(event -> checkRowDone());
         lineNumbers.addValueChangeListener(event -> checkRowDone());
         tonnage.addValueChangeListener(event -> checkRowDone());
+        tonnage.setValueChangeMode(ValueChangeMode.EAGER);
 
         HorizontalLayout serviceLayout = new HorizontalLayout();
         serviceLayout.setSizeFull();
@@ -147,6 +149,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     }
 
     public void enableRow() {
+
         this.station.setEnabled(true);
         this.lineNumbers.setEnabled(true);
         this.tonnage.setEnabled(true);

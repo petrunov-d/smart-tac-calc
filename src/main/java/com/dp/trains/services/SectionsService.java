@@ -162,7 +162,9 @@ public class SectionsService implements BaseImportService {
     @Transactional(readOnly = true)
     public Set<String> getFirstKeyPoints() {
 
-        return this.sectionsRepository.findAll().stream().map(SectionEntity::getFirstKeyPoint).collect(Collectors.toSet());
+        return this.sectionsRepository.findAll().stream()
+                .map(SectionEntity::getFirstKeyPoint)
+                .collect(Collectors.toSet());
     }
 
     @Transactional

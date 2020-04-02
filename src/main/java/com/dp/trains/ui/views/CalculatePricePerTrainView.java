@@ -1,11 +1,13 @@
 package com.dp.trains.ui.views;
 
 import com.dp.trains.event.CPPTFinalRowRemovedEvent;
+import com.dp.trains.event.CPPTResetPageEvent;
 import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.model.dto.CalculateFinalTaxPerTrainDto;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.services.*;
 import com.dp.trains.ui.components.CalculatePricePerTrainLayout;
+import com.dp.trains.ui.components.dialogs.ConfirmLeaveCalculateTaxPerTrainPageDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.eventbus.Subscribe;
@@ -20,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.Route;
@@ -79,12 +82,14 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
             calculatePricePerTrainLayout.updateTrainNumberForRows(event.getValue());
             shouldEnableAddButton();
         });
+        trainNumber.setValueChangeMode(ValueChangeMode.EAGER);
 
         trainType = new Select<>();
         trainType.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_TYPE));
         trainType.addValueChangeListener(event -> shouldEnableAddButton());
         tonnage = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
         tonnage.addValueChangeListener(event -> shouldEnableAddButton());
+        tonnage.setValueChangeMode(ValueChangeMode.EAGER);
 
         baseParametersLayout.add(trainNumber, trainType, tonnage);
 
@@ -227,8 +232,21 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
         this.finalize.setEnabled(true);
     }
 
+    @Subscribe
+    public void resetPageStateFromDialog(CPPTResetPageEvent cpptResetPageEvent) {
+
+        this.resetPageState();
+    }
+
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
+
+        event.postpone();
+
+        ConfirmLeaveCalculateTaxPerTrainPageDialog confirmLeaveCalculateTaxPerTrainPageDialog =
+                new ConfirmLeaveCalculateTaxPerTrainPageDialog(event);
+
+        confirmLeaveCalculateTaxPerTrainPageDialog.open();
     }
 
     private void calculateFinalTax() {
