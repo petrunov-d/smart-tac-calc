@@ -1,6 +1,7 @@
 package com.dp.trains.ui.components.dialogs;
 
 import com.dp.trains.model.entities.SectionEntity;
+import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SubSectionService;
 import com.dp.trains.ui.components.grids.SubSectionGrid;
 import com.vaadin.flow.component.button.Button;
@@ -18,7 +19,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 public class EditSubSectionsDialog extends Dialog {
 
-    public EditSubSectionsDialog(SectionEntity sectionEntity, SubSectionService subSectionService) {
+    public EditSubSectionsDialog(SectionEntity sectionEntity, SubSectionService subSectionService, RailStationService railStationService) {
 
         this.setCloseOnEsc(false);
         this.setCloseOnOutsideClick(false);
@@ -32,13 +33,13 @@ public class EditSubSectionsDialog extends Dialog {
 
         cancelDialog.addClickListener(event -> this.close());
 
-        Grid subSectionGrid = new SubSectionGrid(sectionEntity, subSectionService);
+        Grid subSectionGrid = new SubSectionGrid(sectionEntity, subSectionService, railStationService);
 
         Button button = new Button(new Icon(VaadinIcon.PLUS));
         button.setText(getTranslation(EDIT_DATA_VIEW_BUTTON_TEXT_ADD_ITEM));
         button.addClickListener(event -> {
 
-            Dialog dialog = new AddSubSectionDialog(subSectionGrid, subSectionService, sectionEntity);
+            Dialog dialog = new AddSubSectionDialog(subSectionGrid, subSectionService, railStationService, sectionEntity);
             dialog.open();
         });
 

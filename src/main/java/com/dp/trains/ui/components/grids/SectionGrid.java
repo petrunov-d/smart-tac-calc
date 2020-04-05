@@ -1,10 +1,7 @@
 package com.dp.trains.ui.components.grids;
 
 import com.dp.trains.model.entities.SectionEntity;
-import com.dp.trains.services.LineNumberService;
-import com.dp.trains.services.LineTypeService;
-import com.dp.trains.services.SectionsService;
-import com.dp.trains.services.SubSectionService;
+import com.dp.trains.services.*;
 import com.dp.trains.ui.components.dialogs.EditSectionDialog;
 import com.dp.trains.ui.components.dialogs.EditSubSectionsDialog;
 import com.vaadin.flow.component.button.Button;
@@ -25,7 +22,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 public class SectionGrid extends SmartTACCalcGrid<SectionEntity> {
 
     public SectionGrid(SectionsService sectionsService, SubSectionService subSectionService,
-                       LineNumberService lineNumberService, LineTypeService lineTypeService) {
+                       LineNumberService lineNumberService, LineTypeService lineTypeService, RailStationService railStationService) {
 
         super();
 
@@ -75,14 +72,15 @@ public class SectionGrid extends SmartTACCalcGrid<SectionEntity> {
 
         this.addComponentColumn(item -> new Button(getTranslation(SHARED_BUTTON_TEXT_EDIT), VaadinIcon.EDIT.create(), click -> {
 
-            Dialog editDialog = new EditSectionDialog(this, sectionsService, lineTypeService, lineNumberService, item);
+            Dialog editDialog = new EditSectionDialog(this, sectionsService, lineTypeService,
+                    lineNumberService, item, railStationService);
             editDialog.open();
         }));
 
         this.addComponentColumn(item -> new Button(getTranslation(GRID_SECTION_BUTTON_VIEW_SUB_SECTIONS_LABEL),
                 new Icon(VaadinIcon.EYE), click -> {
 
-            Dialog editUserDialog = new EditSubSectionsDialog(item, subSectionService);
+            Dialog editUserDialog = new EditSubSectionsDialog(item, subSectionService, railStationService);
             editUserDialog.open();
         }));
 

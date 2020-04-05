@@ -1,18 +1,22 @@
 package com.dp.trains.ui.views;
 
+import com.dp.trains.event.CPPTAllRowsRemovedEvent;
 import com.dp.trains.event.CPPTFinalRowRemovedEvent;
 import com.dp.trains.event.CPPTResetPageEvent;
 import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.model.dto.CalculateFinalTaxPerTrainDto;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
+import com.dp.trains.model.entities.TrainTypeEntity;
 import com.dp.trains.services.*;
 import com.dp.trains.ui.components.CalculatePricePerTrainLayout;
+import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.ConfirmLeaveCalculateTaxPerTrainPageDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -52,7 +56,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private Button calculateFinalTax;
     private NumberField tonnage;
     private IntegerField trainNumber;
-    private Select<String> trainType;
+    private Select<TrainTypeEntity> trainType;
     private CalculatePricePerTrainLayout calculatePricePerTrainLayout;
     private Select<StrategicCoefficientEntity> strategicCoefficientSelect;
 
@@ -124,7 +128,8 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     @PostConstruct
     public void populateDropDowns() {
 
-        trainType.setItems(trainTypeService.getTrainTypes());
+        trainType.setItems(trainTypeService.fetch(0, 0));
+        trainType.setItemLabelGenerator(TrainTypeEntity::getName);
         strategicCoefficientSelect.setItems(strategicCoefficientService.fetch(0, 0));
         strategicCoefficientSelect.setItemLabelGenerator(StrategicCoefficientEntity::getName);
         EventBusHolder.getEventBus().register(this);
@@ -177,7 +182,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         add.addClickListener(e -> {
             calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
-                    false, sectionsService, serviceChargesPerTrainService);
+                    false, sectionsService, serviceChargesPerTrainService, tonnage.getValue());
 
             add.setEnabled(false);
             finalize.setEnabled(false);
@@ -187,7 +192,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
             add.setEnabled(false);
             finalize.setEnabled(false);
             calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
-                    true, sectionsService, serviceChargesPerTrainService);
+                    true, sectionsService, serviceChargesPerTrainService, tonnage.getValue());
         });
 
         calculateFinalTax.addClickListener(event -> calculateFinalTax());
@@ -200,15 +205,15 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         calculatePricePerTrainLayout.resetContainer();
         strategicCoefficientSelect.setValue(null);
-        trainType.setValue("");
+        trainType.setValue(null);
         trainNumber.setValue(null);
         tonnage.setValue(null);
         finalize.setEnabled(false);
         add.setEnabled(false);
         calculateFinalTax.setEnabled(false);
-        totalKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
-        totalBruttoKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
-        titleFinalTax = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
+        totalKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
+        totalBruttoKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
+        titleFinalTax.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
     }
 
     @Subscribe
@@ -233,6 +238,14 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     }
 
     @Subscribe
+    public void handleAllRowsRemovedEvent(CPPTAllRowsRemovedEvent cpptAllRowsRemovedEvent) {
+
+        this.add.setEnabled(true);
+        this.finalize.setEnabled(false);
+        this.calculateFinalTax.setEnabled(false);
+    }
+
+    @Subscribe
     public void resetPageStateFromDialog(CPPTResetPageEvent cpptResetPageEvent) {
 
         this.resetPageState();
@@ -251,21 +264,30 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private void calculateFinalTax() {
 
-        CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.
-                taxForServicesPerTrainService.calculateFinalTaxForTrain(this.calculatePricePerTrainLayout.gatherAllRowData(),
-                strategicCoefficientSelect.getValue(), trainNumber.getValue(), trainType.getValue(),
-                tonnage.getValue());
+        CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.taxForServicesPerTrainService
+                .calculateFinalTaxForTrain(this.calculatePricePerTrainLayout.gatherAllRowData(),
+                        strategicCoefficientSelect.getValue(), trainNumber.getValue(), trainType.getValue(),
+                        tonnage.getValue());
 
-        this.totalKilometersTitle.setText(String.format("%s %.3f",
-                getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS),
-                calculateFinalTaxPerTrainDto.getTotalKilometers()));
+        if (calculateFinalTaxPerTrainDto.isErrorInCalculation()) {
 
-        this.totalBruttoKilometersTitle.setText(String.format("%s %.3f",
-                getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS),
-                calculateFinalTaxPerTrainDto.getTotalBruttoTonneKilometers()));
+            Dialog dialog = new BasicInfoDialog(
+                    "There was an error in calculating the final tax. Please check data integrity for unit prices, stations and sections or contact an admin. " + calculateFinalTaxPerTrainDto.getStackTrace());
+            dialog.open();
 
-        this.titleFinalTax.setText(String.format("%s %.3f",
-                getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX),
-                calculateFinalTaxPerTrainDto.getFinalTax()));
+        } else {
+
+            this.totalKilometersTitle.setText(String.format("%s %.3f",
+                    getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS),
+                    calculateFinalTaxPerTrainDto.getTotalKilometers()));
+
+            this.totalBruttoKilometersTitle.setText(String.format("%s %.3f",
+                    getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS),
+                    calculateFinalTaxPerTrainDto.getTotalBruttoTonneKilometers()));
+
+            this.titleFinalTax.setText(String.format("%s %.5f",
+                    getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX),
+                    calculateFinalTaxPerTrainDto.getFinalTax()));
+        }
     }
 }

@@ -18,4 +18,6 @@ public class SubSectionDto {
 
     @JMap(value = "nonKeyStation", classes = SubSectionEntity.class)
     private String nonKeyStation;
+
+    private Boolean isSelected;
 }

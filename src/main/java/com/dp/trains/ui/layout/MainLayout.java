@@ -84,7 +84,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                 .get()
                 .withStickyFooter()
                 .addToSection(Section.FOOTER, img)
-                .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_LOAD_DATA), DATABASE.create(), LoadDataView.class)
+                .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_LOAD_DATA), DATABASE.create(), ImportDataView.class)
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_EDIT_DATA), EDIT.create(), EditDataView.class)
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_CALCULATE_SINGLE_PRICE), CALC_BOOK.create(), CalculateSinglePriceView.class)
                 .add(getTranslation(MAIN_LAYOUT_VIEW_SINGLE_PRICE), INFO_CIRCLE_O.create(), ViewSinglePriceView.class)

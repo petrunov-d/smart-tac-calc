@@ -10,7 +10,6 @@ import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -103,6 +102,11 @@ public class LineTypeService implements BaseImportService {
     public Set<String> getLineTypes() {
 
         return this.lineTypeRepository.findAll().stream().map(LineTypeEntity::getLineType).collect(Collectors.toSet());
+    }
+
+    @Transactional(readOnly = true)
+    public LineTypeEntity getByType(String lineType) {
+        return this.lineTypeRepository.findByLineType(lineType);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class SelectedYearPerUserHolder {
 
         Integer year = backingMap.get(user.toLowerCase());
 
-        log.info(String.format("Got year %d for user: %s", year, user));
+        log.debug(String.format("Got year %d for user: %s", year, user));
 
         return year;
     }
@@ -35,7 +35,7 @@ public class SelectedYearPerUserHolder {
 
     public static Integer getForCurrentlyLoggedInUser() {
 
-        log.info("Current Map state: " + Joiner.on(",").withKeyValueSeparator(":").join(backingMap));
+        log.debug("Current Map state: " + Joiner.on(",").withKeyValueSeparator(":").join(backingMap));
 
         return backingMap.get(SecurityContextHolder.getContext().getAuthentication().getName().toLowerCase());
     }

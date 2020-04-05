@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components;
 
-import com.dp.trains.event.LocaleChanged;
+import com.dp.trains.event.LocaleChangedEvent;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.vaadin.flow.component.UI;
@@ -60,6 +60,6 @@ public class LanguageSelect extends Select<Locale> implements LocaleChangeObserv
     @Override
     public void localeChange(LocaleChangeEvent event) {
 
-        EventBusHolder.getEventBus().post(LocaleChanged.builder().locale(event.getLocale()).build());
+        EventBusHolder.getEventBus().post(LocaleChangedEvent.builder().locale(event.getLocale()).build());
     }
 }

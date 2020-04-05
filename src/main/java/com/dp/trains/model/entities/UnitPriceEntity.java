@@ -18,7 +18,7 @@ public class UnitPriceEntity extends YearDiscriminatingEntity {
     private Long id;
 
     @Column(name = "code")
-    private Integer code;
+    private String code;
 
     @Column(name = "name")
     private String name;

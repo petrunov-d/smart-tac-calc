@@ -43,7 +43,7 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
     }
 
     /**
-     * Reroutes the user if (s)he is not authorized to access the view.
+     * Reroutes the user if they are not authorized to access the view.
      *
      * @param event before navigation event with event details
      */

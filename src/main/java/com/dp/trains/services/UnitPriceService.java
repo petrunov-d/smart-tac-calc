@@ -186,6 +186,12 @@ public class UnitPriceService implements BaseImportService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public UnitPriceEntity findByCode(String code) {
+
+        return this.unitPriceRepository.findByCode(code);
+    }
+
     @Override
     @YearAgnostic
     @Transactional(readOnly = true)

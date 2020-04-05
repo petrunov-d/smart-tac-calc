@@ -4,6 +4,7 @@ import com.dp.trains.model.dto.SectionsDto;
 import com.dp.trains.model.entities.SectionEntity;
 import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.LineTypeService;
+import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
@@ -16,7 +17,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.BindingValidationStatus;
@@ -25,17 +25,23 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
+@SuppressWarnings("unchecked")
 @Slf4j
 public class AddSectionDialog extends AddDialogBase {
 
     public AddSectionDialog(Grid currentlyActiveGrid, SectionsService sectionsService,
-                            LineTypeService lineTypeService, LineNumberService lineNumberService) {
+                            LineTypeService lineTypeService, LineNumberService lineNumberService,
+                            RailStationService railStationService) {
 
         super(currentlyActiveGrid);
+
+        Set<String> railStations = railStationService.getAllStationNames(true);
+
         FormLayout layoutWithBinder = new FormLayout();
         Binder<SectionsDto> binder = new Binder<>();
 
@@ -52,17 +58,17 @@ public class AddSectionDialog extends AddDialogBase {
         lineType.addValueChangeListener(event -> binder.validate());
         lineType.setRequiredIndicatorVisible(true);
 
-        TextArea firstKeyPoint = new TextArea();
+        Select<String> firstKeyPoint = new Select<>();
 
-        firstKeyPoint.setValueChangeMode(ValueChangeMode.EAGER);
         firstKeyPoint.addValueChangeListener(event -> binder.validate());
         firstKeyPoint.setRequiredIndicatorVisible(true);
+        firstKeyPoint.setItems(railStations);
 
-        TextArea lastKeyPoint = new TextArea();
+        Select<String> lastKeyPoint = new Select<>();
 
-        lastKeyPoint.setValueChangeMode(ValueChangeMode.EAGER);
         lastKeyPoint.addValueChangeListener(event -> binder.validate());
         lastKeyPoint.setRequiredIndicatorVisible(true);
+        lastKeyPoint.setItems(railStations);
 
         NumberField kilometersBetweenStations = new NumberField();
 
@@ -121,7 +127,8 @@ public class AddSectionDialog extends AddDialogBase {
 
             if (binder.writeBeanIfValid(sectionsDto)) {
 
-                ListDataProvider<SectionEntity> dataProvider = (ListDataProvider<SectionEntity>) currentlyActiveGrid.getDataProvider();
+                ListDataProvider<SectionEntity> dataProvider =
+                        (ListDataProvider<SectionEntity>) currentlyActiveGrid.getDataProvider();
 
                 sectionsDto.setIsElectrified(isElectrified.getValue());
 

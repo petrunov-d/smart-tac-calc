@@ -1,5 +1,6 @@
 package com.dp.trains.model.entities;
 
+import com.dp.trains.model.entities.listeners.SectionEntityListener;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @Table(name = "section")
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@EntityListeners(SectionEntityListener.class)
 public class SectionEntity extends YearDiscriminatingEntity {
 
     @Id

@@ -22,4 +22,7 @@ public class LineTypeEntity extends YearDiscriminatingEntity {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "code")
+    private Integer code;
 }

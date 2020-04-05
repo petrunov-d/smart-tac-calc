@@ -9,7 +9,6 @@ import com.dp.trains.repository.TrafficDataRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

@@ -108,14 +108,15 @@ public class MainView extends Composite<Div> {
 
                             log.info("Data for last year is empty or merge result produced 0 meaningful records, nothing to copy, proceeding...");
                             UI.getCurrent().navigate(EditDataView.class);
+                        } else {
+
+                            log.info("Data for current year was missing some static data, trying with data from previous year: "
+                                    + Joiner.on(",").withKeyValueSeparator("=").join(dataForLastYear));
+
+                            Dialog dialog = new CopyDataFromPreviousYearDialog(mergeResultList, selectedYear);
+
+                            dialog.open();
                         }
-
-                        log.info("Data for current year was missing some static data, trying with data from previous year: "
-                                + Joiner.on(",").withKeyValueSeparator("=").join(dataForLastYear));
-
-                        Dialog dialog = new CopyDataFromPreviousYearDialog(mergeResultList, selectedYear);
-
-                        dialog.open();
 
                     } else {
 

@@ -2,6 +2,7 @@ package com.dp.trains.ui.components.grids;
 
 import com.dp.trains.model.entities.SectionEntity;
 import com.dp.trains.model.entities.SubSectionEntity;
+import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SubSectionService;
 import com.dp.trains.ui.components.dialogs.EditSubSectionDialog;
 import com.vaadin.flow.component.button.Button;
@@ -19,7 +20,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @SuppressWarnings("unchecked")
 public class SubSectionGrid extends SmartTACCalcGrid<SubSectionEntity> {
 
-    public SubSectionGrid(SectionEntity sectionEntity, SubSectionService subSectionService) {
+    public SubSectionGrid(SectionEntity sectionEntity, SubSectionService subSectionService, RailStationService railStationService) {
 
         super();
 
@@ -38,7 +39,7 @@ public class SubSectionGrid extends SmartTACCalcGrid<SubSectionEntity> {
 
         this.addComponentColumn(item -> new Button(getTranslation(SHARED_BUTTON_TEXT_EDIT), VaadinIcon.EDIT.create(), click -> {
 
-            Dialog editDialog = new EditSubSectionDialog(this, subSectionService, sectionEntity, item);
+            Dialog editDialog = new EditSubSectionDialog(this, subSectionService, item, railStationService);
             editDialog.open();
         }));
 

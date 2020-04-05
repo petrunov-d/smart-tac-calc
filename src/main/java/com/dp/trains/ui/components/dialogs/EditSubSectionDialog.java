@@ -1,8 +1,8 @@
 package com.dp.trains.ui.components.dialogs;
 
 import com.dp.trains.model.dto.SubSectionDto;
-import com.dp.trains.model.entities.SectionEntity;
 import com.dp.trains.model.entities.SubSectionEntity;
+import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SubSectionService;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
@@ -12,8 +12,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.BindingValidationStatus;
@@ -29,8 +29,8 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 public class EditSubSectionDialog extends AddDialogBase {
 
-    public EditSubSectionDialog(Grid currentlyActiveGrid, SubSectionService subSectionService,
-                                SectionEntity sectionEntity, SubSectionEntity subSectionEntity) {
+    public EditSubSectionDialog(Grid currentlyActiveGrid, SubSectionService subSectionService, SubSectionEntity subSectionEntity,
+                                RailStationService railStationService) {
 
         super(currentlyActiveGrid);
 
@@ -46,11 +46,11 @@ public class EditSubSectionDialog extends AddDialogBase {
         kilometers.setRequiredIndicatorVisible(true);
         kilometers.setValue(subSectionEntity.getKilometers());
 
-        TextArea nonKeyStation = new TextArea();
-        nonKeyStation.setValueChangeMode(ValueChangeMode.EAGER);
+        Select<String> nonKeyStation = new Select<>();
+
         nonKeyStation.addValueChangeListener(event -> binder.validate());
         nonKeyStation.setRequiredIndicatorVisible(true);
-        nonKeyStation.setValue(subSectionEntity.getNonKeyStation());
+        nonKeyStation.setItems(railStationService.getAllStationNames(false));
 
         binder.forField(kilometers)
                 .asRequired()

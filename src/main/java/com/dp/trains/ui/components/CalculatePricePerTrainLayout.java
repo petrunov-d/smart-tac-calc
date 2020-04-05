@@ -1,8 +1,6 @@
 package com.dp.trains.ui.components;
 
-import com.dp.trains.event.CPPTFinalRowRemovedEvent;
-import com.dp.trains.event.CPPTRowRemovedEvent;
-import com.dp.trains.event.CPPTStationChangedEvent;
+import com.dp.trains.event.*;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
@@ -26,6 +24,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
     private int nextRowIdex = 1;
     private String currentKeyStation;
+    private Double tonnage;
 
     private List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
 
@@ -47,10 +46,14 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     }
 
     public void addRow(Integer trainNumber, boolean isFinal, SectionsService sectionsService,
-                       ServiceChargesPerTrainService serviceChargesPerTrainService) {
+                       ServiceChargesPerTrainService serviceChargesPerTrainService, Double tonnage) {
+
+        if (this.tonnage == null) {
+            this.tonnage = tonnage;
+        }
 
         this.add(new CalculatePricePerTrainRow(nextRowIdex, isFinal, trainNumber,
-                sectionsService, serviceChargesPerTrainService, currentKeyStation));
+                sectionsService, serviceChargesPerTrainService, currentKeyStation, this.tonnage));
         nextRowIdex++;
     }
 
@@ -71,6 +74,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         this.getChildren().filter(x -> x instanceof CalculatePricePerTrainRow).forEach(this::remove);
         nextRowIdex = 1;
         currentKeyStation = null;
+        this.tonnage = null;
         calculatePricePerTrainRows.clear();
     }
 
@@ -91,11 +95,6 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
                 .filter(x -> ((CalculatePricePerTrainRow) x).getRowIndex() == cpptRowRemovedEvent.getRowIndex())
                 .findFirst().get();
 
-        if (toRemove.getIsFinal()) {
-
-            EventBusHolder.getEventBus().post(new CPPTFinalRowRemovedEvent());
-        }
-
         this.remove(toRemove);
 
         nextRowIdex = 1;
@@ -108,9 +107,23 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         if (calculatePricePerTrainRows.size() > 0) {
 
-            calculatePricePerTrainRows.get(calculatePricePerTrainRows.size() - 1).enableRow();
+            CalculatePricePerTrainRow previousRow = calculatePricePerTrainRows.get(calculatePricePerTrainRows.size() - 1);
+
+            previousRow.enableRow();
+            currentKeyStation = previousRow.getCurrentKeyStation();
+            tonnage = previousRow.getRowData().getTonnage();
+
+        } else {
+
+            EventBusHolder.getEventBus().post(new CPPTAllRowsRemovedEvent());
+            currentKeyStation = null;
+            tonnage = null;
         }
 
+        if (toRemove.getIsFinal()) {
+
+            EventBusHolder.getEventBus().post(new CPPTFinalRowRemovedEvent());
+        }
     }
 
     @Subscribe
@@ -118,6 +131,13 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         currentKeyStation = CPPTStationChangedEvent.getSelectedKeyStation();
         log.info("Current Key Station set to:" + currentKeyStation);
+    }
+
+    @Subscribe
+    public void handleTonnageChangedFromRow(CPPTTonnageChangedFromRowEvent cpptTonnageChangedFromRowEvent) {
+
+        this.tonnage = cpptTonnageChangedFromRowEvent.getTonnage();
+        log.info("Tonnage set to:" + this.tonnage);
     }
 
     public List<CalculateTaxPerTrainRowDataDto> gatherAllRowData() {

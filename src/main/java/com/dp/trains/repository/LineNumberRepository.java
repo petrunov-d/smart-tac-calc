@@ -12,4 +12,6 @@ public interface LineNumberRepository extends JpaRepository<LineNumberEntity, Lo
     int countByYear(int year);
 
     List<LineNumberEntity> findAllByYear(int year);
+
+    LineNumberEntity findByLineNumber(Integer lineNUmber);
 }

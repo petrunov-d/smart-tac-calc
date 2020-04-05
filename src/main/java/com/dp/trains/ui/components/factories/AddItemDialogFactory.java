@@ -46,7 +46,7 @@ public class AddItemDialogFactory {
 
         } else if (clazz == SectionEntity.class) {
 
-            return new AddSectionDialog(currentlyActiveGrid, sectionsService, lineTypeService, lineNumberService);
+            return new AddSectionDialog(currentlyActiveGrid, sectionsService, lineTypeService, lineNumberService, railStationService);
         } else if (clazz == LineNumberEntity.class) {
 
             return new AddLineNumberDialog(currentlyActiveGrid, lineNumberService);

@@ -32,6 +32,12 @@ public class FinancialDataService implements BaseImportService {
         financialDataRepository.saveAll(lineNumberEntities);
     }
 
+    @Transactional(readOnly = true)
+    public FinancialDataEntity findByCode(Integer code) {
+
+        return this.financialDataRepository.findByCode(code);
+    }
+
     @Override
     @Transactional
     public void importFromExcel(List<? extends ExcelImportDto> excelImportDto) {

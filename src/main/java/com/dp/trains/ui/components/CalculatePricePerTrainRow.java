@@ -3,7 +3,9 @@ package com.dp.trains.ui.components;
 import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.event.CPPTRowRemovedEvent;
 import com.dp.trains.event.CPPTStationChangedEvent;
+import com.dp.trains.event.CPPTTonnageChangedFromRowEvent;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
+import com.dp.trains.model.dto.DisplayableStationDto;
 import com.dp.trains.model.dto.SectionNeighboursDto;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.services.SectionsService;
@@ -19,7 +21,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +38,9 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private boolean isFinal;
     private Integer trainNumber;
     private String currentKeyStation;
-    private Select<SectionNeighboursDto> station;
+    private Select<DisplayableStationDto> station;
     private Select<SectionNeighboursDto> lineNumbers;
-    private IntegerField tonnage;
+    private NumberField tonnage;
     private Button serviceButton;
     private Button removeButton;
     private Button doneButton;
@@ -48,10 +50,12 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
 
+    private Set<SectionNeighboursDto> neighbours;
+
     public CalculatePricePerTrainRow(int i, boolean isFinal,
                                      Integer trainNumber, SectionsService sectionsService,
                                      ServiceChargesPerTrainService serviceChargesPerTrainService,
-                                     String currentKeyStation) {
+                                     String currentKeyStation, Double tonnageDouble) {
 
         EventBusHolder.getEventBus().register(this);
 
@@ -62,12 +66,13 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.sectionsService = sectionsService;
         this.setRowIndex(i, isFinal);
 
-        Set<SectionNeighboursDto> neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation);
+        neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation, this.isFinal);
 
-        initalizeStationSelect(i, trainNumber, serviceChargesPerTrainService, neighbours);
+        initalizeStationSelect(trainNumber, serviceChargesPerTrainService, neighbours);
         initializeLineNumberSelect(neighbours);
 
-        tonnage = new IntegerField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
+        tonnage = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
+        tonnage.setValue(tonnageDouble);
 
         serviceChargesLabel = new H5();
         serviceChargesLabel.setWidth("100%");
@@ -104,7 +109,14 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         station.addValueChangeListener(event -> checkRowDone());
         lineNumbers.addValueChangeListener(event -> checkRowDone());
-        tonnage.addValueChangeListener(event -> checkRowDone());
+        tonnage.addValueChangeListener(event -> {
+
+            EventBusHolder.getEventBus().post(CPPTTonnageChangedFromRowEvent.builder()
+                    .tonnage(event.getValue())
+                    .build());
+
+            checkRowDone();
+        });
         tonnage.setValueChangeMode(ValueChangeMode.EAGER);
 
         HorizontalLayout serviceLayout = new HorizontalLayout();
@@ -120,10 +132,6 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         serviceButtonLayout.setSpacing(false);
         serviceButtonLayout.setPadding(true);
         serviceButtonLayout.setMargin(true);
-
-        setMargin(false);
-        setPadding(false);
-        setSpacing(false);
 
         horizontalLayout.add(serviceButtonLayout);
         this.add(horizontalLayout);
@@ -175,19 +183,21 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         lineNumbers.setItemLabelGenerator(sectionNeighboursDto -> String.valueOf(sectionNeighboursDto.getLineNumber()));
     }
 
-    private void initalizeStationSelect(int i, Integer trainNumber,
-                                        ServiceChargesPerTrainService serviceChargesPerTrainService,
+    private void initalizeStationSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
                                         Set<SectionNeighboursDto> neighbours) {
+
+        Set<DisplayableStationDto> displayableStationDtos = this.sectionsService.getDisplayableStationDtos(this.rowIndex, this.isFinal, neighbours);
+
         station = new Select<>();
         station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
-        station.setItems(neighbours);
-        station.setItemLabelGenerator(SectionNeighboursDto::getStation);
+        station.setItems(displayableStationDtos);
+        station.setItemLabelGenerator(DisplayableStationDto::getName);
         station.addValueChangeListener(event -> {
 
-            String newKeyStation = event.getValue().getStation();
+            String newKeyStation = event.getValue().getName();
 
             EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder()
-                    .selectedKeyStation(event.getValue().getStation())
+                    .selectedKeyStation(newKeyStation)
                     .build());
 
             this.currentKeyStation = newKeyStation;
@@ -196,7 +206,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
                 if (lineNumbers.getDataProvider().size(new Query<>()) == 0) {
 
-                    lineNumbers.setItems(this.sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation));
+                    lineNumbers.setItems(this.sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation, this.isFinal));
                 }
 
                 if (this.trainNumber != null) {
@@ -222,7 +232,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         log.info("Setting train number to: " + trainNumber);
         this.trainNumber = trainNumber;
-        this.station.setValue(new SectionNeighboursDto());
+        this.station.setValue(new DisplayableStationDto());
         this.station.setValue(this.station.getValue());
     }
 
@@ -254,12 +264,31 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         rowTitle.setText(rowTitleString);
     }
 
+    public String getCurrentKeyStation() {
+
+        return this.currentKeyStation;
+    }
+
+    public void setCurrentKeyStation(String currentKeyStation) {
+
+        this.currentKeyStation = currentKeyStation;
+
+        Set<SectionNeighboursDto> neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation, this.isFinal);
+
+        this.station.setItems(this.sectionsService.getDisplayableStationDtos(this.rowIndex, this.isFinal, neighbours));
+        this.lineNumbers.setItems(neighbours);
+    }
+
     public CalculateTaxPerTrainRowDataDto getRowData() {
+
+        SectionNeighboursDto sectionNeighboursDto = this.sectionsService
+                .findSectionNeighboursDtoByDisplayableDto(station.getValue(), neighbours);
 
         return CalculateTaxPerTrainRowDataDto
                 .builder()
-                .section(station.getValue().toBuilder()
-                        .lineNumber(lineNumbers.getValue().getLineNumber()).build())
+                .section(sectionNeighboursDto.toBuilder()
+                        .lineNumber(lineNumbers.getValue().getLineNumber())
+                        .build())
                 .tonnage(this.tonnage.getValue())
                 .serviceChargesPerTrainEntityList(serviceChargesPerTrainEntityList)
                 .build();

@@ -10,7 +10,6 @@ import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -169,6 +169,15 @@ public class RailStationService implements BaseImportService {
     public int countByYear(int year) {
 
         return this.railStationRepository.countByYear(year);
+    }
+
+    @Transactional
+    public Set<String> getAllStationNames(boolean onlyKeyStations) {
+
+        List<RailStationEntity> entities = onlyKeyStations ? railStationRepository.findByIsKeyStationTrue() :
+                railStationRepository.findByIsKeyStationFalse();
+
+        return entities.stream().map(RailStationEntity::getStation).collect(Collectors.toSet());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.dp.trains.services.vaadin;
 
 
-import com.dp.trains.event.LocaleChanged;
+import com.dp.trains.event.LocaleChangedEvent;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
@@ -73,10 +73,10 @@ public class I18NProviderImpl implements I18NProvider {
     }
 
     @Subscribe
-    public void localeChanged(LocaleChanged localeChanged) {
+    public void localeChanged(LocaleChangedEvent localeChangedEvent) {
 
-        locale = localeChanged.getLocale();
+        locale = localeChangedEvent.getLocale();
 
-        log.info("locale changed here, current locale is " + locale.toString());
+        log.debug("Locale changed: " + locale.toString());
     }
 }

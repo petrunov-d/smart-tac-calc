@@ -10,7 +10,6 @@ import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -107,6 +106,13 @@ public class LineNumberService implements BaseImportService {
 
         lineNumberRepository.saveAll(lineNumberEntities);
     }
+
+    @Transactional(readOnly = true)
+    public LineNumberEntity getByLineNumber(Integer lineNumber) {
+
+        return this.lineNumberRepository.findByLineNumber(lineNumber);
+    }
+
 
     @Override
     @Transactional

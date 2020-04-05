@@ -45,8 +45,8 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 @UIScope
 @SpringComponent
-@Route(value = LoadDataView.NAV_LOAD_DATA_VIEW, layout = MainLayout.class)
-public class LoadDataView extends BaseSmartTacCalcView {
+@Route(value = ImportDataView.NAV_LOAD_DATA_VIEW, layout = MainLayout.class)
+public class ImportDataView extends BaseSmartTacCalcView {
 
     static final String NAV_LOAD_DATA_VIEW = "load_data_view";
 
@@ -85,7 +85,7 @@ public class LoadDataView extends BaseSmartTacCalcView {
     @Autowired
     private ServiceRegistry serviceRegistry;
 
-    public LoadDataView() {
+    public ImportDataView() {
 
         super();
 

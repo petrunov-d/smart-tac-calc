@@ -14,4 +14,6 @@ public interface UnitPriceRepository extends JpaRepository<UnitPriceEntity, Long
     int countByYear(int year);
 
     List<UnitPriceEntity> findAllByYear(Integer previousYear);
+
+    UnitPriceEntity findByCode(String code);
 }

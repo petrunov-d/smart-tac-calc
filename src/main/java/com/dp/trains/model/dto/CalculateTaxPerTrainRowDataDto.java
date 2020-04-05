@@ -13,6 +13,6 @@ import java.util.List;
 public class CalculateTaxPerTrainRowDataDto {
 
     private SectionNeighboursDto section;
-    private Integer tonnage;
+    private Double tonnage;
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList;
 }

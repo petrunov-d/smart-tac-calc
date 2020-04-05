@@ -22,4 +22,7 @@ public class FinancialDataEntity extends YearDiscriminatingEntity {
 
     @Column(name = "direct_cost_value")
     private Double directCostValue;
+
+    @Column(name = "code")
+    private String code;
 }

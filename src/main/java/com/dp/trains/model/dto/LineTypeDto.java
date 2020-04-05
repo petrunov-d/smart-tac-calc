@@ -21,4 +21,8 @@ public class LineTypeDto implements ExcelImportDto {
     @ExcelCell(1)
     @JMap(value = "name", classes = LineTypeEntity.class)
     private String name;
+
+    @ExcelCell(2)
+    @JMap(value = "code", classes = LineTypeEntity.class)
+    private String code;
 }

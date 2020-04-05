@@ -14,4 +14,8 @@ public interface RailStationRepository extends JpaRepository<RailStationEntity, 
     int countByYear(int year);
 
     List<RailStationEntity> findAllByYear(Integer previousYear);
+
+    List<RailStationEntity> findByIsKeyStationTrue();
+
+    List<RailStationEntity> findByIsKeyStationFalse();
 }

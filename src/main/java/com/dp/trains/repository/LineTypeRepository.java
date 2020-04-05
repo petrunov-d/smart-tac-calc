@@ -12,4 +12,6 @@ public interface LineTypeRepository extends JpaRepository<LineTypeEntity, Long> 
     int countByYear(int year);
 
     List<LineTypeEntity> findAllByYear(Integer previousYear);
+
+    LineTypeEntity findByLineType(String lineType);
 }
