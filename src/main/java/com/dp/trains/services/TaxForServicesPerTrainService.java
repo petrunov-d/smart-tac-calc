@@ -86,9 +86,7 @@ public class TaxForServicesPerTrainService implements BaseImportService {
 
     public CalculateFinalTaxPerTrainDto calculateFinalTaxForTrain(List<CalculateTaxPerTrainRowDataDto> allRowData,
                                                                   StrategicCoefficientEntity strategicCoefficientEntity,
-                                                                  Integer trainNumber,
-                                                                  TrainTypeEntity trainTypeEntity,
-                                                                  Double initialTonnage) {
+                                                                  Integer trainNumber, TrainTypeEntity trainTypeEntity) {
 
         boolean errorInCalculation = false;
         String stackTrace = null;
@@ -126,6 +124,10 @@ public class TaxForServicesPerTrainService implements BaseImportService {
 
                         partialKilometers = rowDataDto.getSection().getKilometersBetweenStations()
                                 - subSectionDto.getKilometers();
+
+                        log.info("Selected segment is first or last and selected station is not key, partial kms = "
+                                + partialKilometers + " " +
+                                subSectionDto.toString() + " " + rowDataDto.toString());
                     }
                 }
 
@@ -209,7 +211,8 @@ public class TaxForServicesPerTrainService implements BaseImportService {
     }
 
     private List<UnitPriceEntity> findUnitPricesForSection(
-            TrainTypeEntity trainTypeEntity, CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto) throws CodeNotFoundException {
+            TrainTypeEntity trainTypeEntity, CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto)
+            throws CodeNotFoundException {
 
         List<UnitPriceEntity> unitPriceEntities = Lists.newArrayList();
 
@@ -225,9 +228,10 @@ public class TaxForServicesPerTrainService implements BaseImportService {
         return unitPriceEntities;
     }
 
-    private UnitPriceEntity getForCode(boolean isTrainKilometers, TrainTypeEntity trainTypeEntity,
-                                       CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto)
-            throws CodeNotFoundException {
+    private UnitPriceEntity getForCode(boolean isTrainKilometers,
+                                       TrainTypeEntity trainTypeEntity,
+                                       CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto) throws CodeNotFoundException {
+
         LineTypeEntity lineTypeEntity =
                 lineTypeService.getByType(calculateTaxPerTrainRowDataDto.getSection().getTypeOfLine());
 

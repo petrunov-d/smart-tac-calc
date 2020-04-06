@@ -144,18 +144,22 @@ public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
         List<String> validationList = Lists.newArrayList();
 
         if (railStationEntitySelect.getValue() == null) {
+
             validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_RAIL_STATION));
         }
 
         if (serviceEntitySelect.getValue() == null) {
+
             validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_SERVICE));
         }
 
         if (trainNumber.getValue() == null) {
+
             validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_TRAIN_NUMBER));
         }
 
         if (serviceCount.getValue() == null) {
+
             validationList.add(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_VALIDATION_SERVICE_COUNT));
         }
 

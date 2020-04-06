@@ -118,8 +118,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private void shouldEnableAddButton() {
 
-        if (trainNumber.getValue() != null && trainType.getValue() != null &&
-                !"".equals(trainType.getValue()) && tonnage.getValue() != null) {
+        if (trainNumber.getValue() != null && trainType.getValue() != null && tonnage.getValue() != null) {
 
             add.setEnabled(true);
         }
@@ -266,8 +265,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.taxForServicesPerTrainService
                 .calculateFinalTaxForTrain(this.calculatePricePerTrainLayout.gatherAllRowData(),
-                        strategicCoefficientSelect.getValue(), trainNumber.getValue(), trainType.getValue(),
-                        tonnage.getValue());
+                        strategicCoefficientSelect.getValue(), trainNumber.getValue(), trainType.getValue());
 
         if (calculateFinalTaxPerTrainDto.isErrorInCalculation()) {
 
