@@ -4,7 +4,7 @@ import com.dp.trains.common.ServiceEnum;
 import com.dp.trains.common.ServiceRegistry;
 import com.dp.trains.model.dto.*;
 import com.dp.trains.services.BaseImportService;
-import com.dp.trains.ui.components.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.dialogs.ConfirmImportDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.DtoPoijiHolder;
@@ -67,9 +67,9 @@ public class ImportDataView extends BaseSmartTacCalcView {
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_STRATEGIC_COEFFICIENTS), new DtoPoijiHolder(StrategicCoefficientDto.class,
                     ServiceEnum.STRATEGIC_COEFFICIENTS_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_FINANCIAL_DATA), new DtoPoijiHolder(FinancialDataDto.class,
-                    ServiceEnum.FINANCIAL_DATA_SERVICE, PoijiOptionsFactory.defaultWithSkip(1)))
+                    ServiceEnum.FINANCIAL_DATA_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_TRAFFIC_DATA), new DtoPoijiHolder(TrafficDataDto.class,
-                    ServiceEnum.TRAFFIC_DATA_SERVICE, PoijiOptionsFactory.defaultWithSkip(1)))
+                    ServiceEnum.TRAFFIC_DATA_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_LINE_NUMBERS), new DtoPoijiHolder(LineNumberDto.class,
                     ServiceEnum.LINE_NUMBER_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_TAX_FOR_SERVICES_PER_TRAIN), new DtoPoijiHolder(TaxForServicesPerTrainDto.class,

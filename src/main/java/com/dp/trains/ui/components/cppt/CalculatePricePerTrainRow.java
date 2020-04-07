@@ -1,4 +1,4 @@
-package com.dp.trains.ui.components;
+package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.event.CPPTRowRemovedEvent;

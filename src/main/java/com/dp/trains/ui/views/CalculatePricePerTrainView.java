@@ -8,7 +8,7 @@ import com.dp.trains.model.dto.CalculateFinalTaxPerTrainDto;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.model.entities.TrainTypeEntity;
 import com.dp.trains.services.*;
-import com.dp.trains.ui.components.CalculatePricePerTrainLayout;
+import com.dp.trains.ui.components.cppt.CalculatePricePerTrainLayout;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.ConfirmLeaveCalculateTaxPerTrainPageDialog;
 import com.dp.trains.ui.layout.MainLayout;

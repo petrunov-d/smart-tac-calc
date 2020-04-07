@@ -17,30 +17,12 @@ public class TrafficDataEntity extends YearDiscriminatingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "line_number")
-    private Integer lineNumber;
+    @Column(name = "direct_cost_description")
+    private String directCostDescrption;
 
-    @Column(name = "rank")
-    private String rank;
+    @Column(name = "direct_cost_value")
+    private Double directCostValue;
 
-    @Column(name = "line_length")
-    private Integer lineLength;
-
-    @Column(name = "is_electrified")
-    private String isElectrified;
-
-    @Column(name = "train_type")
-    private Integer trainType;
-
-    @Column(name = "freight_traffic_train_kilometers")
-    private Integer freightTrafficTrainKilometers;
-
-    @Column(name = "freight_traffic_train_bruto_ton_kilometers")
-    private Integer freightTrafficTrainBrutoTonKilometers;
-
-    @Column(name = "passenger_traffic_train_kilometers")
-    private Integer passengerTrafficTrainKilometers;
-
-    @Column(name = "passenger_traffic_train_bruto_ton_kilometers")
-    private Integer passengerTrafficTrainBrutoTonKilometers;
+    @Column(name = "code")
+    private String code;
 }

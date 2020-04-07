@@ -4,7 +4,10 @@ import com.dp.trains.model.entities.*;
 import com.dp.trains.ui.components.factories.AddItemDialogFactory;
 import com.dp.trains.ui.components.factories.EditableDataGridFactory;
 import com.dp.trains.ui.layout.MainLayout;
+import com.dp.trains.utils.EventBusHolder;
+import com.dp.trains.utils.SmartTacCalcContext;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -46,6 +49,7 @@ public class EditDataView extends Composite<Div> {
 
         constructMenuBar();
         getContent().setHeightFull();
+        EventBusHolder.getEventBus().register(this);
     }
 
     @PostConstruct
@@ -55,6 +59,12 @@ public class EditDataView extends Composite<Div> {
         getContent().add(railStationEntityGrid);
         currentlyActiveGrid = railStationEntityGrid;
         selectedClass = RailStationEntity.class;
+
+        if (SmartTacCalcContext.getShouldRefreshInitially()) {
+
+            UI.getCurrent().getPage().reload();
+            SmartTacCalcContext.setShouldRefreshInitially(false);
+        }
     }
 
     public void constructMenuBar() {

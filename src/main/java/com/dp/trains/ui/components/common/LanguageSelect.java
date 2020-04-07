@@ -1,4 +1,4 @@
-package com.dp.trains.ui.components;
+package com.dp.trains.ui.components.common;
 
 import com.dp.trains.event.LocaleChangedEvent;
 import com.dp.trains.ui.layout.MainLayout;

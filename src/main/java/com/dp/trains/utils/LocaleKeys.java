@@ -220,4 +220,17 @@ public class LocaleKeys {
     public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_UNIT_PRICES = "copy.data.from.previous.year.summary.dialog.entity.display.name.unit.prices";
     public static final String COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_SECTIONS = "copy.data.from.previous.year.summary.dialog.entity.display.name.sections";
     public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_CONFIRM_LEAVE_MESSAGE = "calculate.price.per.train.view.confirm.leave.message";
+
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_BUTTON_LABEL = "calculate.single.price.default.mode.button.label";
+    public static final String CALCULATE_SINGLE_PRICE_AVERAGE_MODE_BUTTON_LABEL = "calculate.single.price.average.mode.button.label";
+
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_ALREADY_HAS_DATA_WARNING = "calculate.single.price.default.mode.already.has.data.warning";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_TITLE = "calculate.single.price.default.mode.title";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_ALL = "calculate.single.price.default.mode.missing.data.all";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_FINANCIAL = "calculate.single.price.default.mode.missing.data.financial";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_TRAFFIC = "calculate.single.price.default.mode.missing.data.traffic";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING = "calculate.single.price.default.mode.missing";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_ADDITIONAL = "calculate.single.price.default.mode.missing.additional";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_CALCULATION_SUCCESS = "calculate.single.price.default.mode.calculation.success";
+    public static final String CALCULATE_SINGLE_PRICE_DEFAULT_MODE_CALCULATION_ERROR = "calculate.single.price.default.mode.calculation.error";
 }

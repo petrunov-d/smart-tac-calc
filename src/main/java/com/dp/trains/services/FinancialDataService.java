@@ -38,6 +38,12 @@ public class FinancialDataService implements BaseImportService {
         return this.financialDataRepository.findByCode(code);
     }
 
+    @Transactional
+    public List<FinancialDataEntity> getAll() {
+
+        return this.financialDataRepository.findAll();
+    }
+
     @Override
     @Transactional
     public void importFromExcel(List<? extends ExcelImportDto> excelImportDto) {

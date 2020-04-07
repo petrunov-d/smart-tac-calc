@@ -21,4 +21,8 @@ public class FinancialDataDto implements ExcelImportDto {
     @ExcelCell(1)
     @JMap(value = "directCostValue", classes = FinancialDataEntity.class)
     private Double directCostValue;
+
+    @ExcelCell(2)
+    @JMap(value = "code", classes = FinancialDataEntity.class)
+    private String code;
 }

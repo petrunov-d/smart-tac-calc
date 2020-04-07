@@ -1,30 +1,23 @@
 package com.dp.trains.ui.views;
 
-import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.services.UnitPriceService;
-import com.dp.trains.ui.components.BaseSmartTacCalcView;
-import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
+import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.csp.CalculateSinglePriceByAverageContainer;
+import com.dp.trains.ui.components.csp.CalculateSinglePriceDefaultModeContainer;
 import com.dp.trains.ui.layout.MainLayout;
-import com.dp.trains.utils.SelectedYearPerUserHolder;
-import com.google.common.base.Joiner;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Collection;
-import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -37,68 +30,69 @@ public class CalculateSinglePriceView extends BaseSmartTacCalcView {
     @Autowired
     private UnitPriceService unitPriceService;
 
+    private VerticalLayout container;
+    private VerticalLayout currentlyActiveView;
+
     static final String NAV_CALCULATE_SINGLE_PRICE = "calculate_single_price";
 
     public CalculateSinglePriceView() {
 
         super();
 
-        H1 headerText = new H1(getTranslation(SHARED_APP_TITLE));
+        container = new VerticalLayout();
+        container.add(new H1(getTranslation(SHARED_APP_TITLE)));
 
-        VerticalLayout verticalLayout = new VerticalLayout();
+        constructMenuBar();
 
-        Integer currentYear = SelectedYearPerUserHolder.getForUser(SecurityContextHolder.getContext()
-                .getAuthentication().getName());
+        container.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
-        H3 h3 = new H3(String.format("%s %d %s", getTranslation(CALCULATE_SINGLE_PRICE_DESCRIPTION_ONE), currentYear,
-                getTranslation(CALCULATE_SINGLE_PRICE_DESCRIPTION_TWO)));
+        add(container, getFooter());
+    }
 
-        H3 backtrackTitle = new H3(getTranslation(CALCULATE_SINGLE_PRICE_INPUT_AMOUNT_OF_YEARS_TO_GO_BACK));
-        IntegerField backtrackYearsField = new IntegerField(getTranslation(CALCULATE_SINGLE_PRICE_INPUT_YEARS_LABEL));
-        backtrackYearsField.setValue(1);
-        backtrackYearsField.setHasControls(true);
-        backtrackYearsField.setMin(1);
-        backtrackYearsField.setMax(20);
+    @PostConstruct
+    public void init() {
 
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(backtrackTitle, backtrackYearsField);
+        currentlyActiveView = new CalculateSinglePriceDefaultModeContainer(unitPriceService);
+        container.add(currentlyActiveView);
+    }
 
-        Button calculate = new Button(getTranslation(CALCULATE_SINGLE_PRICE_INPUT_YEARS_BUTTON_CALCULATE), VaadinIcon.CALC_BOOK.create());
-        calculate.addClickListener(e -> {
+    private void constructMenuBar() {
 
-            Integer yearsToGoBack = backtrackYearsField.getValue();
+        final HorizontalLayout layout = new HorizontalLayout();
 
-            Map<Integer, Boolean> validationResult = unitPriceService.validateUnitPriceDataIntegrityForYears(yearsToGoBack, currentYear);
+        layout.setMargin(true);
+        layout.setSpacing(true);
+        layout.setWidth(null);
 
-            if (validationResult.entrySet().size() > 0) {
+        MenuBar menuBar = new MenuBar();
+        menuBar.setWidth(null);
 
-                Dialog dialog = new BasicInfoDialog(String.format("%s %s %s",
-                        getTranslation(CALCULATE_SINGLE_PRICE_ERROR_NO_DATA_FOR_PROVIDED_YEARS),
-                        Joiner.on(", ").join(validationResult.keySet()),
-                        getTranslation(CALCULATE_SINGLE_PRICE_ERROR_NO_DATA_FOR_PROVIDED_YEARS_HINT)));
+        MenuItem muCalculateUnitPriceBasedOnTrafficAndFinancialData = menuBar.addItem(
+                getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_BUTTON_LABEL));
 
-                dialog.open();
+        muCalculateUnitPriceBasedOnTrafficAndFinancialData.addClickListener(event -> {
 
-            } else {
+            container.remove(currentlyActiveView);
 
-                Collection<UnitPriceDto> unitPriceDtoList = unitPriceService
-                        .calculateSinglePriceForYears(yearsToGoBack, currentYear);
-                this.unitPriceService.add(unitPriceDtoList);
+            currentlyActiveView = new CalculateSinglePriceDefaultModeContainer(unitPriceService);
 
-                Dialog dialog = new BasicInfoDialog(getTranslation(CALCULATE_SINGLE_PRICE_CALCULATION_SUCCESS));
-                dialog.open();
-            }
+            container.add(currentlyActiveView);
         });
 
-        HorizontalLayout footer = getFooter();
+        MenuItem muCalculateUnitPriceBasedOnAveragesFromPreviousYears = menuBar.addItem(
+                getTranslation(CALCULATE_SINGLE_PRICE_AVERAGE_MODE_BUTTON_LABEL));
 
-        verticalLayout.add(headerText);
-        verticalLayout.add(h3);
-        verticalLayout.add(horizontalLayout);
-        verticalLayout.add(calculate);
-        verticalLayout.setSizeFull();
+        muCalculateUnitPriceBasedOnAveragesFromPreviousYears.addClickListener(event -> {
 
-        verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
-        add(verticalLayout, footer);
+            container.remove(currentlyActiveView);
+            currentlyActiveView = new CalculateSinglePriceByAverageContainer(unitPriceService);
+            container.add(currentlyActiveView);
+        });
+
+        layout.setAlignSelf(Alignment.CENTER, menuBar);
+        layout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+        layout.add(menuBar);
+
+        container.add(layout);
     }
 }

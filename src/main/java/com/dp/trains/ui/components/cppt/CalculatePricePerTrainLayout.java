@@ -1,4 +1,4 @@
-package com.dp.trains.ui.components;
+package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;

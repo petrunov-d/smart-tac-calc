@@ -6,7 +6,7 @@ import com.dp.trains.model.entities.ServiceEntity;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.services.ServiceService;
-import com.dp.trains.ui.components.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.google.common.base.Joiner;

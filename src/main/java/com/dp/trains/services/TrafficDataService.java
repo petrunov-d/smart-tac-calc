@@ -36,6 +36,12 @@ public class TrafficDataService implements BaseImportService {
         trafficDataRepository.saveAll(trafficDataEntities);
     }
 
+    @Transactional
+    public List<TrafficDataEntity> getAll() {
+
+        return this.trafficDataRepository.findAll();
+    }
+
     @Override
     @Transactional
     public void importFromExcel(List<? extends ExcelImportDto> excelImportDto) {

@@ -1,7 +1,7 @@
 package com.dp.trains.ui.views;
 
 import com.dp.trains.services.vaadin.I18NProviderImpl;
-import com.dp.trains.ui.components.LanguageSelect;
+import com.dp.trains.ui.components.common.LanguageSelect;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.CommonConstants;
 import com.vaadin.flow.component.Composite;

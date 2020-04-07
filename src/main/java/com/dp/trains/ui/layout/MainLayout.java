@@ -1,7 +1,7 @@
 package com.dp.trains.ui.layout;
 
 import com.dp.trains.services.vaadin.I18NProviderImpl;
-import com.dp.trains.ui.components.LanguageSelect;
+import com.dp.trains.ui.components.common.LanguageSelect;
 import com.dp.trains.ui.views.*;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;

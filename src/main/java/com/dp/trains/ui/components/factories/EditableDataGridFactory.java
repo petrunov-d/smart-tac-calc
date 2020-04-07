@@ -31,7 +31,7 @@ public class EditableDataGridFactory {
 
     public Grid<ServiceEntity> getServiceEntityGrid() {
 
-        return new ServiceGrid(serviceService, lineNumberService);
+        return new ServiceGrid(serviceService);
     }
 
     public Grid<LineTypeEntity> getLineTypeGrid() {

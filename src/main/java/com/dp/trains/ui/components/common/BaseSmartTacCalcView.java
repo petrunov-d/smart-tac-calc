@@ -1,4 +1,4 @@
-package com.dp.trains.ui.components;
+package com.dp.trains.ui.components.common;
 
 import com.dp.trains.ui.layout.MainLayout;
 import com.vaadin.flow.component.html.Image;
@@ -15,6 +15,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_VIEW_BACKGROUND_PICTURE_ALT;
 public class BaseSmartTacCalcView extends VerticalLayout {
 
     public BaseSmartTacCalcView() {
+
         setSizeFull();
 
         setMargin(false);

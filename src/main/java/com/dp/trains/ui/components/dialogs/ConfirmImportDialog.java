@@ -6,7 +6,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -21,12 +20,8 @@ public class ConfirmImportDialog extends Dialog {
 
         H3 h3 = new H3(CONFIRM_IMPORT_DIALOG_TITLE);
 
-        Button ok = new Button(CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA, new Icon(VaadinIcon.DEL_A));
-        ok.addClickListener(e -> {
-            baseImportService.deleteAll();
-            Notification.show(getTranslation(CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA_SUCCESS),
-                    5000, Notification.Position.MIDDLE);
-        });
+        Button ok = new Button(getTranslation(CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA), new Icon(VaadinIcon.DEL_A));
+        ok.addClickListener(e -> baseImportService.deleteAll());
 
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
         cancel.addClickListener(e -> {

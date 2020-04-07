@@ -3,12 +3,16 @@ package com.dp.trains.services;
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.dto.UnitPriceDataIntegrity;
 import com.dp.trains.model.dto.UnitPriceDto;
+import com.dp.trains.model.entities.FinancialDataEntity;
+import com.dp.trains.model.entities.TrafficDataEntity;
 import com.dp.trains.model.entities.UnitPriceEntity;
 import com.dp.trains.repository.UnitPriceRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +20,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,8 +36,12 @@ import static java.util.stream.Collectors.groupingBy;
 @SuppressWarnings({"unchecked", "StreamToLoop", "rawtypes", "OptionalGetWithoutIsPresent"})
 public class UnitPriceService implements BaseImportService {
 
-    private final UnitPriceRepository unitPriceRepository;
     private final ObjectMapper defaultObjectMapper;
+    private final UnitPriceRepository unitPriceRepository;
+
+    private final TrafficDataService trafficDataService;
+    private final FinancialDataService financialDataService;
+
 
     @Qualifier("unitPriceMapper")
     private final DefaultDtoEntityMapperService<UnitPriceDto, UnitPriceEntity> unitPriceMapper;
@@ -209,5 +219,64 @@ public class UnitPriceService implements BaseImportService {
     @Override
     public String toString() {
         return getDisplayName();
+    }
+
+    @Transactional(readOnly = true)
+    public UnitPriceDataIntegrity getDataIntegrityState() {
+
+        int financialDataCount = financialDataService.count();
+        int trafficDataCount = trafficDataService.count();
+
+        if (financialDataCount == 0 && trafficDataCount == 0) {
+
+            return UnitPriceDataIntegrity.ALL_DATA_MISSING;
+
+        } else if (financialDataService.count() == 0) {
+
+            return UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA;
+
+        } else if (trafficDataService.count() == 0) {
+
+            return UnitPriceDataIntegrity.MISSING_TRAFFIC_DATA;
+        }
+
+        return UnitPriceDataIntegrity.ALL_DATA_PRESENT;
+    }
+
+    @Transactional
+    public void calculateSinglePriceForCurrentYear() {
+
+        List<FinancialDataEntity> financialDataEntities = financialDataService.getAll();
+        List<TrafficDataEntity> trafficDataEntities = trafficDataService.getAll();
+        List<UnitPriceEntity> unitPriceEntities = Lists.newArrayList(this.fetch(0, 0));
+
+        int financialDataEntitiesSize = financialDataEntities.size();
+        int trafficDataEntitiesSize = trafficDataEntities.size();
+
+        if (financialDataEntitiesSize == 0 || trafficDataEntitiesSize == 0 ||
+                financialDataEntitiesSize != trafficDataEntitiesSize) {
+
+            throw new IllegalStateException("Data Integrity Violation -> Financial Data Size:"
+                    + financialDataEntitiesSize + " Traffic Data Size: " + trafficDataEntitiesSize);
+        }
+
+        for (int i = 0; i < financialDataEntitiesSize; i++) {
+
+            BigDecimal value = BigDecimal.valueOf(financialDataEntities.get(i).getDirectCostValue()).divide(
+                    BigDecimal.valueOf(trafficDataEntities.get(i).getDirectCostValue()),
+                    BigDecimal.ROUND_HALF_EVEN);
+
+            unitPriceEntities.get(i).setUnitPrice(value.doubleValue());
+        }
+
+        this.unitPriceRepository.saveAll(unitPriceEntities);
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean checkIfAlreadyHasDataCalculated() {
+
+        return this.fetch(0, 0).stream()
+                .filter(Objects::nonNull)
+                .anyMatch(x -> x.getUnitPrice() != null);
     }
 }

@@ -1,7 +1,6 @@
 package com.dp.trains.ui.components.grids;
 
 import com.dp.trains.model.entities.ServiceEntity;
-import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.ServiceService;
 import com.dp.trains.ui.components.dialogs.EditServiceDialog;
 import com.vaadin.flow.component.button.Button;
@@ -19,7 +18,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @SuppressWarnings("unchecked")
 public class ServiceGrid extends SmartTACCalcGrid<ServiceEntity> {
 
-    public ServiceGrid(ServiceService serviceService, LineNumberService lineNumberService) {
+    public ServiceGrid(ServiceService serviceService) {
 
         super();
 
@@ -27,11 +26,6 @@ public class ServiceGrid extends SmartTACCalcGrid<ServiceEntity> {
 
         Grid.Column<ServiceEntity> nameColumn = this.addColumn(ServiceEntity::getName)
                 .setHeader(getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_NAME))
-                .setSortable(true)
-                .setResizable(true);
-
-        Grid.Column<ServiceEntity> lineNumberColumn = this.addColumn(ServiceEntity::getCode)
-                .setHeader(getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_CODE))
                 .setSortable(true)
                 .setResizable(true);
 
