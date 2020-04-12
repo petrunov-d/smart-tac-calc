@@ -69,21 +69,21 @@ public class CopyResultDialog extends Dialog {
         Map<String, String> userFriendlyEntityNames = Maps.newHashMap();
 
         userFriendlyEntityNames.put(LineNumberService.class.getSimpleName(),
-                getTranslation(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_LINE_NUMBERS)));
+                getTranslation(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_LINE_NUMBERS)));
         userFriendlyEntityNames.put(LineTypeService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_LINE_TYPES));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_LINE_TYPES));
         userFriendlyEntityNames.put(RailStationService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_STATIONS));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_STATIONS));
         userFriendlyEntityNames.put(ServiceService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_SERVICES));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_SERVICES));
         userFriendlyEntityNames.put(StrategicCoefficientService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_STRATEGIC_COEFFICIENTS));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_STRATEGIC_COEFFICIENTS));
         userFriendlyEntityNames.put(TrainTypeService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_TRAIN_TYPES));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_TRAIN_TYPES));
         userFriendlyEntityNames.put(UnitPriceService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_UNIT_PRICES));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_UNIT_PRICES));
         userFriendlyEntityNames.put(SectionsService.class.getSimpleName(),
-                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITIY_DISPLAY_NAME_SECTIONS));
+                getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_SUMMARY_DIALOG_ENTITY_DISPLAY_NAME_SECTIONS));
 
         return userFriendlyEntityNames;
     }

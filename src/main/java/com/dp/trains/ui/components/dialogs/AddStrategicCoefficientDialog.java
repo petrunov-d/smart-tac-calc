@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddStrategicCoefficientDialog extends AddDialogBase {
+public class AddStrategicCoefficientDialog extends SmartTACCalcDialogBase {
 
     public AddStrategicCoefficientDialog(Grid currentlyActiveGrid, StrategicCoefficientService strategicCoefficientService) {
 

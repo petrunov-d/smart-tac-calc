@@ -58,7 +58,7 @@ public class SessionFilterDecoratingAspect {
 
                 session.disableFilter(YearDiscriminatingEntity.YEAR_FILTER);
 
-                log.debug("Hit year agnostic method:" + methodSignature.getMethod().getName());
+                log.debug("Disabled filter for year agnostic method:" + methodSignature.getMethod().getName());
             }
         }
     }

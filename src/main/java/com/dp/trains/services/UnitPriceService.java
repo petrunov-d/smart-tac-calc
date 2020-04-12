@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +98,8 @@ public class UnitPriceService implements BaseImportService {
 
         List<UnitPriceDto> unitPriceDtos = (List<UnitPriceDto>) unitPriceMapper.mapEntities((Collection) unitPrices);
 
+        log.info("Calculating single price for years to go back:" + yearsToGoBack + " current year:" + currentYear);
+
         return unitPriceDtos
                 .stream()
                 .collect(Collectors.groupingBy(Function.identity()))
@@ -112,6 +113,7 @@ public class UnitPriceService implements BaseImportService {
                         .unitPrice(unitPriceDto.getValue()
                                 .stream()
                                 .mapToDouble(UnitPriceDto::getUnitPrice)
+                                .peek(x -> log.info("Unit price: " + x))
                                 .average()
                                 .getAsDouble())
                         .build())
@@ -262,11 +264,9 @@ public class UnitPriceService implements BaseImportService {
 
         for (int i = 0; i < financialDataEntitiesSize; i++) {
 
-            BigDecimal value = BigDecimal.valueOf(financialDataEntities.get(i).getDirectCostValue()).divide(
-                    BigDecimal.valueOf(trafficDataEntities.get(i).getDirectCostValue()),
-                    BigDecimal.ROUND_HALF_EVEN);
+            double value = financialDataEntities.get(i).getDirectCostValue() / trafficDataEntities.get(i).getDirectCostValue();
 
-            unitPriceEntities.get(i).setUnitPrice(value.doubleValue());
+            unitPriceEntities.get(i).setUnitPrice(value);
         }
 
         this.unitPriceRepository.saveAll(unitPriceEntities);

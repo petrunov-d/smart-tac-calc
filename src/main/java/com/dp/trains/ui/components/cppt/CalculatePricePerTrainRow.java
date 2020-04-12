@@ -13,7 +13,9 @@ import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.ViewServiceChargesForTrainDialog;
 import com.dp.trains.utils.EventBusHolder;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H5;
@@ -38,6 +40,11 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private boolean isFinal;
     private Integer trainNumber;
     private String currentKeyStation;
+    private Set<SectionNeighboursDto> neighbours;
+    private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
+
+    private SectionsService sectionsService;
+
     private Select<DisplayableStationDto> station;
     private Select<SectionNeighboursDto> lineNumbers;
     private NumberField tonnage;
@@ -46,11 +53,6 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private Button doneButton;
     private H5 serviceChargesLabel;
     private H5 rowTitle;
-    private SectionsService sectionsService;
-
-    private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
-
-    private Set<SectionNeighboursDto> neighbours;
 
     public CalculatePricePerTrainRow(int i, boolean isFinal,
                                      Integer trainNumber, SectionsService sectionsService,
@@ -67,6 +69,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.setRowIndex(i, isFinal);
 
         neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation, this.isFinal);
+
+        log.info(Joiner.on(", ").join(neighbours));
 
         initalizeStationSelect(trainNumber, serviceChargesPerTrainService, neighbours);
         initializeLineNumberSelect(neighbours);
@@ -147,6 +151,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     private void disableRow() {
 
+        log.info("Disabling row:" + this.rowIndex);
+
         this.station.setEnabled(false);
         this.lineNumbers.setEnabled(false);
         this.tonnage.setEnabled(false);
@@ -161,6 +167,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     }
 
     public void enableRow() {
+
+        log.info("Enabling row:" + this.rowIndex);
 
         this.station.setEnabled(true);
         this.lineNumbers.setEnabled(true);
@@ -292,8 +300,14 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     public CalculateTaxPerTrainRowDataDto getRowData() {
 
+        SectionNeighboursDto current = this.sectionsService.getByStationNameAndLineNumber(station.getValue().getName(),
+                lineNumbers.getValue().getLineNumber(), rowIndex == 1);
+
+        Set<SectionNeighboursDto> sectionNeighboursDtos = Sets.newHashSet(neighbours);
+        sectionNeighboursDtos.add(current);
+
         SectionNeighboursDto sectionNeighboursDto = this.sectionsService
-                .findSectionNeighboursDtoByDisplayableDto(station.getValue(), neighbours);
+                .findSectionNeighboursDtoByDisplayableDto(station.getValue(), sectionNeighboursDtos);
 
         return CalculateTaxPerTrainRowDataDto
                 .builder()

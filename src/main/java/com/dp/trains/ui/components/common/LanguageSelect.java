@@ -43,7 +43,7 @@ public class LanguageSelect extends Select<Locale> implements LocaleChangeObserv
         super(items);
         this.setEmptySelectionAllowed(false);
         this.setRenderer(this.languageRenderer);
-        log.info("Creating Language Select, current locale is:" + UI.getCurrent().getLocale());
+        log.debug("Creating Language Select, current locale is:" + UI.getCurrent().getLocale());
         this.setValue(UI.getCurrent().getLocale());
         this.addValueChangeListener((change) -> {
             UI.getCurrent().getSession().setLocale(change.getValue());

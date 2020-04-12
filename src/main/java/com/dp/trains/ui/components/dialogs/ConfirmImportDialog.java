@@ -18,10 +18,14 @@ public class ConfirmImportDialog extends Dialog {
 
     public ConfirmImportDialog(BaseImportService baseImportService, Select<String> select) {
 
-        H3 h3 = new H3(CONFIRM_IMPORT_DIALOG_TITLE);
+        H3 h3 = new H3(getTranslation(CONFIRM_IMPORT_DIALOG_TITLE));
 
         Button ok = new Button(getTranslation(CONFIRM_IMPORT_DIALOG_DELETE_OLD_DATA), new Icon(VaadinIcon.DEL_A));
-        ok.addClickListener(e -> baseImportService.deleteAll());
+        ok.addClickListener(e -> {
+            baseImportService.deleteAll();
+            select.setValue("");
+            this.close();
+        });
 
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
         cancel.addClickListener(e -> {

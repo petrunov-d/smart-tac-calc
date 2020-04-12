@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddLineNumberDialog extends AddDialogBase {
+public class AddLineNumberDialog extends SmartTACCalcDialogBase {
 
     public AddLineNumberDialog(Grid currentlyActiveGrid, LineNumberService lineNumberService) {
 

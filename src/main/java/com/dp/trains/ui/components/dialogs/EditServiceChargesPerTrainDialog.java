@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditServiceChargesPerTrainDialog extends AddDialogBase {
+public class EditServiceChargesPerTrainDialog extends SmartTACCalcDialogBase {
 
     public EditServiceChargesPerTrainDialog(Grid currentlyActiveGrid,
                                             ServiceChargesPerTrainService serviceChargesPerTrainService,
@@ -45,12 +45,12 @@ public class EditServiceChargesPerTrainDialog extends AddDialogBase {
         TextArea station = new TextArea();
 
         station.setEnabled(false);
-        station.setValue(item.getRailStationEntity().getStation());
+        station.setValue(item.getRailStationEntity().getStation() == null ? "" : item.getRailStationEntity().getStation());
 
         TextArea service = new TextArea();
 
         service.setEnabled(false);
-        service.setValue(item.getServiceEntity().getName());
+        station.setValue(item.getServiceEntity().getName() == null ? "" : item.getServiceEntity().getName());
 
         IntegerField trainNumber = new IntegerField();
         trainNumber.setEnabled(false);

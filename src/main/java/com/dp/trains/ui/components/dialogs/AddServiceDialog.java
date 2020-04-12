@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddServiceDialog extends AddDialogBase {
+public class AddServiceDialog extends SmartTACCalcDialogBase {
 
     public AddServiceDialog(Grid currentlyActiveGrid, ServiceService serviceService) {
         super(currentlyActiveGrid);
@@ -66,7 +66,7 @@ public class AddServiceDialog extends AddDialogBase {
         binder.forField(name)
                 .asRequired()
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_NAME_MESSAGE)))
-                .bind(ServiceDto::getMetric, ServiceDto::setMetric);
+                .bind(ServiceDto::getName, ServiceDto::setName);
 
         binder.forField(unitPrice)
                 .asRequired()

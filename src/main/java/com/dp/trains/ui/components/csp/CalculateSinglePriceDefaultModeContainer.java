@@ -50,7 +50,6 @@ public class CalculateSinglePriceDefaultModeContainer extends VerticalLayout {
                     missingDataLabel = UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA.equals(unitPriceDataIntegrity)
                             ? getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_FINANCIAL) :
                             getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_TRAFFIC);
-
                 }
 
                 Dialog dialog = new BasicInfoDialog(String.format("%s %s %s",

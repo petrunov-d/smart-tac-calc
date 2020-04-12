@@ -54,6 +54,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         this.add(new CalculatePricePerTrainRow(nextRowIdex, isFinal, trainNumber,
                 sectionsService, serviceChargesPerTrainService, currentKeyStation, this.tonnage));
+
         nextRowIdex++;
     }
 

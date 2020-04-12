@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddSubSectionDialog extends AddDialogBase {
+public class AddSubSectionDialog extends SmartTACCalcDialogBase {
 
     public AddSubSectionDialog(Grid currentlyActiveGrid, SubSectionService subSectionService,
                                RailStationService railStationService,

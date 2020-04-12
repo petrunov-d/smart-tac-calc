@@ -28,6 +28,6 @@ public class SubSectionEntity extends YearDiscriminatingEntity {
 
     @ToString.Exclude
     @JoinColumn(name = "section_fk")
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private SectionEntity sectionEntity;
 }

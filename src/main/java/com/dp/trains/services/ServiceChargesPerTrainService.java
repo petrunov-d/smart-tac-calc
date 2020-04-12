@@ -36,6 +36,8 @@ public class ServiceChargesPerTrainService {
 
         if (railStationEntity == null) {
 
+            log.info("No railstation for" + trainNumber + " " + railRoadStation);
+
             return Lists.newArrayList();
         }
 

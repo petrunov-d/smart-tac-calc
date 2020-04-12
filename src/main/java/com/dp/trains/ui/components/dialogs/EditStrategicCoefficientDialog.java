@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditStrategicCoefficientDialog extends AddDialogBase {
+public class EditStrategicCoefficientDialog extends SmartTACCalcDialogBase {
 
     public EditStrategicCoefficientDialog(Grid currentlyActiveGrid, StrategicCoefficientService strategicCoefficientService,
                                           StrategicCoefficientEntity strategicCoefficientEntity) {
@@ -49,7 +49,7 @@ public class EditStrategicCoefficientDialog extends AddDialogBase {
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
-        name.setValue(strategicCoefficientEntity.getName());
+        name.setValue(strategicCoefficientEntity.getName() == null ? "" : strategicCoefficientEntity.getName());
 
         NumberField coefficient = new NumberField();
         coefficient.setValueChangeMode(ValueChangeMode.EAGER);

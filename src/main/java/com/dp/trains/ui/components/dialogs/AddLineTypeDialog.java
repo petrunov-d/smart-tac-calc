@@ -11,7 +11,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddLineTypeDialog extends AddDialogBase {
+public class AddLineTypeDialog extends SmartTACCalcDialogBase {
 
     public AddLineTypeDialog(Grid currentlyActiveGrid, LineTypeService lineTypeService) {
 
@@ -37,8 +36,11 @@ public class AddLineTypeDialog extends AddDialogBase {
 
         LineTypeDto lineTypeDto = new LineTypeDto();
 
-        Select<String> lineType = new Select<>();
-        lineType.setItems(lineTypeService.getLineTypes());
+        TextArea lineType = new TextArea();
+
+        lineType.setValueChangeMode(ValueChangeMode.EAGER);
+        lineType.addValueChangeListener(event -> binder.validate());
+        lineType.setRequiredIndicatorVisible(true);
 
         TextArea name = new TextArea();
 

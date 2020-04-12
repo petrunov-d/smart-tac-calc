@@ -32,7 +32,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 
 @SuppressWarnings("unchecked")
 @Slf4j
-public class AddSectionDialog extends AddDialogBase {
+public class AddSectionDialog extends SmartTACCalcDialogBase {
 
     public AddSectionDialog(Grid currentlyActiveGrid, SectionsService sectionsService,
                             LineTypeService lineTypeService, LineNumberService lineNumberService,
@@ -69,6 +69,15 @@ public class AddSectionDialog extends AddDialogBase {
         lastKeyPoint.addValueChangeListener(event -> binder.validate());
         lastKeyPoint.setRequiredIndicatorVisible(true);
         lastKeyPoint.setItems(railStations);
+        lastKeyPoint.setEnabled(false);
+
+        firstKeyPoint.addValueChangeListener(event -> {
+
+            if (event.getValue() != null) {
+
+                lastKeyPoint.setEnabled(true);
+            }
+        });
 
         NumberField kilometersBetweenStations = new NumberField();
 
@@ -109,12 +118,18 @@ public class AddSectionDialog extends AddDialogBase {
                 .withValidator(ValidatorFactory.defaultDoubleRangeValidator(getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_IS_ELECTRIFED_VALIDATION)))
                 .bind(SectionsDto::getUnitPrice, SectionsDto::setUnitPrice);
 
+        binder.forField(kilometersBetweenStations)
+                .asRequired()
+                .withValidator(ValidatorFactory.defaultDoubleRangeValidator(getTranslation(GRID_SECTION_COLUMN_HEADER_KILOMETERS_BETWEEN_STATIONS_VALIDATION)))
+                .bind(SectionsDto::getKilometersBetweenStations, SectionsDto::setKilometersBetweenStations);
+
         layoutWithBinder.addFormItem(lineNumber, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
         layoutWithBinder.addFormItem(lineType, getTranslation(GRID_LINE_TYPE_COLUMN_HEADER_LINE_TYPE));
         layoutWithBinder.addFormItem(firstKeyPoint, getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_FIRST_KEY_POINT));
         layoutWithBinder.addFormItem(lastKeyPoint, getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_LAST_KEY_POINT));
         layoutWithBinder.addFormItem(unitPrice, getTranslation(GRID_SERVICE_COLUMN_HEADER_UNIT_PRICE));
         layoutWithBinder.addFormItem(isElectrified, getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_IS_ELECTRIFED));
+        layoutWithBinder.addFormItem(kilometersBetweenStations, getTranslation(GRID_SECTION_COLUMN_HEADER_KILOMETERS_BETWEEN_STATIONS));
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));

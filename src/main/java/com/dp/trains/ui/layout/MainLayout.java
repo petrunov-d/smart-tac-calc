@@ -3,7 +3,9 @@ package com.dp.trains.ui.layout;
 import com.dp.trains.services.vaadin.I18NProviderImpl;
 import com.dp.trains.ui.components.common.LanguageSelect;
 import com.dp.trains.ui.views.*;
+import com.dp.trains.utils.EventBusHolder;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
+import com.dp.trains.utils.SmartTacCalcContext;
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;
 import com.github.appreciated.app.layout.component.applayout.LeftLayouts;
 import com.github.appreciated.app.layout.component.builder.AppLayoutBuilder;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.impl.ImmutableEmptyStyle;
@@ -35,6 +38,8 @@ import static com.vaadin.flow.component.icon.VaadinIcon.*;
 @Theme(Lumo.class)
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHybrid> {
 
+    //  private Map<Class<? extends Throwable>, String> errorsDescriptions;
+
     public MainLayout() {
 
         Image img = new Image(new StreamResource(SERBIAN_RAILROADS_LOGO,
@@ -52,8 +57,25 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                 .withAppBar(getAppBar())
                 .build();
 
+        EventBusHolder.getEventBus().register(this);
+
+        //errorsDescriptions = getDescriptions();
         init(appLayout);
     }
+
+//    @Subscribe
+//    public void listenForException(ExceptionRaisedEvent exceptionRaisedEvent) {
+//
+//        String errorMessage = errorsDescriptions.get(exceptionRaisedEvent.getThrowable().getClass());
+//
+//        if (errorMessage == null) {
+//
+//            errorMessage = "";
+//        }
+//
+//        Dialog dialog = new BasicInfoDialog(getTranslation(MAIN_LAYOUT_GENERIC_ERROR_MESSAGE) + "\n Hint: " + errorMessage);
+//        dialog.open();
+//    }
 
     private Component getAppBar() {
 
@@ -64,8 +86,13 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
         LanguageSelect languageSelect = new LanguageSelect(Locale.ENGLISH, I18NProviderImpl.LOCALE_SERBIAN);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout(new H5(getTranslation(MAIN_LAYOUT_SELECT_LANGUAGE)), languageSelect);
+        horizontalLayout.setPadding(true);
+        horizontalLayout.setSpacing(true);
+        horizontalLayout.setMargin(true);
 
         return AppBarBuilder.get()
+                .add(new Span(String.format("%s %s ", getTranslation(MAIN_LAYOUT_SPAN_VERSION_LABEL),
+                        SmartTacCalcContext.getSmartTACCalcContext().getModel().getVersion())))
                 .add(horizontalLayout)
                 .add(img)
                 .build();
@@ -133,4 +160,31 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         ui.navigate(LoginView.class);
     }
+
+//    private Map<Class<? extends Throwable>, String> getDescriptions() {
+//
+//        Map<Class<? extends Throwable>, String> map = Maps.newHashMap();
+//
+//        map.put(IllegalStateException.class, "General Error");
+//        map.put(ConstraintViolationException.class, "Bad data. Please fix the data before continuing");
+//        map.put(NullPointerException.class, "General Error");
+//        map.put(CodeNotFoundException.class, "Code not set! Please make sure all data with codes has a code!");
+//        map.put(GenericJDBCException.class, "General Error");
+//        map.put(JDBCConnectionException.class, "Connection error, contact an admin.");
+//        map.put(LockAcquisitionException.class, "Try again later");
+//        map.put(LockTimeoutException.class, "Try again later");
+//        map.put(SQLGrammarException.class, "Contact an admin, or refresh the page.");
+//        map.put(ArithmeticException.class, "Contact an admin or make sure calculation is a legal arithmetic expression");
+//        map.put(ClassNotFoundException.class, "Contact an admin, or refresh the page.");
+//        map.put(FileNotFoundException.class, "Contact an admin, or refresh the page.");
+//        map.put(IOException.class, "Contact an admin, or refresh the page.");
+//        map.put(InterruptedException.class, "Contact an admin, or refresh the page.");
+//        map.put(NoSuchFieldException.class, "Contact an admin, or refresh the page.");
+//        map.put(NoSuchMethodException.class, "Contact an admin, or refresh the page.");
+//        map.put(RuntimeException.class, "Contact an admin, or refresh the page.");
+//        map.put(StringIndexOutOfBoundsException.class, "Contact an admin, or refresh the page.");
+//        map.put(SecurityException.class, "Contact an admin, or refresh the page.");
+//
+//        return map;
+//    }
 }

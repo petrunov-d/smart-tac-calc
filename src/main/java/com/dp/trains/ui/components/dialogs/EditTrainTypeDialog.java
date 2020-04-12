@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditTrainTypeDialog extends AddDialogBase {
+public class EditTrainTypeDialog extends SmartTACCalcDialogBase {
 
     public EditTrainTypeDialog(Grid currentlyActiveGrid, TrainTypeService trainTypeService, TrainTypeEntity trainTypeEntity) {
         super(currentlyActiveGrid);
@@ -47,7 +47,7 @@ public class EditTrainTypeDialog extends AddDialogBase {
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
-        name.setValue(trainTypeEntity.getName());
+        name.setValue(trainTypeEntity.getName() == null ? "" : trainTypeEntity.getName());
 
         binder.forField(code)
                 .asRequired()

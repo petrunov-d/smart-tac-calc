@@ -5,6 +5,7 @@ import com.dp.trains.model.entities.SubSectionEntity;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SubSectionService;
 import com.dp.trains.ui.components.dialogs.EditSubSectionDialog;
+import com.google.common.collect.Lists;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,6 +14,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -24,7 +27,13 @@ public class SubSectionGrid extends SmartTACCalcGrid<SubSectionEntity> {
 
         super();
 
-        this.setDataProvider(DataProvider.ofCollection(sectionEntity.getSubSectionEntities()));
+        List<SubSectionEntity> subSectionEntityList = sectionEntity.getSubSectionEntities();
+
+        if (subSectionEntityList == null) {
+
+            subSectionEntityList = Lists.newArrayList();
+        }
+        this.setDataProvider(DataProvider.ofCollection(subSectionEntityList));
 
         Grid.Column<SubSectionEntity> kilometersColumn = this.addColumn(SubSectionEntity::getKilometers)
                 .setHeader(getTranslation(GRID_SUB_SECTION_COLUMN_HEADER_KILOMETERS))

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddTrainTypeDialog extends AddDialogBase {
+public class AddTrainTypeDialog extends SmartTACCalcDialogBase {
 
     public AddTrainTypeDialog(Grid currentlyActiveGrid, TrainTypeService trainTypeService) {
 

@@ -1,0 +1,2 @@
+ALTER TABLE PUBLIC.service
+    ALTER COLUMN unit_price SET NOT NULL;

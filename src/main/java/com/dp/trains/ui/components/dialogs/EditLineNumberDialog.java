@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditLineNumberDialog extends AddDialogBase {
+public class EditLineNumberDialog extends SmartTACCalcDialogBase {
 
     public EditLineNumberDialog(Grid currentlyActiveGrid, LineNumberService lineNumberService,
                                 LineNumberEntity lineNumberEntity) {
@@ -46,19 +46,19 @@ public class EditLineNumberDialog extends AddDialogBase {
         description.setRequiredIndicatorVisible(true);
 
         lineNumber.setValue(lineNumberEntity.getLineNumber());
-        description.setValue(lineNumberEntity.getDescription());
+        description.setValue(lineNumberEntity.getDescription() == null ? "" : lineNumberEntity.getDescription());
 
         binder.forField(lineNumber)
                 .asRequired()
                 .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
                 .withStatusLabel(new Label(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
-                .bind("lineNumber");
+                .bind(LineNumberDto::getLineNumber, LineNumberDto::setLineNumber);
 
         binder.forField(description)
                 .asRequired()
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(DIALOG_ADD_LINE_NUMBER_FORM_ITEM_DESCRIPTION_VALIDATION)))
                 .withStatusLabel(new Label(getTranslation(DIALOG_ADD_LINE_NUMBER_FORM_ITEM_DESCRIPTION_VALIDATION)))
-                .bind("description");
+                .bind(LineNumberDto::getDescription, LineNumberDto::setDescription);
 
         FormLayout layoutWithBinder = new FormLayout();
 
@@ -111,7 +111,5 @@ public class EditLineNumberDialog extends AddDialogBase {
                 layoutWithBinder, actions);
 
         this.add(verticalLayout);
-
-
     }
 }

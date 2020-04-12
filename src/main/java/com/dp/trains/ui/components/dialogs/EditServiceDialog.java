@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditServiceDialog extends AddDialogBase {
+public class EditServiceDialog extends SmartTACCalcDialogBase {
 
     public EditServiceDialog(Grid currentlyActiveGrid, ServiceService serviceService, ServiceEntity serviceEntity) {
 
@@ -43,7 +43,7 @@ public class EditServiceDialog extends AddDialogBase {
         metric.setValueChangeMode(ValueChangeMode.EAGER);
         metric.addValueChangeListener(event -> binder.validate());
         metric.setRequiredIndicatorVisible(true);
-        metric.setValue(serviceEntity.getMetric());
+        metric.setValue(serviceEntity.getMetric() == null ? "" : serviceEntity.getMetric());
 
         NumberField unitPrice = new NumberField();
 
@@ -57,7 +57,7 @@ public class EditServiceDialog extends AddDialogBase {
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
-        name.setValue(serviceEntity.getName());
+        name.setValue(serviceEntity.getName() == null ? "" : serviceEntity.getName());
 
         ComboBox<String> serviceType = new ComboBox<>();
         serviceType.setItems(serviceService.getServiceTypes());
@@ -72,7 +72,7 @@ public class EditServiceDialog extends AddDialogBase {
         binder.forField(name)
                 .asRequired()
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_NAME_MESSAGE)))
-                .bind(ServiceDto::getMetric, ServiceDto::setMetric);
+                .bind(ServiceDto::getName, ServiceDto::setName);
 
         binder.forField(unitPrice)
                 .asRequired()

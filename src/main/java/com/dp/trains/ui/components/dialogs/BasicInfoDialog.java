@@ -9,7 +9,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.dp.trains.utils.LocaleKeys.SHARED_BUTTON_TEXT_CANCEL;
+import static com.dp.trains.utils.LocaleKeys.COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK;
 
 @Slf4j
 public class BasicInfoDialog extends Dialog {
@@ -22,13 +22,13 @@ public class BasicInfoDialog extends Dialog {
 
         H3 errorText = new H3(message);
 
-        Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
-        cancel.addClickListener(e -> this.close());
+        Button ok = new Button(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK), new Icon(VaadinIcon.CLOSE_SMALL));
+        ok.addClickListener(e -> this.close());
 
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         verticalLayout.add(errorText);
-        verticalLayout.add(cancel);
+        verticalLayout.add(ok);
 
         this.add(verticalLayout);
     }

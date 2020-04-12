@@ -27,9 +27,9 @@ public class FinancialDataService implements BaseImportService {
     @Transactional
     public void add(Collection<FinancialDataDto> financialDataDtos) {
 
-        Collection<FinancialDataEntity> lineNumberEntities = financialDataMapper.mapEntities(financialDataDtos);
+        Collection<FinancialDataEntity> financialDataEntities = financialDataMapper.mapEntities(financialDataDtos);
 
-        financialDataRepository.saveAll(lineNumberEntities);
+        financialDataRepository.saveAll(financialDataEntities);
     }
 
     @Transactional(readOnly = true)

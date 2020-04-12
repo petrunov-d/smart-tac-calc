@@ -10,11 +10,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AddDialogBase extends Dialog {
+public class SmartTACCalcDialogBase extends Dialog {
 
     private Grid currentlyActiveGrid;
 
-    public AddDialogBase(Grid currentlyActiveGrid) {
+    public SmartTACCalcDialogBase(Grid currentlyActiveGrid) {
 
         super();
 

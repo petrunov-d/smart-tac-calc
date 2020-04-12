@@ -16,6 +16,7 @@ public class SectionNeighboursDto {
 
     private Integer lineNumber;
     private String typeOfLine;
+    private RailStationEntity source;
     private RailStationEntity destination;
     private Boolean isElectrified;
     private Double unitPrice;

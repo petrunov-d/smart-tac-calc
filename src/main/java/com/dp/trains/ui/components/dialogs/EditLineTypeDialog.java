@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditLineTypeDialog extends AddDialogBase {
+public class EditLineTypeDialog extends SmartTACCalcDialogBase {
 
     public EditLineTypeDialog(Grid currentlyActiveGrid, LineTypeService lineTypeService, LineTypeEntity lineTypeEntity) {
 
@@ -46,7 +46,7 @@ public class EditLineTypeDialog extends AddDialogBase {
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
-        name.setValue(lineTypeEntity.getName());
+        name.setValue(lineTypeEntity.getName() == null ? "" : lineTypeEntity.getName());
 
         binder.forField(lineType)
                 .asRequired()

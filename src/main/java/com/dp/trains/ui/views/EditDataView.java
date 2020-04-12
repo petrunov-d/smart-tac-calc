@@ -5,7 +5,6 @@ import com.dp.trains.ui.components.factories.AddItemDialogFactory;
 import com.dp.trains.ui.components.factories.EditableDataGridFactory;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
-import com.dp.trains.utils.SmartTacCalcContext;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -19,6 +18,7 @@ import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.slf4j.Slf4j;
@@ -60,10 +60,14 @@ public class EditDataView extends Composite<Div> {
         currentlyActiveGrid = railStationEntityGrid;
         selectedClass = RailStationEntity.class;
 
-        if (SmartTacCalcContext.getShouldRefreshInitially()) {
+        VaadinSession session = VaadinSession.getCurrent();
+
+        if (session.getAttribute("shouldRefreshInitially") == null ||
+                session.getAttribute("shouldRefreshInitially").equals(true)) {
 
             UI.getCurrent().getPage().reload();
-            SmartTacCalcContext.setShouldRefreshInitially(false);
+
+            session.setAttribute("shouldRefreshInitially", false);
         }
     }
 
@@ -163,7 +167,7 @@ public class EditDataView extends Composite<Div> {
         button.setHeightFull();
         button.addClickListener(event -> {
 
-            log.info("Currently selected class" + selectedClass);
+            log.info("Currently selected class: " + selectedClass);
 
             Dialog dialog = addItemDialogFactory.getDialogForClass(selectedClass, currentlyActiveGrid);
 

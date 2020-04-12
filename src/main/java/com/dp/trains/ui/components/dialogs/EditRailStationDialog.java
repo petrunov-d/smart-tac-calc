@@ -5,6 +5,7 @@ import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.ui.validators.ValidatorFactory;
+import com.neovisionaries.i18n.CountryCode;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -14,6 +15,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
@@ -22,13 +24,14 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditRailStationDialog extends AddDialogBase {
+public class EditRailStationDialog extends SmartTACCalcDialogBase {
 
     public EditRailStationDialog(Grid currentlyActiveGrid, RailStationService railStationService,
                                  LineNumberService lineNumberService,
@@ -53,14 +56,14 @@ public class EditRailStationDialog extends AddDialogBase {
         station.setValueChangeMode(ValueChangeMode.EAGER);
         station.addValueChangeListener(event -> binder.validate());
         station.setRequiredIndicatorVisible(true);
-        station.setValue(railStationEntity.getStation());
+        station.setValue(railStationEntity.getStation() == null ? "" : railStationEntity.getStation());
 
         TextArea type = new TextArea();
 
         type.setValueChangeMode(ValueChangeMode.EAGER);
         type.addValueChangeListener(event -> binder.validate());
         type.setRequiredIndicatorVisible(true);
-        type.setValue(railStationEntity.getType());
+        type.setValue(railStationEntity.getType() == null ? "" : railStationEntity.getType());
 
         Checkbox isKeyStation = new Checkbox();
 
@@ -68,11 +71,16 @@ public class EditRailStationDialog extends AddDialogBase {
         isKeyStation.setRequiredIndicatorVisible(true);
         isKeyStation.setValue(railStationEntity.getIsKeyStation());
 
-        TextArea country = new TextArea();
-        country.setValueChangeMode(ValueChangeMode.EAGER);
+        Select<String> country = new Select<>();
+
+        country.setItems(Arrays.stream(CountryCode.values())
+                .map(x -> x.getAlpha3() + " - " + x.getName())
+                .collect(Collectors.toSet()));
+
         country.addValueChangeListener(event -> binder.validate());
         country.setRequiredIndicatorVisible(false);
-        country.setValue(railStationEntity.getCountry());
+        country.setValue(CountryCode.getByCode(railStationEntity.getStation()).getAlpha3() + " - "
+                + CountryCode.getByCode(railStationEntity.getStation()).getName());
 
         binder.forField(lineNumber)
                 .asRequired()
@@ -87,7 +95,7 @@ public class EditRailStationDialog extends AddDialogBase {
         binder.forField(type)
                 .asRequired()
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_TYPE)))
-                .bind(RailStationDto::getStation, RailStationDto::setStation);
+                .bind(RailStationDto::getType, RailStationDto::setType);
 
         binder.forField(isKeyStation)
                 .asRequired()

@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -104,7 +101,10 @@ public class ServiceService implements BaseImportService {
     @Transactional(readOnly = true)
     public Set<String> getServiceTypes() {
 
-        return serviceRepository.findAll().stream().map(ServiceEntity::getType).collect(Collectors.toSet());
+        return serviceRepository.findAll().stream()
+                .map(ServiceEntity::getType)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     @Override
