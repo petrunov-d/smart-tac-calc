@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components.dialogs;
 
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.services.BaseImportService;
 import com.dp.trains.ui.views.EditDataView;
 import com.vaadin.flow.component.UI;
@@ -40,7 +40,7 @@ public class CopyDataFromPreviousYearDialog extends Dialog {
 
                 progressBar.setVisible(true);
 
-                List<PreviousYearCopyingResultDto> copyResult = mergeResult.parallelStream()
+                List<PreviousYearCopyingResultViewModel> copyResult = mergeResult.parallelStream()
                         .map(x -> x.copyFromPreviousYear(selectedYear - 1))
                         .collect(Collectors.toList());
 

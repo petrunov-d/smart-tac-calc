@@ -2,12 +2,16 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.*;
+import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.SectionEntity;
 import com.dp.trains.model.entities.SubSectionEntity;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
+import com.dp.trains.model.viewmodels.StationViewModel;
 import com.dp.trains.repository.SectionRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
@@ -169,79 +173,89 @@ public class SectionsService implements BaseImportService {
     }
 
     @Transactional(readOnly = true)
-    public Set<SectionNeighboursDto> getDirectKeyStationNeighboursForSource(String source, boolean isFinal) {
+    public Set<SectionNeighboursDto> getDirectNeighboursForSource(StationViewModel source, boolean isFirst) {
 
-        Set<SectionEntity> entities;
-        Boolean isFirst = false;
+        if (source != null && !source.getIsKeyStation()) {
 
-        if (source == null) {
-
-            entities = Sets.newHashSet(this.sectionsRepository.findAll());
-            isFirst = true;
-
-        } else {
-
-            entities = this.sectionsRepository.findAllByFirstKeyPoint(source);
+            return this.getDirectNeighboursForNonKeyStation(source.getSelectedStation());
         }
 
-        Boolean finalIsFirst = isFirst;
-        return entities.stream()
-                .map(x -> SectionNeighboursDto.builder()
-                        .isElectrified(x.getIsElectrified())
-                        .lineNumber(x.getLineNumber())
-                        .typeOfLine(x.getLineType())
-                        .unitPrice(x.getUnitPrice())
-                        .source(railStationService.getByRailStationName(x.getFirstKeyPoint()))
-                        .destination(railStationService.getByRailStationName(x.getLastKeyPoint()))
-                        .kilometersBetweenStations(x.getKilometersBetweenStations())
-                        .displayableStationNames(getDisplayableItemsForSection(x, finalIsFirst))
-                        .subSectionDtoList(x.getSubSectionEntities().stream()
-                                .map(y -> SubSectionDto
-                                        .builder()
-                                        .nonKeyStation(y.getNonKeyStation())
-                                        .kilometers(y.getKilometers())
-                                        .build())
-                                .collect(Collectors.toSet())).build())
-                .collect(Collectors.toSet());
+        Set<SectionEntity> entities = source == null ? Sets.newHashSet(this.sectionsRepository.findAll()) :
+                this.sectionsRepository.findAllByFirstKeyPoint(source.getSelectedStation());
+
+        Set<SectionNeighboursDto> sectionNeighbourDtos = Sets.newHashSet();
+
+        for (SectionEntity sectionEntity : entities) {
+
+            SectionNeighboursDto rootDto = getSectionNeighboursDtoFromSectionEntity(sectionEntity, true);
+
+            sectionNeighbourDtos.add(rootDto);
+
+            if (isFirst) {
+
+                RailStationEntity first = railStationService.getByRailStationName(sectionEntity.getFirstKeyPoint());
+
+                SectionNeighboursDto firstDto = SectionNeighboursDto.builder()
+                        .isElectrified(sectionEntity.getIsElectrified())
+                        .lineNumber(sectionEntity.getLineNumber())
+                        .typeOfLine(sectionEntity.getLineType())
+                        .unitPrice(sectionEntity.getUnitPrice())
+                        .source(first)
+                        .destination(first)
+                        .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
+                        .isKeyStation(true)
+                        .build();
+
+                sectionNeighbourDtos.add(firstDto);
+            }
+
+            getSubSectionNeighbours(sectionNeighbourDtos, sectionEntity);
+        }
+
+        return sectionNeighbourDtos;
     }
 
-    private static Set<DisplayableStationDto> getDisplayableItemsForSection(SectionEntity sectionEntity,
-                                                                            Boolean finalIsFirst) {
+    private Set<SectionNeighboursDto> getDirectNeighboursForNonKeyStation(String selectedStation) {
 
-        Set<DisplayableStationDto> displayableItems = Sets.newHashSet();
+        SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionEntity(selectedStation);
+        return Sets.newHashSet(getSectionNeighboursDtoFromSectionEntity(sectionEntity, true));
+    }
 
-        displayableItems.add(DisplayableStationDto
-                .builder()
-                .name(sectionEntity.getLastKeyPoint())
-                .isKeyStation(true)
-                .build());
+    private void getSubSectionNeighbours(Set<SectionNeighboursDto> sectionNeighbourDtos, SectionEntity sectionEntity) {
 
-        if (finalIsFirst) {
+        for (SubSectionEntity subSectionEntity : sectionEntity.getSubSectionEntities()) {
 
-            displayableItems.add(DisplayableStationDto
-                    .builder()
-                    .name(sectionEntity.getFirstKeyPoint())
-                    .isKeyStation(true)
-                    .build());
+            SectionNeighboursDto sectionNeighboursDto = getSectionNeighboursDtoFromSectionEntity(sectionEntity, false);
+
+            Double kilometersBetweenStations = sectionEntity.getKilometersBetweenStations() - subSectionEntity.getKilometers();
+            sectionNeighboursDto.setKilometersBetweenStations(kilometersBetweenStations);
+            sectionNeighboursDto.setNonKeyStation(railStationService.getByRailStationName(subSectionEntity.getNonKeyStation()));
+
+            log.info("Adding non key station:" + sectionNeighboursDto.toString());
+
+            sectionNeighbourDtos.add(sectionNeighboursDto);
         }
+    }
 
-        displayableItems.addAll(sectionEntity.getSubSectionEntities()
-                .stream()
-                .map(SubSectionEntity::getNonKeyStation)
-                .map(x -> DisplayableStationDto.builder()
-                        .name(x)
-                        .isKeyStation(false)
-                        .build())
-                .collect(Collectors.toSet()));
+    private SectionNeighboursDto getSectionNeighboursDtoFromSectionEntity(SectionEntity sectionEntity, boolean isKeyStation) {
 
-        return displayableItems;
+        return SectionNeighboursDto.builder()
+                .isElectrified(sectionEntity.getIsElectrified())
+                .lineNumber(sectionEntity.getLineNumber())
+                .typeOfLine(sectionEntity.getLineType())
+                .unitPrice(sectionEntity.getUnitPrice())
+                .source(railStationService.getByRailStationName(sectionEntity.getFirstKeyPoint()))
+                .destination(railStationService.getByRailStationName(sectionEntity.getLastKeyPoint()))
+                .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
+                .isKeyStation(isKeyStation)
+                .build();
     }
 
     @Override
     @Transactional
     public void deleteAll() {
 
-        sectionsRepository.deleteAll();
+        this.sectionsRepository.deleteAll();
     }
 
     @Transactional
@@ -268,13 +282,13 @@ public class SectionsService implements BaseImportService {
     @Override
     @YearAgnostic
     @Transactional
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
 
         List<SectionEntity> clones = this.sectionsRepository.findAllByYear(previousYear).stream().map(x -> {
             try {
 
-                SectionEntity sectionEntity =
-                        defaultObjectMapper.readValue(defaultObjectMapper.writeValueAsString(x), SectionEntity.class);
+                SectionEntity sectionEntity = defaultObjectMapper
+                        .readValue(defaultObjectMapper.writeValueAsString(x), SectionEntity.class);
                 sectionEntity.setId(null);
                 sectionEntity.setYear(previousYear + 1);
                 sectionEntity.setShouldUpdateYear(false);
@@ -289,9 +303,7 @@ public class SectionsService implements BaseImportService {
 
         this.sectionsRepository.saveAll(clones);
 
-        return PreviousYearCopyingResultDto.builder()
-                .displayName(getDisplayName())
-                .copyCount(clones.size())
+        return PreviousYearCopyingResultViewModel.builder().displayName(getDisplayName()).copyCount(clones.size())
                 .build();
     }
 
@@ -314,79 +326,40 @@ public class SectionsService implements BaseImportService {
         return getDisplayName();
     }
 
-    public SectionNeighboursDto findSectionNeighboursDtoByDisplayableDto(DisplayableStationDto value,
-                                                                         Set<SectionNeighboursDto> neighbours) {
-
-        SectionNeighboursDto result = null;
-
-        if (value.isKeyStation()) {
-            result = neighbours.stream()
-                    .filter(x -> x.getDestination().getStation().equals(value.getName()) ||
-                            x.getSource().getStation().equals(value.getName()))
-                    .findFirst()
-                    .get();
-        } else {
-
-            breakAll:
-            for (SectionNeighboursDto sectionNeighboursDto : neighbours) {
-
-                for (SubSectionDto subSectionDto : sectionNeighboursDto.getSubSectionDtoList()) {
-
-                    if (subSectionDto.getNonKeyStation().equals(value.getName())) {
-
-                        subSectionDto.setIsSelected(true);
-                        result = sectionNeighboursDto;
-                        break breakAll;
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public Set<DisplayableStationDto> getDisplayableStationDtos(int rowIndex, boolean isFinalRow,
-                                                                Set<SectionNeighboursDto> neighbours) {
-        Set<DisplayableStationDto> displayableStationDtos;
-
+    public Set<SectionNeighboursDto> getVisibleSectionNeighbourDtos(int rowIndex, boolean isFinalRow,
+                                                                    Collection<SectionNeighboursDto> neighbours) {
         if (rowIndex == 1 || isFinalRow) {
 
-            displayableStationDtos = neighbours.stream()
-                    .map(SectionNeighboursDto::getDisplayableStationNames)
-                    .flatMap(Set::stream)
-                    .collect(Collectors.toSet());
-
-        } else {
-
-            displayableStationDtos = neighbours.stream()
-                    .map(SectionNeighboursDto::getDisplayableStationNames)
-                    .flatMap(Set::stream)
-                    .filter(DisplayableStationDto::isKeyStation)
-                    .collect(Collectors.toSet());
+            return Sets.newHashSet(neighbours);
         }
-        return displayableStationDtos;
+
+        return neighbours.stream()
+                .filter(SectionNeighboursDto::getIsKeyStation)
+                .collect(Collectors.toSet());
     }
 
-    @Transactional(readOnly = true)
-    public SectionNeighboursDto getByStationNameAndLineNumber(String station, Integer lineNumber, Boolean isFirst) {
+    public SectionNeighboursDto getByStationAndLineNumber(SectionNeighboursDto value,
+                                                          Collection<SectionNeighboursDto> neighbours) {
 
-        SectionEntity x = this.sectionsRepository.findByFirstKeyPointAndLineNumber(station, lineNumber);
+        Optional<SectionNeighboursDto> optionalSectionNeighboursDto = neighbours.stream()
+                .filter(x -> x.equals(value))
+                .findFirst();
 
-        return SectionNeighboursDto.builder()
-                .isElectrified(x.getIsElectrified())
-                .lineNumber(x.getLineNumber())
-                .typeOfLine(x.getLineType())
-                .unitPrice(x.getUnitPrice())
-                .source(railStationService.getByRailStationName(x.getFirstKeyPoint()))
-                .destination(railStationService.getByRailStationName(x.getLastKeyPoint()))
-                .kilometersBetweenStations(x.getKilometersBetweenStations())
-                .displayableStationNames(getDisplayableItemsForSection(x, isFirst))
-                .subSectionDtoList(x.getSubSectionEntities().stream()
-                        .map(y -> SubSectionDto
-                                .builder()
-                                .nonKeyStation(y.getNonKeyStation())
-                                .kilometers(y.getKilometers())
-                                .build())
-                        .collect(Collectors.toSet())).build();
+        if (!optionalSectionNeighboursDto.isPresent()) {
+
+            throw new IllegalStateException("Could not find station for target:" + value
+                    + " neighbours " + Joiner.on(",").join(neighbours));
+        }
+
+        return neighbours.stream()
+                .filter(x -> x.equals(value))
+                .findFirst().get();
+    }
+
+    public Set<Integer> getLineNumbersFromSectionNeighbourDtos(Collection<SectionNeighboursDto> sectionNeighboursDtos) {
+
+        return sectionNeighboursDtos.stream()
+                .map(SectionNeighboursDto::getLineNumber)
+                .collect(Collectors.toSet());
     }
 }

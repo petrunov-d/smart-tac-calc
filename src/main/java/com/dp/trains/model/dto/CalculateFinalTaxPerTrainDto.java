@@ -14,6 +14,5 @@ public class CalculateFinalTaxPerTrainDto {
     private BigDecimal totalKilometers;
     private BigDecimal totalBruttoTonneKilometers;
     private BigDecimal finalTax;
-    private boolean errorInCalculation;
     private String stackTrace;
 }

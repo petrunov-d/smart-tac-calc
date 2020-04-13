@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,10 +16,15 @@ public class SectionNeighboursDto {
     private String typeOfLine;
     private RailStationEntity source;
     private RailStationEntity destination;
+    private RailStationEntity nonKeyStation;
     private Boolean isElectrified;
     private Double unitPrice;
     private Double kilometersBetweenStations;
-    private Set<SubSectionDto> subSectionDtoList;
-    private Set<DisplayableStationDto> displayableStationNames;
-    private int rowCount;
+    private Boolean isKeyStation;
+    private int rowIndex;
+
+    public String getDisplayName() {
+
+        return isKeyStation ? destination.getStation() : nonKeyStation.getStation();
+    }
 }

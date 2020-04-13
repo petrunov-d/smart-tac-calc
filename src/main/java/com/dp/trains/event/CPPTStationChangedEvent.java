@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CPPTStationChangedEvent {
 
-    private String selectedKeyStation;
+    private String selectedStation;
+    private Boolean isKeyStation;
 }

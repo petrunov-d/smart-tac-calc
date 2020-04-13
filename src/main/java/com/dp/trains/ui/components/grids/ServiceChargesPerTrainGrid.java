@@ -43,6 +43,11 @@ public class ServiceChargesPerTrainGrid extends SmartTACCalcGrid<ServiceChargesP
                 .setSortable(true)
                 .setResizable(true);
 
+        Grid.Column<ServiceChargesPerTrainEntity> serviceUnitPriceColumn = this.addColumn(x -> x.getServiceEntity().getUnitPrice())
+                .setHeader(getTranslation(GRID_SERVICE_COLUMN_HEADER_UNIT_PRICE))
+                .setSortable(true)
+                .setResizable(true);
+
         this.addComponentColumn(item -> new Button(getTranslation(SHARED_BUTTON_TEXT_EDIT), VaadinIcon.EDIT.create(), click -> {
 
             Dialog editDialog = new EditServiceChargesPerTrainDialog(this, serviceChargesPerTrainService, item);

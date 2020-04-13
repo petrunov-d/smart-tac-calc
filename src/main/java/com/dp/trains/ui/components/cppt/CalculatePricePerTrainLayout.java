@@ -2,18 +2,17 @@ package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
+import com.dp.trains.model.viewmodels.StationViewModel;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
 public class CalculatePricePerTrainLayout extends VerticalLayout {
 
     private int nextRowIdex = 1;
-    private String currentKeyStation;
+    private StationViewModel currentStation;
     private Double tonnage;
 
     private List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
@@ -49,39 +48,32 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
                        ServiceChargesPerTrainService serviceChargesPerTrainService, Double tonnage) {
 
         if (this.tonnage == null) {
+
             this.tonnage = tonnage;
         }
 
-        this.add(new CalculatePricePerTrainRow(nextRowIdex, isFinal, trainNumber,
-                sectionsService, serviceChargesPerTrainService, currentKeyStation, this.tonnage));
+        CalculatePricePerTrainRow calculatePricePerTrainRow = new CalculatePricePerTrainRow(
+                nextRowIdex, isFinal, trainNumber, sectionsService, serviceChargesPerTrainService,
+                currentStation, this.tonnage);
+
+        this.add(calculatePricePerTrainRow);
+        this.calculatePricePerTrainRows.add(calculatePricePerTrainRow);
 
         nextRowIdex++;
-    }
-
-    @Override
-    public void add(Component... components) {
-
-        super.add(components);
-
-        calculatePricePerTrainRows.addAll(Arrays
-                .stream(components)
-                .filter(component -> component instanceof CalculatePricePerTrainRow)
-                .map(x -> (CalculatePricePerTrainRow) x)
-                .collect(Collectors.toList()));
     }
 
     public void resetContainer() {
 
         this.getChildren().filter(x -> x instanceof CalculatePricePerTrainRow).forEach(this::remove);
-        nextRowIdex = 1;
-        currentKeyStation = null;
+        this.nextRowIdex = 1;
+        this.currentStation = null;
         this.tonnage = null;
-        calculatePricePerTrainRows.clear();
+        this.calculatePricePerTrainRows.clear();
     }
 
     public void updateTrainNumberForRows(Integer trainNumber) {
 
-        calculatePricePerTrainRows.forEach(x -> x.setTrainNumber(trainNumber));
+        this.calculatePricePerTrainRows.forEach(x -> x.setTrainNumber(trainNumber));
     }
 
     @Subscribe
@@ -89,7 +81,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         log.info("Row Removed: " + cpptRowRemovedEvent.toString());
 
-        calculatePricePerTrainRows.remove(cpptRowRemovedEvent.getRowIndex() - 1);
+        this.calculatePricePerTrainRows.remove(cpptRowRemovedEvent.getRowIndex() - 1);
 
         CalculatePricePerTrainRow toRemove = (CalculatePricePerTrainRow) this.getChildren()
                 .filter(x -> x instanceof CalculatePricePerTrainRow)
@@ -98,26 +90,26 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         this.remove(toRemove);
 
-        nextRowIdex = 1;
+        this.nextRowIdex = 1;
 
         for (CalculatePricePerTrainRow row : calculatePricePerTrainRows) {
 
-            row.setRowIndex(nextRowIdex, row.getIsFinal());
-            nextRowIdex++;
+            row.setRowIndex(nextRowIdex);
+            this.nextRowIdex++;
         }
 
-        if (calculatePricePerTrainRows.size() > 0) {
+        if (this.calculatePricePerTrainRows.size() > 0) {
 
             CalculatePricePerTrainRow previousRow = calculatePricePerTrainRows.get(calculatePricePerTrainRows.size() - 1);
 
             previousRow.enableRow();
-            currentKeyStation = previousRow.getCurrentKeyStation();
+            currentStation = previousRow.getSelectedStation();
             tonnage = previousRow.getRowData().getTonnage();
 
         } else {
 
             EventBusHolder.getEventBus().post(new CPPTAllRowsRemovedEvent());
-            currentKeyStation = null;
+            currentStation = null;
             tonnage = null;
         }
 
@@ -128,10 +120,14 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     }
 
     @Subscribe
-    public void handleStationChangedFromRow(CPPTStationChangedEvent CPPTStationChangedEvent) {
+    public void handleStationChangedFromRow(CPPTStationChangedEvent cPPTStationChangedEvent) {
 
-        currentKeyStation = CPPTStationChangedEvent.getSelectedKeyStation();
-        log.info("Current Key Station set to:" + currentKeyStation);
+        currentStation = StationViewModel.builder()
+                .selectedStation(cPPTStationChangedEvent.getSelectedStation())
+                .isKeyStation(cPPTStationChangedEvent.getIsKeyStation())
+                .build();
+
+        log.info("Current Key Station set to:" + currentStation.toString());
     }
 
     @Subscribe

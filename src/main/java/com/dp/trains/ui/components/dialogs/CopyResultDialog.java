@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components.dialogs;
 
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.services.*;
 import com.dp.trains.ui.views.EditDataView;
 import com.google.common.collect.Maps;
@@ -24,7 +24,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 public class CopyResultDialog extends Dialog {
 
-    public CopyResultDialog(List<PreviousYearCopyingResultDto> copyResult, Integer selectedYear) {
+    public CopyResultDialog(List<PreviousYearCopyingResultViewModel> copyResult, Integer selectedYear) {
 
         VerticalLayout verticalLayout = new VerticalLayout();
 

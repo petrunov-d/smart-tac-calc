@@ -3,7 +3,7 @@ package com.dp.trains.services;
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.LineNumberDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.model.entities.LineNumberEntity;
 import com.dp.trains.repository.LineNumberRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
@@ -146,7 +146,7 @@ public class LineNumberService implements BaseImportService {
     @Override
     @YearAgnostic
     @Transactional
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
 
         List<LineNumberEntity> clones = this.lineNumberRepository.findAllByYear(previousYear).stream().map(x -> {
             try {
@@ -167,7 +167,7 @@ public class LineNumberService implements BaseImportService {
 
         this.lineNumberRepository.saveAll(clones);
 
-        return PreviousYearCopyingResultDto.builder()
+        return PreviousYearCopyingResultViewModel.builder()
                 .displayName(getDisplayName())
                 .copyCount(clones.size())
                 .build();

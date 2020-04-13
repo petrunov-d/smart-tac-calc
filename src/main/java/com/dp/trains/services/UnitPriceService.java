@@ -2,7 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.model.dto.UnitPriceDataIntegrity;
 import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.model.entities.FinancialDataEntity;
@@ -171,7 +171,7 @@ public class UnitPriceService implements BaseImportService {
     @Override
     @YearAgnostic
     @Transactional
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
 
         List<UnitPriceEntity> clones = this.unitPriceRepository.findAllByYear(previousYear).stream().map(x -> {
             try {
@@ -192,7 +192,7 @@ public class UnitPriceService implements BaseImportService {
 
         this.unitPriceRepository.saveAll(clones);
 
-        return PreviousYearCopyingResultDto.builder()
+        return PreviousYearCopyingResultViewModel.builder()
                 .displayName(getDisplayName())
                 .copyCount(clones.size())
                 .build();

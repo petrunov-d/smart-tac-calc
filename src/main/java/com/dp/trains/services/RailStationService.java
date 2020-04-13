@@ -2,7 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.model.dto.RailStationDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.repository.RailStationRepository;
@@ -136,7 +136,7 @@ public class RailStationService implements BaseImportService {
     @Override
     @YearAgnostic
     @Transactional
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
 
         List<RailStationEntity> clones = this.railStationRepository.findAllByYear(previousYear).stream().map(x -> {
             try {
@@ -157,7 +157,7 @@ public class RailStationService implements BaseImportService {
 
         this.railStationRepository.saveAll(clones);
 
-        return PreviousYearCopyingResultDto.builder()
+        return PreviousYearCopyingResultViewModel.builder()
                 .displayName(getDisplayName())
                 .copyCount(clones.size())
                 .build();

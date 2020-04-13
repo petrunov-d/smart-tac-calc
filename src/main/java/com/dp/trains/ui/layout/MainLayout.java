@@ -1,5 +1,6 @@
 package com.dp.trains.ui.layout;
 
+import com.dp.trains.exception.CodeNotFoundException;
 import com.dp.trains.services.vaadin.I18NProviderImpl;
 import com.dp.trains.ui.components.common.LanguageSelect;
 import com.dp.trains.ui.views.*;
@@ -13,6 +14,7 @@ import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenu
 import com.github.appreciated.app.layout.component.menu.left.items.LeftClickableItem;
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
+import com.google.common.collect.Maps;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H5;
@@ -25,9 +27,13 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
+import org.hibernate.exception.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -161,30 +167,30 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
         ui.navigate(LoginView.class);
     }
 
-//    private Map<Class<? extends Throwable>, String> getDescriptions() {
-//
-//        Map<Class<? extends Throwable>, String> map = Maps.newHashMap();
-//
-//        map.put(IllegalStateException.class, "General Error");
-//        map.put(ConstraintViolationException.class, "Bad data. Please fix the data before continuing");
-//        map.put(NullPointerException.class, "General Error");
-//        map.put(CodeNotFoundException.class, "Code not set! Please make sure all data with codes has a code!");
-//        map.put(GenericJDBCException.class, "General Error");
-//        map.put(JDBCConnectionException.class, "Connection error, contact an admin.");
-//        map.put(LockAcquisitionException.class, "Try again later");
-//        map.put(LockTimeoutException.class, "Try again later");
-//        map.put(SQLGrammarException.class, "Contact an admin, or refresh the page.");
-//        map.put(ArithmeticException.class, "Contact an admin or make sure calculation is a legal arithmetic expression");
-//        map.put(ClassNotFoundException.class, "Contact an admin, or refresh the page.");
-//        map.put(FileNotFoundException.class, "Contact an admin, or refresh the page.");
-//        map.put(IOException.class, "Contact an admin, or refresh the page.");
-//        map.put(InterruptedException.class, "Contact an admin, or refresh the page.");
-//        map.put(NoSuchFieldException.class, "Contact an admin, or refresh the page.");
-//        map.put(NoSuchMethodException.class, "Contact an admin, or refresh the page.");
-//        map.put(RuntimeException.class, "Contact an admin, or refresh the page.");
-//        map.put(StringIndexOutOfBoundsException.class, "Contact an admin, or refresh the page.");
-//        map.put(SecurityException.class, "Contact an admin, or refresh the page.");
-//
-//        return map;
-//    }
+    private Map<Class<? extends Throwable>, String> getDescriptions() {
+
+        Map<Class<? extends Throwable>, String> map = Maps.newHashMap();
+
+        map.put(IllegalStateException.class, "General Error");
+        map.put(ConstraintViolationException.class, "Data Integrity Problem. Please fix the data before continuing");
+        map.put(NullPointerException.class, "General Error");
+        map.put(CodeNotFoundException.class, "Code not set! Please make sure all data with codes has a code!");
+        map.put(GenericJDBCException.class, "General Error");
+        map.put(JDBCConnectionException.class, "Connection error, contact an admin.");
+        map.put(LockAcquisitionException.class, "Try again later");
+        map.put(LockTimeoutException.class, "Try again later");
+        map.put(SQLGrammarException.class, "Contact an admin, or refresh the page.");
+        map.put(ArithmeticException.class, "Contact an admin or make sure calculation is a legal arithmetic expression");
+        map.put(ClassNotFoundException.class, "Contact an admin, or refresh the page.");
+        map.put(FileNotFoundException.class, "Contact an admin, or refresh the page.");
+        map.put(IOException.class, "Contact an admin, or refresh the page.");
+        map.put(InterruptedException.class, "Contact an admin, or refresh the page.");
+        map.put(NoSuchFieldException.class, "Contact an admin, or refresh the page.");
+        map.put(NoSuchMethodException.class, "Contact an admin, or refresh the page.");
+        map.put(RuntimeException.class, "Contact an admin, or refresh the page.");
+        map.put(StringIndexOutOfBoundsException.class, "Contact an admin, or refresh the page.");
+        map.put(SecurityException.class, "Contact an admin, or refresh the page.");
+
+        return map;
+    }
 }

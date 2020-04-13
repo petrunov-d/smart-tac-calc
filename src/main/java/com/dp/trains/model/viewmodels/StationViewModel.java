@@ -1,4 +1,4 @@
-package com.dp.trains.model.dto;
+package com.dp.trains.model.viewmodels;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DisplayableStationDto {
+public class StationViewModel {
 
-    private String name;
-    private boolean isKeyStation;
+    private String selectedStation;
+    private Boolean isKeyStation;
 }

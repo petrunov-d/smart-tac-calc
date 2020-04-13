@@ -2,7 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.model.dto.TrafficDataDto;
 import com.dp.trains.model.entities.TrafficDataEntity;
 import com.dp.trains.repository.TrafficDataRepository;
@@ -63,7 +63,7 @@ public class TrafficDataService implements BaseImportService {
     }
 
     @Override
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
         return null;
     }
 

@@ -1,4 +1,4 @@
-package com.dp.trains.model.dto;
+package com.dp.trains.model.viewmodels;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PreviousYearCopyingResultDto {
+public class PreviousYearCopyingResultViewModel {
 
     private String displayName;
     private Integer copyCount;

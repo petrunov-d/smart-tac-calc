@@ -5,15 +5,14 @@ import com.dp.trains.event.CPPTRowRemovedEvent;
 import com.dp.trains.event.CPPTStationChangedEvent;
 import com.dp.trains.event.CPPTTonnageChangedFromRowEvent;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
-import com.dp.trains.model.dto.DisplayableStationDto;
 import com.dp.trains.model.dto.SectionNeighboursDto;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
+import com.dp.trains.model.viewmodels.StationViewModel;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.ViewServiceChargesForTrainDialog;
 import com.dp.trains.utils.EventBusHolder;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vaadin.flow.component.button.Button;
@@ -28,6 +27,7 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -39,14 +39,14 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private int rowIndex;
     private boolean isFinal;
     private Integer trainNumber;
-    private String currentKeyStation;
-    private Set<SectionNeighboursDto> neighbours;
+    private StationViewModel selectedStation;
+    private Collection<SectionNeighboursDto> neighbours;
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
 
     private SectionsService sectionsService;
 
-    private Select<DisplayableStationDto> station;
-    private Select<SectionNeighboursDto> lineNumbers;
+    private Select<SectionNeighboursDto> station;
+    private Select<Integer> lineNumbers;
     private NumberField tonnage;
     private Button serviceButton;
     private Button removeButton;
@@ -54,23 +54,21 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private H5 serviceChargesLabel;
     private H5 rowTitle;
 
-    public CalculatePricePerTrainRow(int i, boolean isFinal,
+    public CalculatePricePerTrainRow(int rowIndex, boolean isFinal,
                                      Integer trainNumber, SectionsService sectionsService,
                                      ServiceChargesPerTrainService serviceChargesPerTrainService,
-                                     String currentKeyStation, Double tonnageDouble) {
+                                     StationViewModel selectedStation, Double tonnageDouble) {
 
         EventBusHolder.getEventBus().register(this);
 
-        rowTitle = new H5();
+        this.rowTitle = new H5();
         this.isFinal = isFinal;
-        this.currentKeyStation = currentKeyStation;
+        this.selectedStation = selectedStation;
         this.trainNumber = trainNumber;
         this.sectionsService = sectionsService;
-        this.setRowIndex(i, isFinal);
+        this.setRowIndex(rowIndex);
 
-        neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation, this.isFinal);
-
-        log.info(Joiner.on(", ").join(neighbours));
+        neighbours = sectionsService.getDirectNeighboursForSource(selectedStation, isFirst());
 
         initalizeStationSelect(trainNumber, serviceChargesPerTrainService, neighbours);
         initializeLineNumberSelect(neighbours);
@@ -103,9 +101,13 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         doneButton.setWidth("100%");
         doneButton.setEnabled(false);
         doneButton.addClickListener(event -> {
+
             if (station.getValue() != null && lineNumbers.getValue() != null && tonnage.getValue() != null) {
+
                 disableRow();
+
             } else {
+
                 Dialog dialog = new BasicInfoDialog(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_FILL_IN_ALL_WARNING));
                 dialog.open();
             }
@@ -139,6 +141,11 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         horizontalLayout.add(serviceButtonLayout);
         this.add(horizontalLayout);
+    }
+
+    private boolean isFirst() {
+
+        return this.rowIndex == 1;
     }
 
     private void checkRowDone() {
@@ -178,82 +185,82 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.doneButton.setEnabled(true);
     }
 
-    private void initializeLineNumberSelect(Set<SectionNeighboursDto> neighbours) {
+    private void initializeLineNumberSelect(Collection<SectionNeighboursDto> neighbours) {
 
         lineNumbers = new Select<>();
         lineNumbers.setLabel(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
 
-        if (this.currentKeyStation == null) {
+        if (this.selectedStation == null) {
 
-            lineNumbers.setItems(Lists.newArrayList());
+            lineNumbers.setItems(Sets.newHashSet());
 
         } else {
 
-            lineNumbers.setItems(neighbours);
+            lineNumbers.setItems(this.sectionsService.getLineNumbersFromSectionNeighbourDtos(neighbours));
         }
-
-        lineNumbers.setItemLabelGenerator(sectionNeighboursDto -> String.valueOf(sectionNeighboursDto.getLineNumber()));
     }
 
     private void initalizeStationSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
-                                        Set<SectionNeighboursDto> neighbours) {
+                                        Collection<SectionNeighboursDto> neighbours) {
 
-        Set<DisplayableStationDto> displayableStationDtos = this.sectionsService.getDisplayableStationDtos(
+        Set<SectionNeighboursDto> visibleSectionNeighbourDtos = this.sectionsService.getVisibleSectionNeighbourDtos(
                 this.rowIndex, this.isFinal, neighbours);
 
         station = new Select<>();
         station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
-        station.setItems(displayableStationDtos);
-        station.setItemLabelGenerator(DisplayableStationDto::getName);
+        station.setItems(visibleSectionNeighbourDtos);
+        station.setItemLabelGenerator(SectionNeighboursDto::getDisplayName);
         station.addValueChangeListener(event -> {
 
-            String newKeyStation = event.getValue().getName();
+            Boolean isKeyStation = event.getValue().getIsKeyStation();
+            String newStation = isKeyStation ? event.getValue().getDestination().getStation() : event.getValue().getNonKeyStation().getStation();
 
-            EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder()
-                    .selectedKeyStation(newKeyStation)
-                    .build());
+            EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder().selectedStation(newStation).isKeyStation(isKeyStation).build());
 
-            this.currentKeyStation = newKeyStation;
+            this.selectedStation = StationViewModel.builder().selectedStation(newStation).isKeyStation(isKeyStation).build();
 
-            if (this.currentKeyStation != null) {
+            if (this.selectedStation != null) {
 
                 if (lineNumbers.getDataProvider().size(new Query<>()) == 0) {
 
-                    lineNumbers.setItems(this.sectionsService.getDirectKeyStationNeighboursForSource(
-                            currentKeyStation, this.isFinal));
+                    Collection<SectionNeighboursDto> sectionNeighboursDtos = this.sectionsService
+                            .getDirectNeighboursForSource(selectedStation, isFirst());
+
+                    lineNumbers.setItems(this.sectionsService.getLineNumbersFromSectionNeighbourDtos(sectionNeighboursDtos));
                 }
 
                 if (this.trainNumber != null) {
 
-                    serviceChargesPerTrainEntityList = serviceChargesPerTrainService
-                            .findByTrainNumberAndRailRoadStation(trainNumber, this.currentKeyStation);
+                    this.serviceChargesPerTrainEntityList = serviceChargesPerTrainService
+                            .findByTrainNumberAndRailRoadStation(trainNumber, this.selectedStation.getSelectedStation());
 
                     serviceChargesLabel.setText(String.format("%s %.3f",
                             getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL),
                             serviceChargesPerTrainService.getTotalServiceChargesForTrainNumberAndRailStation(
                                     serviceChargesPerTrainEntityList)));
 
-                    serviceButton.setEnabled(true);
+                    if (this.serviceChargesPerTrainEntityList.isEmpty()) {
+
+                        serviceButton.setEnabled(false);
+                    } else {
+                        serviceButton.setEnabled(true);
+                    }
                 }
-
-            } else {
-
-                serviceButton.setEnabled(false);
             }
         });
     }
 
     public void setTrainNumber(Integer trainNumber) {
 
-        log.info("Setting train number to: " + trainNumber);
+        log.debug("Setting train number to: " + trainNumber);
         this.trainNumber = trainNumber;
-        this.station.setValue(new DisplayableStationDto());
+        this.station.setValue(new SectionNeighboursDto());
         this.station.setValue(this.station.getValue());
     }
 
     public int getRowIndex() {
 
-        return rowIndex;
+        return this.rowIndex;
     }
 
     public boolean getIsFinal() {
@@ -261,17 +268,17 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         return this.isFinal;
     }
 
-    public void setRowIndex(int i, boolean isFinal) {
+    public void setRowIndex(int rowIndex) {
 
-        this.rowIndex = i;
+        this.rowIndex = rowIndex;
 
         String rowTitleString;
 
-        if (this.rowIndex == 1) {
+        if (isFirst()) {
 
             rowTitleString = getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FIRST_STATION);
 
-        } else if (isFinal) {
+        } else if (getIsFinal()) {
 
             rowTitleString = getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_FINAL_STATION);
 
@@ -280,39 +287,24 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
             rowTitleString = String.format("%d - %s", this.rowIndex, getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_TITLE_N_STATION));
         }
 
-        rowTitle.setText(rowTitleString);
+        this.rowTitle.setText(rowTitleString);
     }
 
-    public String getCurrentKeyStation() {
+    public StationViewModel getSelectedStation() {
 
-        return this.currentKeyStation;
-    }
-
-    public void setCurrentKeyStation(String currentKeyStation) {
-
-        this.currentKeyStation = currentKeyStation;
-
-        Set<SectionNeighboursDto> neighbours = sectionsService.getDirectKeyStationNeighboursForSource(currentKeyStation, this.isFinal);
-
-        this.station.setItems(this.sectionsService.getDisplayableStationDtos(this.rowIndex, this.isFinal, neighbours));
-        this.lineNumbers.setItems(neighbours);
+        return this.selectedStation;
     }
 
     public CalculateTaxPerTrainRowDataDto getRowData() {
 
-        SectionNeighboursDto current = this.sectionsService.getByStationNameAndLineNumber(station.getValue().getName(),
-                lineNumbers.getValue().getLineNumber(), rowIndex == 1);
-
-        Set<SectionNeighboursDto> sectionNeighboursDtos = Sets.newHashSet(neighbours);
-        sectionNeighboursDtos.add(current);
-
-        SectionNeighboursDto sectionNeighboursDto = this.sectionsService
-                .findSectionNeighboursDtoByDisplayableDto(station.getValue(), sectionNeighboursDtos);
+        SectionNeighboursDto sectionNeighboursDto = this.sectionsService.getByStationAndLineNumber(station.getValue(), neighbours);
 
         return CalculateTaxPerTrainRowDataDto
                 .builder()
-                .section(sectionNeighboursDto.toBuilder()
-                        .lineNumber(lineNumbers.getValue().getLineNumber())
+                .section(sectionNeighboursDto
+                        .toBuilder()
+                        .lineNumber(lineNumbers.getValue())
+                        .rowIndex(this.getRowIndex())
                         .build())
                 .tonnage(this.tonnage.getValue())
                 .serviceChargesPerTrainEntityList(serviceChargesPerTrainEntityList)

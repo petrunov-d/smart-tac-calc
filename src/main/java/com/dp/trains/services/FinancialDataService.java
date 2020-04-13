@@ -2,7 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.FinancialDataDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.model.entities.FinancialDataEntity;
 import com.dp.trains.repository.FinancialDataRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
@@ -77,7 +77,7 @@ public class FinancialDataService implements BaseImportService {
     }
 
     @Override
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
 
         return null;
     }

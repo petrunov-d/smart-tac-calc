@@ -1,7 +1,7 @@
 package com.dp.trains.services;
 
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.PreviousYearCopyingResultDto;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public interface BaseImportService {
 
     String getDisplayName();
 
-    PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear);
+    PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear);
 }

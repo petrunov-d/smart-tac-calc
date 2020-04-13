@@ -119,6 +119,8 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
                 ListDataProvider<RailStationEntity> dataProvider =
                         (ListDataProvider<RailStationEntity>) currentlyActiveGrid.getDataProvider();
 
+                railStationDto.setCountry(country.getValue().substring(0, country.getValue().indexOf('-') - 1));
+
                 RailStationEntity railStationEntity = railStationService.add(railStationDto);
                 dataProvider.getItems().add(railStationEntity);
                 dataProvider.refreshAll();

@@ -1,12 +1,17 @@
 package com.dp.trains.services;
 
 import com.dp.trains.exception.CodeNotFoundException;
-import com.dp.trains.model.dto.*;
+import com.dp.trains.model.dto.CalculateFinalTaxPerTrainDto;
+import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
+import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.TaxForServicesPerTrainDto;
 import com.dp.trains.model.entities.*;
+import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.repository.TaxForServicesPerTrainRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.neovisionaries.i18n.CountryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -64,7 +69,7 @@ public class TaxForServicesPerTrainService implements BaseImportService {
     }
 
     @Override
-    public PreviousYearCopyingResultDto copyFromPreviousYear(Integer previousYear) {
+    public PreviousYearCopyingResultViewModel copyFromPreviousYear(Integer previousYear) {
         return null;
     }
 
@@ -86,9 +91,8 @@ public class TaxForServicesPerTrainService implements BaseImportService {
 
     public CalculateFinalTaxPerTrainDto calculateFinalTaxForTrain(List<CalculateTaxPerTrainRowDataDto> allRowData,
                                                                   StrategicCoefficientEntity strategicCoefficientEntity,
-                                                                  Integer trainNumber, TrainTypeEntity trainTypeEntity) {
-
-        boolean errorInCalculation = false;
+                                                                  Integer trainNumber,
+                                                                  TrainTypeEntity trainTypeEntity) {
         String stackTrace = null;
 
         BigDecimal finalTax = BigDecimal.ZERO;
@@ -97,38 +101,37 @@ public class TaxForServicesPerTrainService implements BaseImportService {
         BigDecimal totalTaxForTrainKilometers = BigDecimal.ZERO;
         BigDecimal totalTaxForBruttoTonneKilometers = BigDecimal.ZERO;
         BigDecimal totalAdditionalCharges = BigDecimal.ZERO;
+        BigDecimal partialKilometers = BigDecimal.valueOf(Long.MIN_VALUE);
 
         try {
 
-            int i = 0;
-
             for (CalculateTaxPerTrainRowDataDto rowDataDto : allRowData) {
 
-                if (!rowDataDto.getSection().getDestination().getCountry().equals("SRB")) {
+                if (!rowDataDto.getSection().getDestination().getCountry().equals(CountryCode.RS.getAlpha3())) {
 
-                    log.info("Found segment where country is not Serbia, skipping->" + rowDataDto.toString());
+                    log.info("Found segment where country is not Serbia, skipping -> " + rowDataDto.toString());
+
                     continue;
                 }
 
-                Double partialKilometers = Double.NEGATIVE_INFINITY;
+                BigDecimal sumOfAdditionalChargesForRow = BigDecimal.valueOf(
+                        rowDataDto.getServiceChargesPerTrainEntityList().stream()
+                                .map(x -> x.getServiceEntity().getUnitPrice() * x.getServiceCount())
+                                .mapToDouble(x -> x)
+                                .sum());
 
-                if (i == 0 || (i == allRowData.size() - 1)) {
+                log.info("Adding additional charges for row:" + sumOfAdditionalChargesForRow);
 
-                    if (rowDataDto.getSection().getSubSectionDtoList().stream().anyMatch(SubSectionDto::getIsSelected)) {
+                totalAdditionalCharges = totalAdditionalCharges.add(sumOfAdditionalChargesForRow);
 
-                        SubSectionDto subSectionDto = rowDataDto.getSection()
-                                .getSubSectionDtoList()
-                                .stream()
-                                .filter(SubSectionDto::getIsSelected)
-                                .findFirst().get();
+                if (rowDataDto.getSection().getRowIndex() == 1) {
 
-                        partialKilometers = rowDataDto.getSection().getKilometersBetweenStations()
-                                - subSectionDto.getKilometers();
+                    if (!rowDataDto.getSection().getIsKeyStation()) {
 
-                        log.info("Selected segment is first or last and selected station is not key, partial kms = "
-                                + partialKilometers + " " +
-                                subSectionDto.toString() + " " + rowDataDto.toString());
+                        partialKilometers = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations());
                     }
+                    log.info("Skipping start station -> " + rowDataDto.toString());
+                    continue;
                 }
 
                 log.info("Row Data:" + rowDataDto.toString());
@@ -144,21 +147,25 @@ public class TaxForServicesPerTrainService implements BaseImportService {
                 log.info("Unit price for BTK for section:" + unitPriceForTrainKilometers.toString());
 
                 BigDecimal trainKilometersForSection;
-
                 BigDecimal bruttoTonneKilometersForSection;
 
-                if (partialKilometers == Double.NEGATIVE_INFINITY) {
+                if (!partialKilometers.equals(BigDecimal.valueOf(Long.MIN_VALUE))) {
 
-                    trainKilometersForSection = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations());
-                    bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * rowDataDto.getSection().getKilometersBetweenStations());
+                    Double partialKms = rowDataDto.getSection().getKilometersBetweenStations() - partialKilometers.doubleValue();
+
+                    trainKilometersForSection = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations() - partialKms);
+                    bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * (rowDataDto.getSection().getKilometersBetweenStations() - partialKms));
+
+                    partialKilometers = BigDecimal.valueOf(Long.MIN_VALUE);
 
                 } else {
 
-                    trainKilometersForSection = BigDecimal.valueOf(partialKilometers);
-                    bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * partialKilometers);
+                    trainKilometersForSection = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations());
+                    bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * rowDataDto.getSection().getKilometersBetweenStations());
                 }
 
-                log.info("BTK for section:" + trainKilometersForSection.toString());
+                log.info("BTK for section:" + bruttoTonneKilometersForSection.toString());
+                log.info("TK for section:" + trainKilometersForSection.toString());
 
                 totalKilometers = totalKilometers.add(trainKilometersForSection);
                 totalBruttoTonneKilometers = totalBruttoTonneKilometers.add(bruttoTonneKilometersForSection);
@@ -168,15 +175,6 @@ public class TaxForServicesPerTrainService implements BaseImportService {
 
                 totalTaxForBruttoTonneKilometers = totalTaxForBruttoTonneKilometers.add(bruttoTonneKilometersForSection.multiply(
                         BigDecimal.valueOf(unitPriceForBruttoTonneKilometers.getUnitPrice())));
-
-                BigDecimal sumOfAdditionalChargesForRow = BigDecimal.valueOf(
-                        rowDataDto.getServiceChargesPerTrainEntityList().stream()
-                                .map(x -> x.getServiceEntity().getUnitPrice() * x.getServiceCount())
-                                .mapToDouble(x -> x)
-                                .sum());
-
-                totalAdditionalCharges = totalAdditionalCharges.add(sumOfAdditionalChargesForRow);
-                i++;
             }
 
             BigDecimal strategicCoefficientMultiplier = BigDecimal.ONE;
@@ -184,6 +182,7 @@ public class TaxForServicesPerTrainService implements BaseImportService {
             if (strategicCoefficientEntity != null && strategicCoefficientEntity.getCoefficient() != null) {
 
                 strategicCoefficientMultiplier = BigDecimal.valueOf(strategicCoefficientEntity.getCoefficient());
+                log.info("Strategic coefficient was selected, applying multiplier -> " + strategicCoefficientMultiplier.toString());
             }
 
             BigDecimal totalSumOfTrainKilometersAndBruttoTonneKilometers = totalTaxForTrainKilometers.add(totalTaxForBruttoTonneKilometers);
@@ -195,14 +194,12 @@ public class TaxForServicesPerTrainService implements BaseImportService {
         } catch (Exception e) {
 
             log.error("Error calculating final tax: ", e);
-            errorInCalculation = true;
 
             stackTrace = ExceptionUtils.getStackTrace(e);
         }
 
         return CalculateFinalTaxPerTrainDto
                 .builder()
-                .errorInCalculation(errorInCalculation)
                 .totalKilometers(totalKilometers)
                 .totalBruttoTonneKilometers(totalBruttoTonneKilometers)
                 .finalTax(finalTax)
