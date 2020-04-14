@@ -20,9 +20,11 @@ import static com.dp.trains.utils.LocaleKeys.COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG
 import static com.dp.trains.utils.LocaleKeys.COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_TITLE;
 
 @Slf4j
-public class CopyDataFromPreviousYearDialog extends Dialog {
+public class CopyDataFromPreviousYearDialog extends SmartTACCalcDialogBase {
 
     public CopyDataFromPreviousYearDialog(List<BaseImportService> mergeResult, Integer selectedYear) {
+
+        super();
 
         H3 h3Heading = new H3(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_TITLE));
 

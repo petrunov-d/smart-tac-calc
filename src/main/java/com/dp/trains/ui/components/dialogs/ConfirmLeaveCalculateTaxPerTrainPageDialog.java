@@ -3,7 +3,6 @@ package com.dp.trains.ui.components.dialogs;
 import com.dp.trains.event.CPPTResetPageEvent;
 import com.dp.trains.utils.EventBusHolder;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -16,9 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class ConfirmLeaveCalculateTaxPerTrainPageDialog extends Dialog {
+public class ConfirmLeaveCalculateTaxPerTrainPageDialog extends SmartTACCalcDialogBase {
 
     public ConfirmLeaveCalculateTaxPerTrainPageDialog(BeforeLeaveEvent beforeLeaveEvent) {
+
+        super();
 
         VerticalLayout verticalLayout = new VerticalLayout();
 

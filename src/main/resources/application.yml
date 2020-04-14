@@ -1,6 +1,6 @@
 spring:
-#  jpa:
-#    show-sql: true
+  #  jpa:
+  #    show-sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/trains?useSSL=false
     username: root

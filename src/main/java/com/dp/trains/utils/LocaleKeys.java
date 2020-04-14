@@ -241,7 +241,7 @@ public class LocaleKeys {
     public static final String GENERAL_ERROR_HINT_DEFAULT = "general.error.hint.default";
     public static final String GENERAL_ERROR_HINT_DATA_INTEGRITY_PROBLEM = "general.error.hint.data.integrity.problem";
     public static final String GENERAL_ERROR_HINT_CODE_NOT_SET = "general.error.hint.code.not.set";
-    public static final String GENERAL_ERROR_HINT_CONNECTION_ERROR= "general.error.hint.connection.error";
+    public static final String GENERAL_ERROR_HINT_CONNECTION_ERROR = "general.error.hint.connection.error";
     public static final String GENERAL_ERROR_HINT_TRY_AGAIN_LATER = "general.error.hint.try.again.later";
     public static final String GENERAL_ERROR_HINT_CONTACT_ADMIN = "general.error.hint.contact.admin";
     public static final String GENERAL_ERROR_HINT_ILLEGAL_ARITHMETICS = "general.error.hint.illegal.arithmetics";

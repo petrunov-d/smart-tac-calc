@@ -1,7 +1,6 @@
 package com.dp.trains.ui.components.dialogs;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -12,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import static com.dp.trains.utils.LocaleKeys.COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK;
 
 @Slf4j
-public class BasicInfoDialog extends Dialog {
+public class BasicInfoDialog extends SmartTACCalcDialogBase {
 
     public BasicInfoDialog(String message) {
 

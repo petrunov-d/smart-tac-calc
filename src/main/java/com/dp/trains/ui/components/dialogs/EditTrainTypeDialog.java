@@ -29,6 +29,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 public class EditTrainTypeDialog extends SmartTACCalcDialogBase {
 
     public EditTrainTypeDialog(Grid currentlyActiveGrid, TrainTypeService trainTypeService, TrainTypeEntity trainTypeEntity) {
+
         super(currentlyActiveGrid);
 
         FormLayout layoutWithBinder = new FormLayout();

@@ -1,8 +1,11 @@
 package com.dp.trains.ui.layout;
 
+import com.dp.trains.event.ExceptionRaisedEvent;
 import com.dp.trains.exception.CodeNotFoundException;
 import com.dp.trains.services.vaadin.I18NProviderImpl;
+import com.dp.trains.ui.components.common.DialogRegistry;
 import com.dp.trains.ui.components.common.LanguageSelect;
+import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.views.*;
 import com.dp.trains.utils.EventBusHolder;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
@@ -15,8 +18,10 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftClickable
 import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
 import com.github.appreciated.app.layout.entity.Section;
 import com.google.common.collect.Maps;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -27,6 +32,7 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -41,10 +47,11 @@ import static com.dp.trains.utils.CommonConstants.*;
 import static com.dp.trains.utils.LocaleKeys.*;
 import static com.vaadin.flow.component.icon.VaadinIcon.*;
 
+@Slf4j
 @Theme(Lumo.class)
 public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsiveHybrid> {
 
-    //  private Map<Class<? extends Throwable>, String> errorsDescriptions;
+    private Map<Class<? extends Throwable>, String> errorsDescriptions;
 
     public MainLayout() {
 
@@ -65,23 +72,29 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         EventBusHolder.getEventBus().register(this);
 
-        //errorsDescriptions = getDescriptions();
+        errorsDescriptions = getDescriptions();
         init(appLayout);
     }
 
-//    @Subscribe
-//    public void listenForException(ExceptionRaisedEvent exceptionRaisedEvent) {
-//
-//        String errorMessage = errorsDescriptions.get(exceptionRaisedEvent.getThrowable().getClass());
-//
-//        if (errorMessage == null) {
-//
-//            errorMessage = "";
-//        }
-//
-//        Dialog dialog = new BasicInfoDialog(getTranslation(MAIN_LAYOUT_GENERIC_ERROR_MESSAGE) + "\n Hint: " + errorMessage);
-//        dialog.open();
-//    }
+    @Subscribe
+    public void listenForException(ExceptionRaisedEvent exceptionRaisedEvent) {
+
+        log.info("Got exception event: " + exceptionRaisedEvent.toString());
+
+        String errorMessage = errorsDescriptions.get(exceptionRaisedEvent.getThrowable().getClass());
+
+        if (errorMessage == null) {
+
+            errorMessage = "";
+        }
+
+        DialogRegistry.get().closeAllDialogs();
+
+        Dialog dialog = new BasicInfoDialog(String.format("%s %s %s", getTranslation(MAIN_LAYOUT_GENERIC_ERROR_MESSAGE),
+                " => ", errorMessage));
+
+        dialog.open();
+    }
 
     private Component getAppBar() {
 
@@ -98,7 +111,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         return AppBarBuilder.get()
                 .add(new Span(String.format("%s %s ", getTranslation(MAIN_LAYOUT_SPAN_VERSION_LABEL),
-                        SmartTacCalcContext.getSmartTACCalcContext().getModel().getVersion())))
+                        SmartTacCalcContext.get().getModel().getVersion())))
                 .add(horizontalLayout)
                 .add(img)
                 .build();
@@ -171,25 +184,25 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         Map<Class<? extends Throwable>, String> map = Maps.newHashMap();
 
-        map.put(IllegalStateException.class, "General Error");
-        map.put(ConstraintViolationException.class, "Data Integrity Problem. Please fix the data before continuing");
-        map.put(NullPointerException.class, "General Error");
-        map.put(CodeNotFoundException.class, "Code not set! Please make sure all data with codes has a code!");
-        map.put(GenericJDBCException.class, "General Error");
-        map.put(JDBCConnectionException.class, "Connection error, contact an admin.");
-        map.put(LockAcquisitionException.class, "Try again later");
-        map.put(LockTimeoutException.class, "Try again later");
-        map.put(SQLGrammarException.class, "Contact an admin, or refresh the page.");
-        map.put(ArithmeticException.class, "Contact an admin or make sure calculation is a legal arithmetic expression");
-        map.put(ClassNotFoundException.class, "Contact an admin, or refresh the page.");
-        map.put(FileNotFoundException.class, "Contact an admin, or refresh the page.");
-        map.put(IOException.class, "Contact an admin, or refresh the page.");
-        map.put(InterruptedException.class, "Contact an admin, or refresh the page.");
-        map.put(NoSuchFieldException.class, "Contact an admin, or refresh the page.");
-        map.put(NoSuchMethodException.class, "Contact an admin, or refresh the page.");
-        map.put(RuntimeException.class, "Contact an admin, or refresh the page.");
-        map.put(StringIndexOutOfBoundsException.class, "Contact an admin, or refresh the page.");
-        map.put(SecurityException.class, "Contact an admin, or refresh the page.");
+        map.put(IllegalStateException.class, getTranslation(GENERAL_ERROR_HINT_DEFAULT));
+        map.put(ConstraintViolationException.class, getTranslation(GENERAL_ERROR_HINT_DATA_INTEGRITY_PROBLEM));
+        map.put(NullPointerException.class, getTranslation(GENERAL_ERROR_HINT_DEFAULT));
+        map.put(CodeNotFoundException.class, getTranslation(GENERAL_ERROR_HINT_CODE_NOT_SET));
+        map.put(GenericJDBCException.class, getTranslation(GENERAL_ERROR_HINT_DEFAULT));
+        map.put(JDBCConnectionException.class, getTranslation(GENERAL_ERROR_HINT_CONNECTION_ERROR));
+        map.put(LockAcquisitionException.class, getTranslation(GENERAL_ERROR_HINT_TRY_AGAIN_LATER));
+        map.put(LockTimeoutException.class, getTranslation(GENERAL_ERROR_HINT_TRY_AGAIN_LATER));
+        map.put(SQLGrammarException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(ArithmeticException.class, getTranslation(GENERAL_ERROR_HINT_ILLEGAL_ARITHMETICS));
+        map.put(ClassNotFoundException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(FileNotFoundException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(IOException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(InterruptedException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(NoSuchFieldException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(NoSuchMethodException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(RuntimeException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(StringIndexOutOfBoundsException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
+        map.put(SecurityException.class, getTranslation(GENERAL_ERROR_HINT_CONTACT_ADMIN));
 
         return map;
     }

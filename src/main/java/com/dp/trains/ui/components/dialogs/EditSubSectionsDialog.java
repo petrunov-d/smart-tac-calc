@@ -17,12 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditSubSectionsDialog extends Dialog {
+public class EditSubSectionsDialog extends SmartTACCalcDialogBase {
 
-    public EditSubSectionsDialog(SectionEntity sectionEntity, SubSectionService subSectionService, RailStationService railStationService) {
+    public EditSubSectionsDialog(SectionEntity sectionEntity, SubSectionService subSectionService,
+                                 RailStationService railStationService) {
 
-        this.setCloseOnEsc(false);
-        this.setCloseOnOutsideClick(false);
+        super();
 
         setWidth("calc(90vw - (4*var(--lumo-space-m)))");
         setHeight("calc(50vw - (1*var(--lumo-space-m)))");

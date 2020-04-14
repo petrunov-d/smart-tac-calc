@@ -6,7 +6,6 @@ import com.dp.trains.services.TrainsUserDetailService;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -23,9 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddUserDialog extends Dialog {
+public class AddUserDialog extends SmartTACCalcDialogBase {
 
     public AddUserDialog(String loggedInUserUserName, TrainsUserDetailService trainsUserDetailService) {
+
+        super();
 
         FormLayout layoutWithBinder = new FormLayout();
         Binder<UserDto> binder = new Binder<>();

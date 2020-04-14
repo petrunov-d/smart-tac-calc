@@ -3,7 +3,6 @@ package com.dp.trains.ui.components.dialogs;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.ui.components.grids.ServiceChargesPerTrainGrid;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -14,12 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import static com.dp.trains.utils.LocaleKeys.SHARED_BUTTON_TEXT_CANCEL;
 
 @Slf4j
-public class ViewServiceChargesForTrainDialog extends Dialog {
+public class ViewServiceChargesForTrainDialog extends SmartTACCalcDialogBase {
 
     public ViewServiceChargesForTrainDialog(ServiceChargesPerTrainService serviceChargesPerTrainService) {
 
-        this.setCloseOnEsc(false);
-        this.setCloseOnOutsideClick(false);
+        super();
 
         setWidth("calc(90vw - (4*var(--lumo-space-m)))");
         setHeight("calc(50vw - (1*var(--lumo-space-m)))");

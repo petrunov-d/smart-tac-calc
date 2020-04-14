@@ -7,7 +7,6 @@ import com.dp.trains.services.TrainsUserDetailService;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -26,13 +25,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditUserDialog extends Dialog {
+public class EditUserDialog extends SmartTACCalcDialogBase {
 
     public EditUserDialog(UserEntity userEntity, ListDataProvider<UserEntity> dataProvider,
                           TrainsUserDetailService trainsUserDetailService) {
-
-        this.setCloseOnEsc(false);
-        this.setCloseOnOutsideClick(false);
+        super();
 
         FormLayout layoutWithBinder = new FormLayout();
         Binder<UserDto> binder = new Binder<>();

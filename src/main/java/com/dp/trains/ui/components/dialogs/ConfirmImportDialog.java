@@ -2,7 +2,6 @@ package com.dp.trains.ui.components.dialogs;
 
 import com.dp.trains.services.BaseImportService;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -14,9 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class ConfirmImportDialog extends Dialog {
+public class ConfirmImportDialog extends SmartTACCalcDialogBase {
 
     public ConfirmImportDialog(BaseImportService baseImportService, Select<String> select) {
+
+        super();
 
         H3 h3 = new H3(getTranslation(CONFIRM_IMPORT_DIALOG_TITLE));
 

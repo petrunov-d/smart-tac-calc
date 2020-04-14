@@ -6,7 +6,6 @@ import com.dp.trains.ui.views.EditDataView;
 import com.google.common.collect.Maps;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -22,9 +21,11 @@ import java.util.Objects;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class CopyResultDialog extends Dialog {
+public class CopyResultDialog extends SmartTACCalcDialogBase {
 
     public CopyResultDialog(List<PreviousYearCopyingResultViewModel> copyResult, Integer selectedYear) {
+
+        super();
 
         VerticalLayout verticalLayout = new VerticalLayout();
 

@@ -20,7 +20,7 @@ public class SmartTacCalcContext {
         model = new MavenXpp3Reader().read(new FileReader("pom.xml"));
     }
 
-    public static SmartTacCalcContext getSmartTACCalcContext() {
+    public static SmartTacCalcContext get() {
 
         if (smartTacCalcContext == null) {
 

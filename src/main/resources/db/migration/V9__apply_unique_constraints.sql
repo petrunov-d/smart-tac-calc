@@ -19,7 +19,7 @@ ALTER TABLE PUBLIC.rail_station
 
 -- Section
 ALTER TABLE PUBLIC.section
-    ADD UNIQUE (first_key_point, last_key_point, year);
+    ADD UNIQUE (first_key_point, last_key_point, line_type, line_number, year);
 
 -- Service
 ALTER TABLE PUBLIC.service
