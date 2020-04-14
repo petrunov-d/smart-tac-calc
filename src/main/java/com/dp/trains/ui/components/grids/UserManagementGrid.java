@@ -4,16 +4,20 @@ import com.dp.trains.model.dto.Authority;
 import com.dp.trains.model.entities.AuthorityEntity;
 import com.dp.trains.model.entities.UserEntity;
 import com.dp.trains.services.TrainsUserDetailService;
+import com.dp.trains.ui.components.common.FilteringTextField;
 import com.dp.trains.ui.components.dialogs.EditUserDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 
@@ -28,12 +32,13 @@ public class UserManagementGrid extends SmartTACCalcGrid<UserEntity> {
 
         this.setDataProvider(DataProvider.ofCollection(trainsUserDetailService.fetch(0, 0)));
 
-        this.addColumn(UserEntity::getUsername)
+        Grid.Column<UserEntity> userNameColumn = this.addColumn(UserEntity::getUsername)
                 .setHeader(getTranslation(GRID_USER_MANAGEMENT_COLUMN_HEADER_USERNAME))
                 .setSortable(true)
-                .setResizable(true);
+                .setResizable(true)
+                .setFooter(String.format("%s %d", getTranslation(GRID_FOOTERS_TOTAL), trainsUserDetailService.count()));
 
-        this.addColumn(new ComponentRenderer<>(userEntity -> {
+        Grid.Column<UserEntity> isAdminColumn = this.addColumn(new ComponentRenderer<>(userEntity -> {
 
             Collection<AuthorityEntity> authorityEntities = (Collection<AuthorityEntity>) userEntity.getAuthorities();
 
@@ -48,7 +53,7 @@ public class UserManagementGrid extends SmartTACCalcGrid<UserEntity> {
                 .setSortable(true)
                 .setResizable(true);
 
-        this.addColumn(new ComponentRenderer<>(userEntity -> {
+        Grid.Column<UserEntity> isUserColumn = this.addColumn(new ComponentRenderer<>(userEntity -> {
 
             Collection<AuthorityEntity> authorityEntities = (Collection<AuthorityEntity>) userEntity.getAuthorities();
 
@@ -81,5 +86,15 @@ public class UserManagementGrid extends SmartTACCalcGrid<UserEntity> {
                     dataProvider.getItems().remove(item);
                     dataProvider.refreshAll();
                 }));
+
+        HeaderRow filterRow = this.appendHeaderRow();
+
+        FilteringTextField usernameFieldFilter = new FilteringTextField();
+
+        usernameFieldFilter.addValueChangeListener(event -> ((ListDataProvider<UserEntity>)
+                this.getDataProvider()).addFilter(userEntity ->
+                StringUtils.containsIgnoreCase(userEntity.getUsername(), usernameFieldFilter.getValue())));
+
+        filterRow.getCell(userNameColumn).setComponent(usernameFieldFilter);
     }
 }

@@ -245,4 +245,7 @@ public class LocaleKeys {
     public static final String GENERAL_ERROR_HINT_TRY_AGAIN_LATER = "general.error.hint.try.again.later";
     public static final String GENERAL_ERROR_HINT_CONTACT_ADMIN = "general.error.hint.contact.admin";
     public static final String GENERAL_ERROR_HINT_ILLEGAL_ARITHMETICS = "general.error.hint.illegal.arithmetics";
+
+    public static final String GRID_FOOTERS_TOTAL = "grid.footers.total";
+    public static final String GRID_FILTER_ROW_PLACEHOLDER = "grid.filter.row.placeholder";
 }

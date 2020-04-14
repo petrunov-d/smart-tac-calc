@@ -11,7 +11,7 @@
     <groupId>com.dp</groupId>
     <artifactId>trains</artifactId>
     <version>0.1.1</version>
-    <name>trains</name>
+    <name>SmartTACCalc</name>
     <description>SmartTACCALC Application</description>
 
     <profiles>

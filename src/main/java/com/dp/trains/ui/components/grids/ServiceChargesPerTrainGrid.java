@@ -2,19 +2,23 @@ package com.dp.trains.ui.components.grids;
 
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.services.ServiceChargesPerTrainService;
+import com.dp.trains.ui.components.common.FilteringTextField;
 import com.dp.trains.ui.components.dialogs.EditServiceChargesPerTrainDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
+@SuppressWarnings("unchecked")
 public class ServiceChargesPerTrainGrid extends SmartTACCalcGrid<ServiceChargesPerTrainEntity> {
 
     public ServiceChargesPerTrainGrid(ServiceChargesPerTrainService serviceChargesPerTrainService) {
@@ -26,7 +30,8 @@ public class ServiceChargesPerTrainGrid extends SmartTACCalcGrid<ServiceChargesP
         Grid.Column<ServiceChargesPerTrainEntity> trainNumberColumn = this.addColumn(ServiceChargesPerTrainEntity::getTrainNumber)
                 .setHeader(getTranslation(SERVICE_CHARGES_PER_TRAIN_GRID_COLUMN_HEADER_TRAIN_NUMBER))
                 .setSortable(true)
-                .setResizable(true);
+                .setResizable(true)
+                .setFooter(String.format("%s %d", getTranslation(GRID_FOOTERS_TOTAL), serviceChargesPerTrainService.count()));
 
         Grid.Column<ServiceChargesPerTrainEntity> stationColumn = this.addColumn(s -> s.getRailStationEntity().getStation())
                 .setHeader(getTranslation(GRID_RAIL_STATION_COLUMN_HEADER_STATION))
@@ -64,5 +69,44 @@ public class ServiceChargesPerTrainGrid extends SmartTACCalcGrid<ServiceChargesP
             dataProvider.getItems().remove(item);
             dataProvider.refreshAll();
         }));
+
+        HeaderRow filterRow = this.appendHeaderRow();
+
+        FilteringTextField trainNumberFieldFilter = new FilteringTextField();
+        FilteringTextField stationFieldFilter = new FilteringTextField();
+        FilteringTextField serviceNameFieldFilter = new FilteringTextField();
+        FilteringTextField sericeCountFieldFilter = new FilteringTextField();
+        FilteringTextField serviceUnitPriceFieldFilter = new FilteringTextField();
+
+        trainNumberFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceChargesPerTrainEntity>)
+                this.getDataProvider()).addFilter(serviceChargesPerTrainEntity ->
+                StringUtils.containsIgnoreCase(String.valueOf(serviceChargesPerTrainEntity.getTrainNumber()),
+                        trainNumberFieldFilter.getValue())));
+
+        stationFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceChargesPerTrainEntity>)
+                this.getDataProvider()).addFilter(serviceChargesPerTrainEntity ->
+                StringUtils.containsIgnoreCase(serviceChargesPerTrainEntity.getRailStationEntity().getStation(),
+                        stationFieldFilter.getValue())));
+
+        serviceNameFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceChargesPerTrainEntity>)
+                this.getDataProvider()).addFilter(serviceChargesPerTrainEntity ->
+                StringUtils.containsIgnoreCase(serviceChargesPerTrainEntity.getServiceEntity().getName(),
+                        serviceNameFieldFilter.getValue())));
+
+        sericeCountFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceChargesPerTrainEntity>)
+                this.getDataProvider()).addFilter(serviceChargesPerTrainEntity ->
+                StringUtils.containsIgnoreCase(String.valueOf(serviceChargesPerTrainEntity.getServiceCount()),
+                        sericeCountFieldFilter.getValue())));
+
+        serviceUnitPriceFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceChargesPerTrainEntity>)
+                this.getDataProvider()).addFilter(serviceChargesPerTrainEntity ->
+                StringUtils.containsIgnoreCase(String.valueOf(serviceChargesPerTrainEntity.getServiceEntity().getUnitPrice()),
+                        serviceUnitPriceFieldFilter.getValue())));
+
+        filterRow.getCell(trainNumberColumn).setComponent(trainNumberFieldFilter);
+        filterRow.getCell(stationColumn).setComponent(stationFieldFilter);
+        filterRow.getCell(serviceNameColumn).setComponent(serviceNameFieldFilter);
+        filterRow.getCell(serviceCountColumn).setComponent(sericeCountFieldFilter);
+        filterRow.getCell(serviceUnitPriceColumn).setComponent(serviceUnitPriceFieldFilter);
     }
 }

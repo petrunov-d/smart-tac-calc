@@ -53,7 +53,6 @@ public class AfterExceptionThrownAspect {
         logException(jp, error);
     }
 
-
     @AfterThrowing(pointcut = "uiPackage()", throwing = "error")
     public void afterThrowingUIAdvice(JoinPoint jp, Throwable error) {
 

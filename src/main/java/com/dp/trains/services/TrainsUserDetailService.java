@@ -171,4 +171,9 @@ public class TrainsUserDetailService implements UserDetailsService {
 
         return userRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public int count() {
+        return (int) userRepository.count();
+    }
 }

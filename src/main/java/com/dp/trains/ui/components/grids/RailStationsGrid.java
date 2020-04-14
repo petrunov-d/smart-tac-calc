@@ -3,17 +3,20 @@ package com.dp.trains.ui.components.grids;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.RailStationService;
+import com.dp.trains.ui.components.common.FilteringTextField;
 import com.dp.trains.ui.components.dialogs.EditRailStationDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -30,7 +33,8 @@ public class RailStationsGrid extends SmartTACCalcGrid<RailStationEntity> {
         Grid.Column<RailStationEntity> lineNumberColumn = this.addColumn(RailStationEntity::getLineNumber)
                 .setHeader(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER))
                 .setSortable(true)
-                .setResizable(true);
+                .setResizable(true)
+                .setFooter(String.format("%s %d", getTranslation(GRID_FOOTERS_TOTAL), railStationService.count()));
 
         Grid.Column<RailStationEntity> stationColumn = this.addColumn(RailStationEntity::getStation)
                 .setHeader(getTranslation(GRID_RAIL_STATION_COLUMN_HEADER_STATION))
@@ -74,5 +78,40 @@ public class RailStationsGrid extends SmartTACCalcGrid<RailStationEntity> {
             dataProvider.getItems().remove(item);
             dataProvider.refreshAll();
         }));
+
+        HeaderRow filterRow = this.appendHeaderRow();
+
+        FilteringTextField lineNumberFieldFilter = new FilteringTextField();
+        FilteringTextField stationFieldFiler = new FilteringTextField();
+        Checkbox isKeyStationFieldFilter = new Checkbox();
+        FilteringTextField typeFieldFilter = new FilteringTextField();
+        FilteringTextField countryFieldFilter = new FilteringTextField();
+
+        lineNumberFieldFilter.addValueChangeListener(event -> ((ListDataProvider<RailStationEntity>)
+                this.getDataProvider()).addFilter(railStationEntity ->
+                StringUtils.containsIgnoreCase(String.valueOf(railStationEntity.getLineNumber()),
+                        lineNumberFieldFilter.getValue())));
+
+        stationFieldFiler.addValueChangeListener(event -> ((ListDataProvider<RailStationEntity>)
+                this.getDataProvider()).addFilter(railStationEntity ->
+                StringUtils.containsIgnoreCase(railStationEntity.getStation(), stationFieldFiler.getValue())));
+
+        isKeyStationFieldFilter.addValueChangeListener(event -> ((ListDataProvider<RailStationEntity>)
+                this.getDataProvider()).addFilter(railStationEntity ->
+                railStationEntity.getIsKeyStation().equals(isKeyStationFieldFilter.getValue())));
+
+        typeFieldFilter.addValueChangeListener(event -> ((ListDataProvider<RailStationEntity>)
+                this.getDataProvider()).addFilter(railStationEntity ->
+                StringUtils.containsIgnoreCase(railStationEntity.getType(), typeFieldFilter.getValue())));
+
+        countryFieldFilter.addValueChangeListener(event -> ((ListDataProvider<RailStationEntity>)
+                this.getDataProvider()).addFilter(railStationEntity ->
+                StringUtils.containsIgnoreCase(railStationEntity.getCountry(), countryFieldFilter.getValue())));
+
+        filterRow.getCell(lineNumberColumn).setComponent(lineNumberFieldFilter);
+        filterRow.getCell(stationColumn).setComponent(stationFieldFiler);
+        filterRow.getCell(isKeystationColumn).setComponent(isKeyStationFieldFilter);
+        filterRow.getCell(typeColumn).setComponent(typeFieldFilter);
+        filterRow.getCell(countryColumn).setComponent(countryFieldFilter);
     }
 }
