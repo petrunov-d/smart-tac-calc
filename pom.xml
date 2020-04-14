@@ -9,8 +9,8 @@
         <relativePath/>
     </parent>
     <groupId>com.dp</groupId>
-    <artifactId>trains</artifactId>
-    <version>0.1.1</version>
+    <artifactId>SmartTACCalc</artifactId>
+    <version>0.1.2</version>
     <name>SmartTACCalc</name>
     <description>SmartTACCALC Application</description>
 
