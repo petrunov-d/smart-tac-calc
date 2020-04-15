@@ -9,7 +9,6 @@ import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.views.*;
 import com.dp.trains.utils.EventBusHolder;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
-import com.dp.trains.utils.SmartTacCalcContext;
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;
 import com.github.appreciated.app.layout.component.applayout.LeftLayouts;
 import com.github.appreciated.app.layout.component.builder.AppLayoutBuilder;
@@ -110,8 +109,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
         horizontalLayout.setMargin(true);
 
         return AppBarBuilder.get()
-                .add(new Span(String.format("%s %s ", getTranslation(MAIN_LAYOUT_SPAN_VERSION_LABEL),
-                        SmartTacCalcContext.get().getModel().getVersion())))
+                .add(new Span(String.format("%s %s ", getTranslation(MAIN_LAYOUT_SPAN_VERSION_LABEL), "0.1.2")))
                 .add(horizontalLayout)
                 .add(img)
                 .build();

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.4.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/>
     </parent>
     <groupId>com.dp</groupId>
@@ -13,6 +13,11 @@
     <version>0.1.2</version>
     <name>SmartTACCalc</name>
     <description>SmartTACCALC Application</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <vaadin.version>14.1.25</vaadin.version>
+    </properties>
 
     <profiles>
         <profile>
@@ -47,11 +52,6 @@
 
     </profiles>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <vaadin.version>14.1.16</vaadin.version>
-    </properties>
-
     <repositories>
         <repository>
             <id>vaadin-addons</id>
@@ -75,7 +75,6 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring</artifactId>
-            <version>12.1.2</version>
         </dependency>
 
         <dependency>
@@ -121,12 +120,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.rapidpm</groupId>
-            <artifactId>rapidpm-functional-reactive</artifactId>
-            <version>01.00.04-RPM</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>28.2-jre</version>
@@ -157,12 +150,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>14.1.16</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5</artifactId>
             <version>2.10.3</version>
@@ -172,12 +159,6 @@
             <groupId>com.neovisionaries</groupId>
             <artifactId>nv-i18n</artifactId>
             <version>1.27</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-            <version>3.6.3</version>
         </dependency>
 
     </dependencies>
