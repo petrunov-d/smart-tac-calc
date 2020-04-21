@@ -5,7 +5,7 @@ import com.dp.trains.model.entities.AuthorityEntity;
 import com.dp.trains.model.entities.UserEntity;
 import com.dp.trains.services.TrainsUserDetailService;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.EditUserDialog;
+import com.dp.trains.ui.components.dialogs.edit.EditUserDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;

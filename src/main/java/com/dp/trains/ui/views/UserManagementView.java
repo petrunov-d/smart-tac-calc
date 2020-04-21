@@ -2,8 +2,8 @@ package com.dp.trains.ui.views;
 
 import com.dp.trains.model.dto.Authority;
 import com.dp.trains.services.TrainsUserDetailService;
-import com.dp.trains.ui.components.dialogs.AddUserDialog;
 import com.dp.trains.ui.components.dialogs.ChangePasswordDialog;
+import com.dp.trains.ui.components.dialogs.add.AddUserDialog;
 import com.dp.trains.ui.components.factories.EditableDataGridFactory;
 import com.dp.trains.ui.layout.MainLayout;
 import com.vaadin.flow.component.Composite;

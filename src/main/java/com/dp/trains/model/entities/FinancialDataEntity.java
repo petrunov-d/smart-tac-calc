@@ -3,6 +3,7 @@ package com.dp.trains.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -21,7 +22,7 @@ public class FinancialDataEntity extends YearDiscriminatingEntity {
     private String directCostDescrption;
 
     @Column(name = "direct_cost_value")
-    private Double directCostValue;
+    private BigDecimal directCostValue;
 
     @Column(name = "code")
     private String code;

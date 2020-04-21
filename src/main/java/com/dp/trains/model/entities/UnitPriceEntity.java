@@ -3,6 +3,7 @@ package com.dp.trains.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -27,5 +28,5 @@ public class UnitPriceEntity extends YearDiscriminatingEntity {
     private String measure;
 
     @Column(name = "unit_price")
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 }

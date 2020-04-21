@@ -171,10 +171,10 @@ public class TaxForServicesPerTrainService implements BaseImportService {
                 totalBruttoTonneKilometers = totalBruttoTonneKilometers.add(bruttoTonneKilometersForSection);
 
                 totalTaxForTrainKilometers = totalTaxForTrainKilometers.add(trainKilometersForSection.multiply(
-                        BigDecimal.valueOf(unitPriceForTrainKilometers.getUnitPrice())));
+                        unitPriceForTrainKilometers.getUnitPrice()));
 
-                totalTaxForBruttoTonneKilometers = totalTaxForBruttoTonneKilometers.add(bruttoTonneKilometersForSection.multiply(
-                        BigDecimal.valueOf(unitPriceForBruttoTonneKilometers.getUnitPrice())));
+                totalTaxForBruttoTonneKilometers = totalTaxForBruttoTonneKilometers
+                        .add(bruttoTonneKilometersForSection.multiply(unitPriceForBruttoTonneKilometers.getUnitPrice()));
             }
 
             BigDecimal strategicCoefficientMultiplier = BigDecimal.ONE;

@@ -22,5 +22,5 @@ public interface SectionRepository extends JpaRepository<SectionEntity, Long> {
 
     @Query(value = "select s.* from section s inner join sub_section ss on s.id =ss.section_fk where ss.non_key_station = :nonKeyStation",
             nativeQuery = true)
-    SectionEntity findBySubsectionEntity(@Param("nonKeyStation") String nonKeyStation);
+    SectionEntity findBySubsectionNonKeyStation(@Param("nonKeyStation") String nonKeyStation);
 }

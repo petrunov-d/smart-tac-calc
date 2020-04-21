@@ -3,7 +3,7 @@ package com.dp.trains.ui.components.grids;
 import com.dp.trains.model.entities.LineNumberEntity;
 import com.dp.trains.services.LineNumberService;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.EditLineNumberDialog;
+import com.dp.trains.ui.components.dialogs.edit.EditLineNumberDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;

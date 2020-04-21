@@ -1,8 +1,9 @@
-package com.dp.trains.ui.components.dialogs;
+package com.dp.trains.ui.components.dialogs.add;
 
 import com.dp.trains.model.dto.LineTypeDto;
 import com.dp.trains.model.entities.LineTypeEntity;
 import com.dp.trains.services.LineTypeService;
+import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -11,7 +12,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditLineTypeDialog extends SmartTACCalcDialogBase {
+public class AddLineTypeDialog extends SmartTACCalcDialogBase {
 
-    public EditLineTypeDialog(Grid currentlyActiveGrid, LineTypeService lineTypeService, LineTypeEntity lineTypeEntity) {
+    public AddLineTypeDialog(Grid currentlyActiveGrid, LineTypeService lineTypeService) {
 
         super(currentlyActiveGrid);
 
@@ -37,16 +37,17 @@ public class EditLineTypeDialog extends SmartTACCalcDialogBase {
 
         LineTypeDto lineTypeDto = new LineTypeDto();
 
-        Select<String> lineType = new Select<>();
-        lineType.setItems(lineTypeService.getLineTypes());
-        lineType.setValue(lineTypeEntity.getLineType());
+        TextArea lineType = new TextArea();
+
+        lineType.setValueChangeMode(ValueChangeMode.EAGER);
+        lineType.addValueChangeListener(event -> binder.validate());
+        lineType.setRequiredIndicatorVisible(true);
 
         TextArea name = new TextArea();
 
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
-        name.setValue(lineTypeEntity.getName() == null ? "" : lineTypeEntity.getName());
 
         binder.forField(lineType)
                 .asRequired()
@@ -59,13 +60,14 @@ public class EditLineTypeDialog extends SmartTACCalcDialogBase {
                 .bind(LineTypeDto::getName, LineTypeDto::setName);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
+        Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         layoutWithBinder.addFormItem(lineType, getTranslation(DIALOG_ADD_LINE_TYPE_FORM_ITEM_LABEL_LINE_TYPE));
         layoutWithBinder.addFormItem(name, getTranslation(DIALOG_ADD_LINE_TYPE_FORM_ITEM_LABEL_NAME));
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, cancel);
+        actions.add(save, reset, cancel);
 
         save.addClickListener(event -> {
 
@@ -74,9 +76,8 @@ public class EditLineTypeDialog extends SmartTACCalcDialogBase {
                 ListDataProvider<LineTypeEntity> dataProvider =
                         (ListDataProvider<LineTypeEntity>) currentlyActiveGrid.getDataProvider();
 
-                LineTypeEntity lineTypeEntityUpdated = lineTypeService.update(lineTypeDto, lineTypeEntity.getId());
-                dataProvider.getItems().remove(lineTypeEntity);
-                dataProvider.getItems().add(lineTypeEntityUpdated);
+                LineTypeEntity lineTypeEntity = lineTypeService.add(lineTypeDto);
+                dataProvider.getItems().add(lineTypeEntity);
                 dataProvider.refreshAll();
                 this.close();
 
@@ -102,7 +103,14 @@ public class EditLineTypeDialog extends SmartTACCalcDialogBase {
             this.close();
         });
 
-        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
+        reset.addClickListener(event -> {
+
+            binder.readBean(null);
+            name.setValue("");
+            lineType.setValue("M");
+        });
+
+        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_LINE_TYPE_TITLE), layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

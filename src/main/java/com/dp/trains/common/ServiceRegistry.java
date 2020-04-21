@@ -22,6 +22,8 @@ public class ServiceRegistry {
     private final TrafficDataService trafficDataService;
     private final TrainTypeService trainTypeService;
     private final UnitPriceService unitPriceService;
+    private final MarkupCoefficientService markupCoefficientService;
+    private final CarrierCompanyService carrierCompanyService;
 
     public BaseImportService getService(ServiceEnum serviceEnum) {
 
@@ -48,6 +50,10 @@ public class ServiceRegistry {
                 return trainTypeService;
             case UNIT_PRICE_SERVICE:
                 return unitPriceService;
+            case CARRIER_COMPANY_SERVICE:
+                return carrierCompanyService;
+            case MARKUP_COEFFICIENT_SERVICE:
+                return markupCoefficientService;
         }
 
         throw new IllegalStateException("Service not found for service enum:" + serviceEnum);
@@ -55,7 +61,8 @@ public class ServiceRegistry {
 
     public Collection<BaseImportService> getBaseImportServiceList() {
 
-        return Lists.newArrayList(lineNumberService, lineTypeService, railStationService,
-                sectionsService, serviceService, strategicCoefficientService, trainTypeService, unitPriceService);
+        return Lists.newArrayList(lineNumberService, lineTypeService, railStationService, sectionsService,
+                serviceService, strategicCoefficientService, trainTypeService, unitPriceService,
+                markupCoefficientService, carrierCompanyService);
     }
 }

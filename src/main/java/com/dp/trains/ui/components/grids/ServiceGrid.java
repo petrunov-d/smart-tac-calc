@@ -3,7 +3,7 @@ package com.dp.trains.ui.components.grids;
 import com.dp.trains.model.entities.ServiceEntity;
 import com.dp.trains.services.ServiceService;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.EditServiceDialog;
+import com.dp.trains.ui.components.dialogs.edit.EditServiceDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;

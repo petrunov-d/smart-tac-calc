@@ -5,7 +5,7 @@ import com.dp.trains.model.entities.SubSectionEntity;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SubSectionService;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.EditSubSectionDialog;
+import com.dp.trains.ui.components.dialogs.edit.EditSubSectionDialog;
 import com.google.common.collect.Lists;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;

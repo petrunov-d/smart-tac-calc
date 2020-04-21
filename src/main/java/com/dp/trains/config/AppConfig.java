@@ -140,4 +140,16 @@ public class AppConfig {
 
         return new DefaultDtoEntityMapperService<>(ExceptionDto.class, ExceptionEntity.class);
     }
+
+    @Bean("markupCoefficientMapper")
+    public DefaultDtoEntityMapperService<MarkupCoefficientDto, MarkupCoefficientEntity> markupCoefficientMapper() {
+
+        return new DefaultDtoEntityMapperService<>(MarkupCoefficientDto.class, MarkupCoefficientEntity.class);
+    }
+
+    @Bean("carrierCompanyMapper")
+    public DefaultDtoEntityMapperService<CarrierCompanyDto, CarrierCompanyEntity> carrierCompanyMapper() {
+
+        return new DefaultDtoEntityMapperService<>(CarrierCompanyDto.class, CarrierCompanyEntity.class);
+    }
 }

@@ -5,6 +5,8 @@ import com.googlecode.jmapper.annotations.JMap;
 import com.poiji.annotation.ExcelCell;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,5 +28,5 @@ public class UnitPriceDto implements ExcelImportDto {
 
     @ExcelCell(3)
     @JMap(value = "unitPrice", classes = UnitPriceEntity.class)
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 }

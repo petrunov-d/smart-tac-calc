@@ -16,10 +16,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.collections.impl.collector.Collectors2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -112,10 +115,9 @@ public class UnitPriceService implements BaseImportService {
                         .name(unitPriceDto.getKey().getName())
                         .unitPrice(unitPriceDto.getValue()
                                 .stream()
-                                .mapToDouble(UnitPriceDto::getUnitPrice)
-                                .peek(x -> log.info("Unit price: " + x))
-                                .average()
-                                .getAsDouble())
+                                .map(UnitPriceDto::getUnitPrice)
+                                .collect(Collectors2.summarizingBigDecimal(e -> e))
+                                .getAverage(MathContext.DECIMAL64))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -255,18 +257,27 @@ public class UnitPriceService implements BaseImportService {
         int financialDataEntitiesSize = financialDataEntities.size();
         int trafficDataEntitiesSize = trafficDataEntities.size();
 
-        if (financialDataEntitiesSize == 0 || trafficDataEntitiesSize == 0 ||
-                financialDataEntitiesSize != trafficDataEntitiesSize) {
+        if ((financialDataEntitiesSize == 0 || trafficDataEntitiesSize == 0 || unitPriceEntities.size() == 0) ||
+                (financialDataEntitiesSize != trafficDataEntitiesSize ||
+                        unitPriceEntities.size() != financialDataEntitiesSize)) {
 
             throw new IllegalStateException("Data Integrity Violation -> Financial Data Size:"
-                    + financialDataEntitiesSize + " Traffic Data Size: " + trafficDataEntitiesSize);
+                    + financialDataEntitiesSize + " Traffic Data Size: " + trafficDataEntitiesSize +
+                    " Unit Price Size:" + unitPriceEntities.size());
         }
 
         for (int i = 0; i < financialDataEntitiesSize; i++) {
 
-            double value = financialDataEntities.get(i).getDirectCostValue() / trafficDataEntities.get(i).getDirectCostValue();
+            BigDecimal financialDataDirectCostValue = financialDataEntities.get(i).getDirectCostValue();
+            BigDecimal trafficDataDirectCostValue = trafficDataEntities.get(i).getDirectCostValue();
 
-            unitPriceEntities.get(i).setUnitPrice(value);
+            BigDecimal result = financialDataDirectCostValue.divide(trafficDataDirectCostValue, MathContext.DECIMAL64);
+
+            log.info("Financial Data Direct Cost Value: " + financialDataDirectCostValue.toString() +
+                    " Traffic Data Direct Cost Value: " + trafficDataDirectCostValue.toString() + " Result :" +
+                    result.toString());
+
+            unitPriceEntities.get(i).setUnitPrice(result);
         }
 
         this.unitPriceRepository.saveAll(unitPriceEntities);

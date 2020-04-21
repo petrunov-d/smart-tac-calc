@@ -1,4 +1,4 @@
-package com.dp.trains.ui.components.dialogs;
+package com.dp.trains.ui.components.dialogs.add;
 
 import com.dp.trains.model.dto.SectionsDto;
 import com.dp.trains.model.entities.SectionEntity;
@@ -6,6 +6,7 @@ import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.LineTypeService;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SectionsService;
+import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -30,11 +31,13 @@ import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
+@SuppressWarnings("unchecked")
 @Slf4j
-public class EditSectionDialog extends SmartTACCalcDialogBase {
+public class AddSectionDialog extends SmartTACCalcDialogBase {
 
-    public EditSectionDialog(Grid currentlyActiveGrid, SectionsService sectionsService, LineTypeService lineTypeService,
-                             LineNumberService lineNumberService, SectionEntity sectionEntity, RailStationService railStationService) {
+    public AddSectionDialog(Grid currentlyActiveGrid, SectionsService sectionsService,
+                            LineTypeService lineTypeService, LineNumberService lineNumberService,
+                            RailStationService railStationService) {
 
         super(currentlyActiveGrid);
 
@@ -50,13 +53,11 @@ public class EditSectionDialog extends SmartTACCalcDialogBase {
         lineNumber.setItems(lineNumberService.getLineNumbersAsInts());
         lineNumber.addValueChangeListener(event -> binder.validate());
         lineNumber.setRequiredIndicatorVisible(true);
-        lineNumber.setValue(sectionEntity.getLineNumber());
 
         Select<String> lineType = new Select<>();
         lineType.setItems(lineTypeService.getLineTypes());
         lineType.addValueChangeListener(event -> binder.validate());
         lineType.setRequiredIndicatorVisible(true);
-        lineType.setValue(sectionEntity.getLineType());
 
         Select<String> firstKeyPoint = new Select<>();
 
@@ -69,27 +70,33 @@ public class EditSectionDialog extends SmartTACCalcDialogBase {
         lastKeyPoint.addValueChangeListener(event -> binder.validate());
         lastKeyPoint.setRequiredIndicatorVisible(true);
         lastKeyPoint.setItems(railStations);
+        lastKeyPoint.setEnabled(false);
+
+        firstKeyPoint.addValueChangeListener(event -> {
+
+            if (event.getValue() != null) {
+
+                lastKeyPoint.setEnabled(true);
+            }
+        });
 
         NumberField kilometersBetweenStations = new NumberField();
 
         kilometersBetweenStations.setValueChangeMode(ValueChangeMode.EAGER);
         kilometersBetweenStations.addValueChangeListener(event -> binder.validate());
         kilometersBetweenStations.setRequiredIndicatorVisible(true);
-        kilometersBetweenStations.setValue(sectionEntity.getKilometersBetweenStations());
 
         Checkbox isElectrified = new Checkbox();
-        isElectrified.setValue(sectionEntity.getIsElectrified());
+        isElectrified.setValue(false);
 
         NumberField unitPrice = new NumberField();
 
         unitPrice.setValueChangeMode(ValueChangeMode.EAGER);
         unitPrice.addValueChangeListener(event -> binder.validate());
         unitPrice.setRequiredIndicatorVisible(true);
-        unitPrice.setValue(sectionEntity.getUnitPrice());
 
         binder.forField(lineNumber)
                 .asRequired()
-                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
                 .bind(SectionsDto::getLineNumber, SectionsDto::setLineNumber);
 
         binder.forField(lineType)
@@ -112,30 +119,37 @@ public class EditSectionDialog extends SmartTACCalcDialogBase {
                 .withValidator(ValidatorFactory.defaultDoubleRangeValidator(getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_IS_ELECTRIFED_VALIDATION)))
                 .bind(SectionsDto::getUnitPrice, SectionsDto::setUnitPrice);
 
+        binder.forField(kilometersBetweenStations)
+                .asRequired()
+                .withValidator(ValidatorFactory.defaultDoubleRangeValidator(getTranslation(GRID_SECTION_COLUMN_HEADER_KILOMETERS_BETWEEN_STATIONS_VALIDATION)))
+                .bind(SectionsDto::getKilometersBetweenStations, SectionsDto::setKilometersBetweenStations);
+
         layoutWithBinder.addFormItem(lineNumber, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
         layoutWithBinder.addFormItem(lineType, getTranslation(GRID_LINE_TYPE_COLUMN_HEADER_LINE_TYPE));
         layoutWithBinder.addFormItem(firstKeyPoint, getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_FIRST_KEY_POINT));
         layoutWithBinder.addFormItem(lastKeyPoint, getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_LAST_KEY_POINT));
         layoutWithBinder.addFormItem(unitPrice, getTranslation(GRID_SERVICE_COLUMN_HEADER_UNIT_PRICE));
         layoutWithBinder.addFormItem(isElectrified, getTranslation(DIALOG_ADD_SECTION_FORM_ITEM_IS_ELECTRIFED));
+        layoutWithBinder.addFormItem(kilometersBetweenStations, getTranslation(GRID_SECTION_COLUMN_HEADER_KILOMETERS_BETWEEN_STATIONS));
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
+        Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, cancel);
+        actions.add(save, reset, cancel);
 
         save.addClickListener(event -> {
 
             if (binder.writeBeanIfValid(sectionsDto)) {
 
-                ListDataProvider<SectionEntity> dataProvider = (ListDataProvider<SectionEntity>) currentlyActiveGrid.getDataProvider();
+                ListDataProvider<SectionEntity> dataProvider =
+                        (ListDataProvider<SectionEntity>) currentlyActiveGrid.getDataProvider();
 
                 sectionsDto.setIsElectrified(isElectrified.getValue());
 
-                SectionEntity sectionEntityUpdate = sectionsService.update(sectionsDto, sectionEntity.getId());
-                dataProvider.getItems().remove(sectionEntity);
-                dataProvider.getItems().add(sectionEntityUpdate);
+                SectionEntity sectionEntity = sectionsService.add(sectionsDto);
+                dataProvider.getItems().add(sectionEntity);
                 dataProvider.refreshAll();
                 this.close();
 
@@ -165,7 +179,18 @@ public class EditSectionDialog extends SmartTACCalcDialogBase {
             this.close();
         });
 
-        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
+        reset.addClickListener(event -> {
+
+            binder.readBean(null);
+            lineNumber.setValue(null);
+            lineType.setValue("");
+            unitPrice.setValue(null);
+            firstKeyPoint.setValue("");
+            lastKeyPoint.setValue("");
+            isElectrified.setValue(false);
+        });
+
+        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_SECTION_TITLE), layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

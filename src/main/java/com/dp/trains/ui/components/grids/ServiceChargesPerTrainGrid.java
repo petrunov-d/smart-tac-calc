@@ -3,7 +3,7 @@ package com.dp.trains.ui.components.grids;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.EditServiceChargesPerTrainDialog;
+import com.dp.trains.ui.components.dialogs.edit.EditServiceChargesPerTrainDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;

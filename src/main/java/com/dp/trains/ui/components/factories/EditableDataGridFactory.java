@@ -21,7 +21,9 @@ public class EditableDataGridFactory {
     private final SubSectionService subSectionService;
     private final LineNumberService lineNumberService;
     private final RailStationService railStationService;
+    private final CarrierCompanyService carrierCompanyService;
     private final TrainsUserDetailService trainsUserDetailService;
+    private final MarkupCoefficientService markupCoefficientService;
     private final StrategicCoefficientService strategicCoefficientService;
 
     public Grid<TrainTypeEntity> getTrainTypeGrid() {
@@ -62,5 +64,15 @@ public class EditableDataGridFactory {
     public Grid<LineNumberEntity> getLineNumberGrid() {
 
         return new LineNumberGrid(lineNumberService);
+    }
+
+    public Grid<MarkupCoefficientEntity> getMarkupCoefficientsGrid() {
+
+        return new MarkupCoefficientGrid(markupCoefficientService);
+    }
+
+    public Grid<CarrierCompanyEntity> getCarrierCompanyGrid() {
+
+        return new CarrierCompanyGrid(carrierCompanyService);
     }
 }

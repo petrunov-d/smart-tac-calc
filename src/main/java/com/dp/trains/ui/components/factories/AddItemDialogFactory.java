@@ -2,7 +2,7 @@ package com.dp.trains.ui.components.factories;
 
 import com.dp.trains.model.entities.*;
 import com.dp.trains.services.*;
-import com.dp.trains.ui.components.dialogs.*;
+import com.dp.trains.ui.components.dialogs.add.*;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,8 @@ public class AddItemDialogFactory {
     private final TrainTypeService trainTypeService;
     private final LineNumberService lineNumberService;
     private final RailStationService railStationService;
+    private final CarrierCompanyService carrierCompanyService;
+    private final MarkupCoefficientService markupCoefficientService;
     private final StrategicCoefficientService strategicCoefficientService;
 
     public Dialog getDialogForClass(Class<?> clazz, Grid currentlyActiveGrid) {
@@ -50,6 +52,13 @@ public class AddItemDialogFactory {
         } else if (clazz == LineNumberEntity.class) {
 
             return new AddLineNumberDialog(currentlyActiveGrid, lineNumberService);
+        } else if (clazz == MarkupCoefficientEntity.class) {
+
+            return new AddMarkupCoefficientDialog(currentlyActiveGrid, markupCoefficientService);
+
+        } else if (clazz == CarrierCompanyEntity.class) {
+
+            return new AddCarrierCompanyDialog(currentlyActiveGrid, carrierCompanyService);
         }
 
         return null;

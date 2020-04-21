@@ -1,9 +1,9 @@
-package com.dp.trains.ui.components.dialogs;
+package com.dp.trains.ui.components.dialogs.add;
 
 import com.dp.trains.model.dto.Authority;
 import com.dp.trains.model.dto.UserDto;
-import com.dp.trains.model.entities.UserEntity;
 import com.dp.trains.services.TrainsUserDetailService;
+import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -17,18 +17,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class EditUserDialog extends SmartTACCalcDialogBase {
+public class AddUserDialog extends SmartTACCalcDialogBase {
 
-    public EditUserDialog(UserEntity userEntity, ListDataProvider<UserEntity> dataProvider,
-                          TrainsUserDetailService trainsUserDetailService) {
+    public AddUserDialog(String loggedInUserUserName, TrainsUserDetailService trainsUserDetailService) {
+
         super();
 
         FormLayout layoutWithBinder = new FormLayout();
@@ -36,7 +34,7 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
 
         UserDto userDto = new UserDto();
 
-        userDto.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        userDto.setUsername(loggedInUserUserName);
 
         PasswordField password = new PasswordField();
         password.setValueChangeMode(ValueChangeMode.EAGER);
@@ -52,7 +50,6 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
         username.setValueChangeMode(ValueChangeMode.EAGER);
         username.addValueChangeListener(event -> binder.validate());
         username.setRequiredIndicatorVisible(true);
-        username.setValue(userEntity.getUsername());
 
         password.addValueChangeListener(valueChangeEvent -> {
 
@@ -73,10 +70,10 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
         });
 
         Checkbox userRole = new Checkbox();
-        userRole.setValue(userEntity.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Authority.USER.getName())));
+        userRole.setValue(false);
 
         Checkbox adminRole = new Checkbox();
-        adminRole.setValue(userEntity.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Authority.ADMIN.getName())));
+        adminRole.setValue(false);
 
         binder.forField(username)
                 .asRequired()
@@ -116,22 +113,19 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
                     userDto.getAuthorities().add(Authority.ADMIN);
                 }
 
-                trainsUserDetailService.update(userEntity, userDto);
+                trainsUserDetailService.add(userDto);
 
-                dataProvider.refreshAll();
                 this.close();
 
             } else {
 
                 log.error(" ");
-                dataProvider.refreshAll();
             }
         });
 
         cancel.addClickListener(event -> {
 
             reset(binder, password, passwordConfirm, username, userRole, adminRole);
-            dataProvider.refreshAll();
             this.close();
         });
 
@@ -140,7 +134,7 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
         HorizontalLayout actions = new HorizontalLayout();
         actions.add(save, reset, cancel);
 
-        H3 h3Heading = new H3(getTranslation(EDIT_USER_DIALOG_TITLE));
+        H3 h3Heading = new H3(getTranslation(ADD_USER_DIALOG_TITLE));
 
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.add(h3Heading);

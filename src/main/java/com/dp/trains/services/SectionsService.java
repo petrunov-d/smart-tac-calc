@@ -217,7 +217,7 @@ public class SectionsService implements BaseImportService {
 
     private Set<SectionNeighboursDto> getDirectNeighboursForNonKeyStation(String selectedStation) {
 
-        SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionEntity(selectedStation);
+        SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(selectedStation);
         return Sets.newHashSet(getSectionNeighboursDtoFromSectionEntity(sectionEntity, true));
     }
 

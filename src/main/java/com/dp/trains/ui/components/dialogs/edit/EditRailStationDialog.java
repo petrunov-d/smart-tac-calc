@@ -1,9 +1,10 @@
-package com.dp.trains.ui.components.dialogs;
+package com.dp.trains.ui.components.dialogs.edit;
 
 import com.dp.trains.model.dto.RailStationDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.RailStationService;
+import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.neovisionaries.i18n.CountryCode;
 import com.vaadin.flow.component.button.Button;
@@ -31,10 +32,11 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class AddRailStationDialog extends SmartTACCalcDialogBase {
+public class EditRailStationDialog extends SmartTACCalcDialogBase {
 
-    public AddRailStationDialog(Grid currentlyActiveGrid, RailStationService railStationService,
-                                LineNumberService lineNumberService) {
+    public EditRailStationDialog(Grid currentlyActiveGrid, RailStationService railStationService,
+                                 LineNumberService lineNumberService,
+                                 RailStationEntity railStationEntity) {
 
         super(currentlyActiveGrid);
 
@@ -48,24 +50,27 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
         lineNumber.setItems(lineNumberService.getLineNumbersAsInts());
         lineNumber.addValueChangeListener(event -> binder.validate());
         lineNumber.setRequiredIndicatorVisible(true);
+        lineNumber.setValue(railStationEntity.getLineNumber());
 
         TextArea station = new TextArea();
 
         station.setValueChangeMode(ValueChangeMode.EAGER);
         station.addValueChangeListener(event -> binder.validate());
         station.setRequiredIndicatorVisible(true);
+        station.setValue(railStationEntity.getStation() == null ? "" : railStationEntity.getStation());
 
         TextArea type = new TextArea();
 
         type.setValueChangeMode(ValueChangeMode.EAGER);
         type.addValueChangeListener(event -> binder.validate());
         type.setRequiredIndicatorVisible(true);
+        type.setValue(railStationEntity.getType() == null ? "" : railStationEntity.getType());
 
         Checkbox isKeyStation = new Checkbox();
 
         isKeyStation.addValueChangeListener(event -> binder.validate());
         isKeyStation.setRequiredIndicatorVisible(true);
-        isKeyStation.setValue(false);
+        isKeyStation.setValue(railStationEntity.getIsKeyStation());
 
         Select<String> country = new Select<>();
 
@@ -75,7 +80,8 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
 
         country.addValueChangeListener(event -> binder.validate());
         country.setRequiredIndicatorVisible(false);
-        country.setValue(CountryCode.RS.getAlpha3() + " - " + CountryCode.RS.getName());
+        country.setValue(CountryCode.getByCode(railStationEntity.getStation()).getAlpha3() + " - "
+                + CountryCode.getByCode(railStationEntity.getStation()).getName());
 
         binder.forField(lineNumber)
                 .asRequired()
@@ -93,6 +99,7 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
                 .bind(RailStationDto::getType, RailStationDto::setType);
 
         binder.forField(isKeyStation)
+                .asRequired()
                 .bind(RailStationDto::getIsKeyStation, RailStationDto::setIsKeyStation);
 
         binder.forField(country)
@@ -100,7 +107,6 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
                 .bind(RailStationDto::getCountry, RailStationDto::setCountry);
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
-        Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         layoutWithBinder.addFormItem(lineNumber, getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
@@ -110,7 +116,7 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
         layoutWithBinder.addFormItem(country, getTranslation(GRID_RAIL_STATION_COLUMN_HEADER_COUNTRY));
 
         HorizontalLayout actions = new HorizontalLayout();
-        actions.add(save, reset, cancel);
+        actions.add(save, cancel);
 
         save.addClickListener(event -> {
 
@@ -121,8 +127,9 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
 
                 railStationDto.setCountry(country.getValue().substring(0, country.getValue().indexOf('-') - 1));
 
-                RailStationEntity railStationEntity = railStationService.add(railStationDto);
-                dataProvider.getItems().add(railStationEntity);
+                RailStationEntity railStationEntityUpdated = railStationService.update(railStationDto, railStationEntity.getId());
+                dataProvider.getItems().remove(railStationEntity);
+                dataProvider.getItems().add(railStationEntityUpdated);
                 dataProvider.refreshAll();
                 this.close();
 
@@ -151,17 +158,7 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
             this.close();
         });
 
-        reset.addClickListener(event -> {
-
-            binder.readBean(null);
-            lineNumber.setValue(null);
-            station.setValue("");
-            type.setValue("");
-            country.setValue("");
-            isKeyStation.setValue(false);
-        });
-
-        VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_RAIL_STATION_TITLE), layoutWithBinder, actions);
+        VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
     }

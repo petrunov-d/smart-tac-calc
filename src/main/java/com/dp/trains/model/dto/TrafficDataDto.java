@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,7 +22,7 @@ public class TrafficDataDto implements ExcelImportDto {
 
     @ExcelCell(1)
     @JMap(value = "directCostValue", classes = TrafficDataEntity.class)
-    private Double directCostValue;
+    private BigDecimal directCostValue;
 
     @ExcelCell(2)
     @JMap(value = "code", classes = TrafficDataEntity.class)

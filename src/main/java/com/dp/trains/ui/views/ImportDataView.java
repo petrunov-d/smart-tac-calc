@@ -76,6 +76,10 @@ public class ImportDataView extends BaseSmartTacCalcView {
                     ServiceEnum.TAX_FOR_SERVICES_PER_TRAIN, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_UNIT_PRICE), new DtoPoijiHolder(UnitPriceDto.class,
                     ServiceEnum.UNIT_PRICE_SERVICE, PoijiOptionsFactory.defaultOptions()))
+            .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_CARRIER_COMPANY), new DtoPoijiHolder(CarrierCompanyDto.class,
+                    ServiceEnum.CARRIER_COMPANY_SERVICE, PoijiOptionsFactory.defaultOptions()))
+            .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_MARKUP_COEFFICIENT), new DtoPoijiHolder(MarkupCoefficientDto.class,
+                    ServiceEnum.UNIT_PRICE_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .build();
 
     private Upload upload;

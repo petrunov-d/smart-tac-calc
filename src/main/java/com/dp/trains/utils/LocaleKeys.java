@@ -248,4 +248,10 @@ public class LocaleKeys {
 
     public static final String GRID_FOOTERS_TOTAL = "grid.footers.total";
     public static final String GRID_FILTER_ROW_PLACEHOLDER = "grid.filter.row.placeholder";
+
+    public static final String EDIT_DATA_VIEW_IMPORT_LABEL_CARRIER_COMPANY = "edit.data.view.import.label.carrier.company";
+    public static final String EDIT_DATA_VIEW_IMPORT_LABEL_MARKUP_COEFFICIENT = "edit.data.view.import.label.markup.coefficient";
+
+    public static final String GRID_CARRIER_COMPANY_LOCOMOTIVE_SERIES = "grid.carrier.company.locomotive.series";
+    public static final String GRID_CARRIER_COMPANY_LOCOMOTIVE_WEIGHT = "grid.carrier.company.locomotive.weight";
 }

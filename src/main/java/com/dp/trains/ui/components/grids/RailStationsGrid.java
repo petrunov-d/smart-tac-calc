@@ -4,7 +4,7 @@ import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.services.LineNumberService;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.EditRailStationDialog;
+import com.dp.trains.ui.components.dialogs.edit.EditRailStationDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;

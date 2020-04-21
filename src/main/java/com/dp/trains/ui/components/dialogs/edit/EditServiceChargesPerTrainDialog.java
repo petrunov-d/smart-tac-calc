@@ -1,8 +1,9 @@
-package com.dp.trains.ui.components.dialogs;
+package com.dp.trains.ui.components.dialogs.edit;
 
 import com.dp.trains.model.dto.ServiceChargesPerTrainDto;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.services.ServiceChargesPerTrainService;
+import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;

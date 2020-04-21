@@ -1,8 +1,9 @@
-package com.dp.trains.ui.components.dialogs;
+package com.dp.trains.ui.components.dialogs.add;
 
 import com.dp.trains.model.dto.LineNumberDto;
 import com.dp.trains.model.entities.LineNumberEntity;
 import com.dp.trains.services.LineNumberService;
+import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;

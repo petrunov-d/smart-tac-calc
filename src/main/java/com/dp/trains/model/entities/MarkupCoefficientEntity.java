@@ -3,27 +3,26 @@ package com.dp.trains.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "traffic_data")
+@Table(name = "markup_coefficient")
 @EqualsAndHashCode(callSuper = true)
-public class TrafficDataEntity extends YearDiscriminatingEntity {
+public class MarkupCoefficientEntity extends YearDiscriminatingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "direct_cost_description")
-    private String directCostDescrption;
-
-    @Column(name = "direct_cost_value")
-    private BigDecimal directCostValue;
-
     @Column(name = "code")
     private String code;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "coefficient")
+    private Double coefficient;
 }

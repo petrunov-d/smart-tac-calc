@@ -151,11 +151,32 @@ public class EditDataView extends Composite<Div> {
         miStrategicCoefficients.addClickListener(event -> {
 
             getContent().remove(currentlyActiveGrid);
-            Grid<StrategicCoefficientEntity> strategicCoefficientsGrid =
-                    editableDataGridFactory.getStrategicCoefficientsGrid();
+            Grid<StrategicCoefficientEntity> strategicCoefficientsGrid = editableDataGridFactory.getStrategicCoefficientsGrid();
             getContent().add(strategicCoefficientsGrid);
             currentlyActiveGrid = strategicCoefficientsGrid;
             selectedClass = StrategicCoefficientEntity.class;
+        });
+
+        MenuItem miMarkupCoefficients = menuBar.addItem(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_MARKUP_COEFFICIENT));
+
+        miMarkupCoefficients.addClickListener(event -> {
+
+            getContent().remove(currentlyActiveGrid);
+            Grid<MarkupCoefficientEntity> markupCoefficientEntityGrid = editableDataGridFactory.getMarkupCoefficientsGrid();
+            getContent().add(markupCoefficientEntityGrid);
+            currentlyActiveGrid = markupCoefficientEntityGrid;
+            selectedClass = MarkupCoefficientEntity.class;
+        });
+
+        MenuItem miCarrierCompany = menuBar.addItem(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_CARRIER_COMPANY));
+
+        miCarrierCompany.addClickListener(event -> {
+
+            getContent().remove(currentlyActiveGrid);
+            Grid<CarrierCompanyEntity> carrierCompanyEntityGrid = editableDataGridFactory.getCarrierCompanyGrid();
+            getContent().add(carrierCompanyEntityGrid);
+            currentlyActiveGrid = carrierCompanyEntityGrid;
+            selectedClass = CarrierCompanyEntity.class;
         });
 
         layout.add(menuBar);
