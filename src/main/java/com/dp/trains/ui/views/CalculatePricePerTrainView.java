@@ -29,6 +29,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveObserver;
@@ -39,6 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -58,16 +62,16 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private Button finalize;
     private Button calculateFinalTax;
 
-    private final NumberField tonnage;
-    private final NumberField trainLength;
-    private final IntegerField trainNumber;
-    private final TextArea calendar;
-    private final TextArea note;
+    private NumberField tonnage;
+    private NumberField trainLength;
+    private IntegerField trainNumber;
+    private TextArea calendar;
+    private TextArea note;
 
-    private final Select<TrainTypeEntity> trainType;
-    private final Select<StrategicCoefficientEntity> strategicCoefficientSelect;
-    private final Select<CarrierCompanyEntity> carrierCompanySelect;
-    private Select<LocomotiveSeriesDto> locomotiveSeries;
+    private Select<TrainTypeEntity> trainType;
+    private Select<StrategicCoefficientEntity> strategicCoefficientSelect;
+    private Select<CarrierCompanyEntity> carrierCompanySelect;
+    private Select<LocomotiveSeriesDto> locomotiveSeriesDtoSelect;
 
     private final CalculatePricePerTrainLayout calculatePricePerTrainLayout;
 
@@ -90,48 +94,19 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         HorizontalLayout baseParametersLayout = new HorizontalLayout();
 
-        trainNumber = new IntegerField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_NUMBER));
-        trainNumber.addValueChangeListener(event -> {
+        initializeTrainNumber();
+        initializeTrainType();
+        initializeTonnage();
+        initializeTrainLength();
+        initializeNote();
+        initializeCalendar();
+        initializeCarrierCompanySelect();
+        initializeLocomotiveSeriesDtoSelect();
 
-            calculatePricePerTrainLayout.updateTrainNumberForRows(event.getValue());
-            shouldEnableAddButton();
-        });
-        trainNumber.setValueChangeMode(ValueChangeMode.EAGER);
-
-        trainType = new Select<>();
-        trainType.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_TYPE));
-        trainType.addValueChangeListener(event -> shouldEnableAddButton());
-
-        tonnage = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
-        tonnage.addValueChangeListener(event -> shouldEnableAddButton());
-        tonnage.setValueChangeMode(ValueChangeMode.EAGER);
-
-        trainLength = new NumberField();
-        trainLength.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
-
-        note = new TextArea();
-        note.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_NOTE));
-        calendar = new TextArea();
-        calendar.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALENDAR));
-
-        carrierCompanySelect = new Select<>();
-        carrierCompanySelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY)));
-        carrierCompanySelect.addValueChangeListener(event -> {
-
-            locomotiveSeries.setEnabled(true);
-            locomotiveSeries.setItems(this.carrierCompanyService.getByCarrierName(event.getValue().getCarrierName()));
-            locomotiveSeries.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
-        });
-
-        locomotiveSeries = new Select<>();
-        locomotiveSeries.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_LOCOMOTIVE_SERIES)));
-        locomotiveSeries.setEnabled(false);
-
-        baseParametersLayout.add(trainNumber, carrierCompanySelect, locomotiveSeries,
+        baseParametersLayout.add(trainNumber, carrierCompanySelect, locomotiveSeriesDtoSelect,
                 trainType, tonnage, trainLength, calendar, note);
 
-        strategicCoefficientSelect = new Select<>();
-        strategicCoefficientSelect.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
+        initializeStrategicCoefficientsSelect();
 
         VerticalLayout footerContainer = new VerticalLayout(strategicCoefficientSelect,
                 getKilometersSummaryLayout(), getFinalTaxLayout());
@@ -142,6 +117,78 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
         calculatePricePerTrainLayout.add(baseParametersLayout);
 
         getContent().add(calculatePricePerTrainLayout, footerContainer);
+    }
+
+    private void initializeStrategicCoefficientsSelect() {
+
+        strategicCoefficientSelect = new Select<>();
+        strategicCoefficientSelect.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
+    }
+
+    private void initializeLocomotiveSeriesDtoSelect() {
+
+        locomotiveSeriesDtoSelect = new Select<>();
+        locomotiveSeriesDtoSelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_LOCOMOTIVE_SERIES)));
+        locomotiveSeriesDtoSelect.setEnabled(false);
+    }
+
+    private void initializeCalendar() {
+
+        calendar = new TextArea();
+        calendar.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALENDAR));
+    }
+
+    private void initializeNote() {
+
+        note = new TextArea();
+        note.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_NOTE));
+    }
+
+    private void initializeTrainLength() {
+
+        trainLength = new NumberField();
+        trainLength.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
+    }
+
+    private void initializeCarrierCompanySelect() {
+
+        carrierCompanySelect = new Select<>();
+        carrierCompanySelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY)));
+        carrierCompanySelect.addValueChangeListener(event -> {
+
+            Collection<LocomotiveSeriesDto> locomotiveSeriesDtoList =
+                    this.carrierCompanyService.getByCarrierName(event.getValue().getCarrierName());
+
+            locomotiveSeriesDtoSelect.setEnabled(true);
+            locomotiveSeriesDtoSelect.setItems(locomotiveSeriesDtoList);
+            calculatePricePerTrainLayout.setLocomotiveSeriesDtos(locomotiveSeriesDtoList);
+            locomotiveSeriesDtoSelect.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
+        });
+    }
+
+    private void initializeTonnage() {
+
+        tonnage = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
+        tonnage.addValueChangeListener(event -> shouldEnableAddButton());
+        tonnage.setValueChangeMode(ValueChangeMode.EAGER);
+    }
+
+    private void initializeTrainType() {
+
+        trainType = new Select<>();
+        trainType.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_TYPE));
+        trainType.addValueChangeListener(event -> shouldEnableAddButton());
+    }
+
+    private void initializeTrainNumber() {
+
+        trainNumber = new IntegerField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_NUMBER));
+        trainNumber.setValueChangeMode(ValueChangeMode.EAGER);
+        trainNumber.addValueChangeListener(event -> {
+
+            calculatePricePerTrainLayout.updateTrainNumberForRows(event.getValue());
+            shouldEnableAddButton();
+        });
     }
 
     private void shouldEnableAddButton() {
@@ -221,25 +268,38 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private void addRow(boolean isFinal) {
 
         calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
-                isFinal, sectionsService, serviceChargesPerTrainService, tonnage.getValue());
+                isFinal,
+                sectionsService,
+                serviceChargesPerTrainService,
+                tonnage.getValue(),
+                locomotiveSeriesDtoSelect.getDataProvider().fetch(new Query<>()).collect(Collectors.toCollection(ArrayList::new)),
+                locomotiveSeriesDtoSelect.getValue(),
+                trainLength.getValue());
 
+        carrierCompanySelect.setEnabled(false);
+        locomotiveSeriesDtoSelect.setEnabled(false);
         add.setEnabled(false);
         finalize.setEnabled(false);
     }
 
     private void resetPageState() {
 
-        calculatePricePerTrainLayout.resetContainer();
-        strategicCoefficientSelect.setValue(null);
-        trainType.setValue(null);
-        trainNumber.setValue(null);
-        tonnage.setValue(null);
-        finalize.setEnabled(false);
-        add.setEnabled(false);
-        calculateFinalTax.setEnabled(false);
-        totalKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
-        totalBruttoKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
-        titleFinalTax.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
+        this.calculatePricePerTrainLayout.resetContainer();
+        this.strategicCoefficientSelect.setValue(null);
+        this.trainType.setValue(null);
+        this.trainNumber.setValue(null);
+        this.tonnage.setValue(null);
+        this.finalize.setEnabled(false);
+        this.add.setEnabled(false);
+        this.calendar.setValue("");
+        this.note.setValue("");
+        this.trainLength.setValue(null);
+        this.locomotiveSeriesDtoSelect.setValue(null);
+        this.carrierCompanySelect.setValue(null);
+        this.calculateFinalTax.setEnabled(false);
+        this.totalKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
+        this.totalBruttoKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
+        this.titleFinalTax.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
     }
 
     @Subscribe

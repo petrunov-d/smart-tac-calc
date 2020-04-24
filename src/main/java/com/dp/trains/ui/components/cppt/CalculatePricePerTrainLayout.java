@@ -2,6 +2,7 @@ package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
 import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
+import com.dp.trains.model.dto.LocomotiveSeriesDto;
 import com.dp.trains.model.viewmodels.StationViewModel;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,9 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     private int nextRowIdex = 1;
     private StationViewModel currentStation;
     private Double tonnage;
+    private Double trainLength;
+    private Collection<LocomotiveSeriesDto> locomotiveSeriesDtos;
+    private LocomotiveSeriesDto selectedLocomotiveSeriesDto;
 
     private List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
 
@@ -44,17 +49,43 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         setSpacing(false);
     }
 
-    public void addRow(Integer trainNumber, boolean isFinal, SectionsService sectionsService,
-                       ServiceChargesPerTrainService serviceChargesPerTrainService, Double tonnage) {
+    public void addRow(Integer trainNumber,
+                       boolean isFinal,
+                       SectionsService sectionsService,
+                       ServiceChargesPerTrainService serviceChargesPerTrainService,
+                       Double tonnage,
+                       Collection<LocomotiveSeriesDto> locomotiveSeriesDtos,
+                       LocomotiveSeriesDto locomotiveSeriesDto,
+                       Double trainLength) {
+
+        this.locomotiveSeriesDtos = locomotiveSeriesDtos;
 
         if (this.tonnage == null) {
 
             this.tonnage = tonnage;
         }
 
+        if (this.trainLength == null) {
+
+            this.trainLength = trainLength;
+        }
+
+        if (this.selectedLocomotiveSeriesDto == null) {
+
+            this.selectedLocomotiveSeriesDto = locomotiveSeriesDto;
+        }
+
         CalculatePricePerTrainRow calculatePricePerTrainRow = new CalculatePricePerTrainRow(
-                nextRowIdex, isFinal, trainNumber, sectionsService, serviceChargesPerTrainService,
-                currentStation, this.tonnage);
+                this.nextRowIdex,
+                isFinal,
+                trainNumber,
+                sectionsService,
+                serviceChargesPerTrainService,
+                this.currentStation,
+                this.tonnage,
+                this.selectedLocomotiveSeriesDto,
+                this.locomotiveSeriesDtos,
+                this.trainLength);
 
         this.add(calculatePricePerTrainRow);
         this.calculatePricePerTrainRows.add(calculatePricePerTrainRow);
@@ -68,6 +99,9 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         this.nextRowIdex = 1;
         this.currentStation = null;
         this.tonnage = null;
+        this.trainLength = null;
+        this.locomotiveSeriesDtos = null;
+        this.selectedLocomotiveSeriesDto = null;
         this.calculatePricePerTrainRows.clear();
     }
 
@@ -137,10 +171,34 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         log.info("Tonnage set to:" + this.tonnage);
     }
 
+    @Subscribe
+    public void handleLocomotiveSeriesChangedFromRow(CPPTLocomotiveSeriesChangedEvent cpptLocomotiveSeriesChangedEvent) {
+
+        this.selectedLocomotiveSeriesDto = cpptLocomotiveSeriesChangedEvent.getLocomotiveSeriesDto();
+        log.info("Locomotive series set to:" + this.selectedLocomotiveSeriesDto);
+    }
+
+    @Subscribe
+    public void handleTrainLengthChangedFromRow(CPPTTrainLengthChangedFromRowEvent cpptTrainLengthChangedFromRowEvent) {
+
+        this.trainLength = cpptTrainLengthChangedFromRowEvent.getTrainLength();
+        log.info("Tonnage set to:" + this.trainLength);
+    }
+
     public List<CalculateTaxPerTrainRowDataDto> gatherAllRowData() {
 
         return this.calculatePricePerTrainRows.stream()
                 .map(CalculatePricePerTrainRow::getRowData)
                 .collect(Collectors.toList());
+    }
+
+    public Collection<LocomotiveSeriesDto> getLocomotiveSeriesDtos() {
+
+        return locomotiveSeriesDtos;
+    }
+
+    public void setLocomotiveSeriesDtos(Collection<LocomotiveSeriesDto> locomotiveSeriesDtos) {
+
+        this.locomotiveSeriesDtos = locomotiveSeriesDtos;
     }
 }
