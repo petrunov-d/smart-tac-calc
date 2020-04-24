@@ -3,6 +3,7 @@ package com.dp.trains.services;
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.CarrierCompanyDto;
 import com.dp.trains.model.dto.ExcelImportDto;
+import com.dp.trains.model.dto.LocomotiveSeriesDto;
 import com.dp.trains.model.entities.CarrierCompanyEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.repository.CarrierCompanyRepository;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,5 +164,18 @@ public class CarrierCompanyService implements BaseImportService {
         carrierCompanyEntityFromDb.setLocomotiveWeight(carrierCompanyDto.getLocomotiveWeight());
 
         return this.carrierCompanyRepository.save(carrierCompanyEntityFromDb);
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<LocomotiveSeriesDto> getByCarrierName(String carrierName) {
+
+        return this.carrierCompanyRepository.findAllByCarrierName(carrierName)
+                .stream()
+                .map(x -> LocomotiveSeriesDto
+                        .builder()
+                        .series(StringUtils.isBlank(x.getLocomotiveSeries()) ? "N/A" : x.getLocomotiveSeries())
+                        .weight(x.getLocomotiveWeight())
+                        .build())
+                .collect(Collectors.toSet());
     }
 }

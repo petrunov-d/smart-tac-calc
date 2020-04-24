@@ -1,6 +1,12 @@
 spring:
-  #  jpa:
-  #    show-sql: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  main:
+    banner-mode: "off"
   datasource:
     url: jdbc:postgresql://localhost:5432/trains?useSSL=false
     username: root
@@ -19,9 +25,7 @@ spring:
   servlet:
     multipart:
       enabled: false
-
 #logging:
 #  level:
 #    org:
-#      hibernate:
-#        type: trace
+#      springframework: debug

@@ -12,4 +12,6 @@ public interface CarrierCompanyRepository extends JpaRepository<CarrierCompanyEn
     int countByYear(int year);
 
     Collection<CarrierCompanyEntity> findAllByYear(Integer previousYear);
+
+    Collection<CarrierCompanyEntity> findAllByCarrierName(String carrierName);
 }

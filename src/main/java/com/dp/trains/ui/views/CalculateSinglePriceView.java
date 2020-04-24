@@ -30,7 +30,7 @@ public class CalculateSinglePriceView extends BaseSmartTacCalcView {
     @Autowired
     private UnitPriceService unitPriceService;
 
-    private VerticalLayout container;
+    private final VerticalLayout container;
     private VerticalLayout currentlyActiveView;
 
     static final String NAV_CALCULATE_SINGLE_PRICE = "calculate_single_price";

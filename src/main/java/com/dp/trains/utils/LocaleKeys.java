@@ -254,4 +254,53 @@ public class LocaleKeys {
 
     public static final String GRID_CARRIER_COMPANY_LOCOMOTIVE_SERIES = "grid.carrier.company.locomotive.series";
     public static final String GRID_CARRIER_COMPANY_LOCOMOTIVE_WEIGHT = "grid.carrier.company.locomotive.weight";
+
+    public static final String REPORTS_BUTTON_LABEL_SINGLE_PRICE_REPORT = "reports.button.label.single.price.report";
+    public static final String REPORTS_BUTTON_LABEL_TRAIN_WEIGHT_CHANGE_REPORT = "reports.button.label.train.weight.change.report";
+    public static final String REPORTS_BUTTON_LABEL_TRAIN_TAC_REPORT = "reports.button.label.train.tac.report";
+    public static final String REPORTS_BUTTON_LABEL_PRINT = "reports.button.label.print";
+    public static final String REPORTS_BUTTON_LABEL_GET_AS_WORD = "reports.button.label.get.as.word";
+    public static final String REPORTS_BUTTON_LABEL_GET_AS_EXCEL = "reports.button.label.get.as.excel";
+
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH = "calculate.price.per.train.view.train.length";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_NOTE = "calculate.price.per.train.view.note";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_CALENDAR = "calculate.price.per.train.view.calendar";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY = "calculate.price.per.train.view.select.carrier.company";
+    public static final String CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_LOCOMOTIVE_SERIES = "calculate.price.per.train.view.select.locomotive.series";
+
+    public static final String DATE_PICKER_WEEK = "date.picker.week";
+    public static final String DATE_PICKER_CALENDAR = "date.picker.calendar";
+    public static final String DATE_PICKER_CLEAR = "date.picker.clear";
+    public static final String DATE_PICKER_TODAY = "date.picker.today";
+    public static final String DATE_PICKER_CANCEL = "date.picker.cancel";
+    public static final String DATE_PICKER_JANUARY = "date.picker.january";
+    public static final String DATE_PICKER_FEBRUARY = "date.picker.february";
+    public static final String DATE_PICKER_MARCH = "date.picker.march";
+    public static final String DATE_PICKER_APRIL = "date.picker.april";
+    public static final String DATE_PICKER_MAY = "date.picker.may";
+    public static final String DATE_PICKER_JUNE = "date.picker.june";
+    public static final String DATE_PICKER_JULY = "date.picker.july";
+    public static final String DATE_PICKER_AUGUST = "date.picker.august";
+    public static final String DATE_PICKER_SEPTEMBER = "date.picker.september";
+    public static final String DATE_PICKER_OCTOBER = "date.picker.october";
+    public static final String DATE_PICKER_NOVEMBER = "date.picker.november";
+    public static final String DATE_PICKER_DECEMBER = "date.picker.december";
+    public static final String DATE_PICKER_MONDAY = "date.picker.monday";
+    public static final String DATE_PICKER_TUESDAY = "date.picker.tuesday";
+    public static final String DATE_PICKER_WEDNESDAY = "date.picker.wednesday";
+    public static final String DATE_PICKER_THURSDAY = "date.picker.thursday";
+    public static final String DATE_PICKER_FRIDAY = "date.picker.friday";
+    public static final String DATE_PICKER_SATURDAY = "date.picker.saturday";
+    public static final String DATE_PICKER_SUNDAY = "date.picker.sunday";
+    public static final String DATE_PICKER_SHORT_MONDAY = "date.picker.short.monday";
+    public static final String DATE_PICKER_SHORT_TUESDAY = "date.picker.short.tuesday";
+    public static final String DATE_PICKER_SHORT_WEDNESDAY = "date.picker.short.wednesday";
+    public static final String DATE_PICKER_SHORT_THURSDAY = "date.picker.short.thursday";
+    public static final String DATE_PICKER_SHORT_FRIDAY = "date.picker.short.friday";
+    public static final String DATE_PICKER_SHORT_SATURDAY = "date.picker.short.saturday";
+    public static final String DATE_PICKER_SHORT_SUNDAY = "date.picker.short.sunday";
+
+    public static final String REPORT_FROM_DATE = "report.from.date";
+    public static final String REPORT_TO_DATE = "report.to.date";
+    public static final String REPORT_TRAIN_NUMBER = "report.train.number";
 }

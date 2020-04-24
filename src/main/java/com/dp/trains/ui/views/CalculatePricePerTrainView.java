@@ -5,6 +5,8 @@ import com.dp.trains.event.CPPTFinalRowRemovedEvent;
 import com.dp.trains.event.CPPTResetPageEvent;
 import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.model.dto.CalculateFinalTaxPerTrainDto;
+import com.dp.trains.model.dto.LocomotiveSeriesDto;
+import com.dp.trains.model.entities.CarrierCompanyEntity;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.model.entities.TrainTypeEntity;
 import com.dp.trains.services.*;
@@ -26,6 +28,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveObserver;
@@ -55,26 +58,31 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private Button finalize;
     private Button calculateFinalTax;
 
-    private NumberField tonnage;
-    private IntegerField trainNumber;
-    private Select<TrainTypeEntity> trainType;
-    private CalculatePricePerTrainLayout calculatePricePerTrainLayout;
-    private Select<StrategicCoefficientEntity> strategicCoefficientSelect;
+    private final NumberField tonnage;
+    private final NumberField trainLength;
+    private final IntegerField trainNumber;
+    private final TextArea calendar;
+    private final TextArea note;
+
+    private final Select<TrainTypeEntity> trainType;
+    private final Select<StrategicCoefficientEntity> strategicCoefficientSelect;
+    private final Select<CarrierCompanyEntity> carrierCompanySelect;
+    private Select<LocomotiveSeriesDto> locomotiveSeries;
+
+    private final CalculatePricePerTrainLayout calculatePricePerTrainLayout;
 
     @Autowired
     private TrainTypeService trainTypeService;
-
     @Autowired
     private SectionsService sectionsService;
-
     @Autowired
     private StrategicCoefficientService strategicCoefficientService;
-
     @Autowired
     private ServiceChargesPerTrainService serviceChargesPerTrainService;
-
     @Autowired
     private TaxForServicesPerTrainService taxForServicesPerTrainService;
+    @Autowired
+    private CarrierCompanyService carrierCompanyService;
 
     public CalculatePricePerTrainView() {
 
@@ -98,7 +106,29 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
         tonnage.addValueChangeListener(event -> shouldEnableAddButton());
         tonnage.setValueChangeMode(ValueChangeMode.EAGER);
 
-        baseParametersLayout.add(trainNumber, trainType, tonnage);
+        trainLength = new NumberField();
+        trainLength.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
+
+        note = new TextArea();
+        note.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_NOTE));
+        calendar = new TextArea();
+        calendar.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALENDAR));
+
+        carrierCompanySelect = new Select<>();
+        carrierCompanySelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY)));
+        carrierCompanySelect.addValueChangeListener(event -> {
+
+            locomotiveSeries.setEnabled(true);
+            locomotiveSeries.setItems(this.carrierCompanyService.getByCarrierName(event.getValue().getCarrierName()));
+            locomotiveSeries.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
+        });
+
+        locomotiveSeries = new Select<>();
+        locomotiveSeries.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_LOCOMOTIVE_SERIES)));
+        locomotiveSeries.setEnabled(false);
+
+        baseParametersLayout.add(trainNumber, carrierCompanySelect, locomotiveSeries,
+                trainType, tonnage, trainLength, calendar, note);
 
         strategicCoefficientSelect = new Select<>();
         strategicCoefficientSelect.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
@@ -127,8 +157,13 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         trainType.setItems(trainTypeService.fetch(0, 0));
         trainType.setItemLabelGenerator(TrainTypeEntity::getName);
+
+        carrierCompanySelect.setItems(this.carrierCompanyService.fetch(0, 0));
+        carrierCompanySelect.setItemLabelGenerator(CarrierCompanyEntity::getCarrierName);
+
         strategicCoefficientSelect.setItems(strategicCoefficientService.fetch(0, 0));
         strategicCoefficientSelect.setItemLabelGenerator(StrategicCoefficientEntity::getName);
+
         EventBusHolder.getEventBus().register(this);
     }
 

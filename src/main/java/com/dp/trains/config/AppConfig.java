@@ -24,8 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @SuppressWarnings({"UnstableApiUsage"})
 public class AppConfig {
 
-    private ApplicationContext applicationContext;
-
     @Bean
     public MethodInvokingFactoryBean methodInvokingFactoryBean() {
         MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
