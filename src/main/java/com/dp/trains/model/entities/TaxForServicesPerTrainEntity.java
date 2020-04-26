@@ -24,7 +24,7 @@ public class TaxForServicesPerTrainEntity extends YearDiscriminatingEntity {
     private String station;
 
     @Column(name = "code_of_service")
-    private Integer codeOfService;
+    private String code;
 
     @Column(name = "tax")
     private Integer tax;

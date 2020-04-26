@@ -44,7 +44,7 @@ public class EditStrategicCoefficientDialog extends SmartTACCalcDialogBase {
         code.setValueChangeMode(ValueChangeMode.EAGER);
         code.addValueChangeListener(event -> binder.validate());
         code.setRequiredIndicatorVisible(true);
-        code.setValue(strategicCoefficientEntity.getCode());
+        code.setValue(Integer.valueOf(strategicCoefficientEntity.getCode()));
 
         TextArea name = new TextArea();
         name.setValueChangeMode(ValueChangeMode.EAGER);
@@ -61,7 +61,7 @@ public class EditStrategicCoefficientDialog extends SmartTACCalcDialogBase {
                 .asRequired()
                 .withValidator(ValidatorFactory.defaultIntRangeValidator(
                         getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_CODE_MESSAGE)))
-                .bind(StrategicCoefficientDto::getCode, StrategicCoefficientDto::setCode);
+                .bind(x -> Integer.valueOf(x.getCode()), (x, y) -> x.setCode(String.valueOf(y)));
 
         binder.forField(name)
                 .asRequired()

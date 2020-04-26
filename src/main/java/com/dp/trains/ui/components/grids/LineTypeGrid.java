@@ -38,6 +38,11 @@ public class LineTypeGrid extends SmartTACCalcGrid<LineTypeEntity> {
                 .setSortable(true)
                 .setResizable(true);
 
+        Grid.Column<LineTypeEntity> codeColumn = this.addColumn(LineTypeEntity::getCode)
+                .setHeader(getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_CODE))
+                .setSortable(true)
+                .setResizable(true);
+
         this.addComponentColumn(item -> new Button(getTranslation(SHARED_BUTTON_TEXT_EDIT), VaadinIcon.EDIT.create(), click -> {
 
             Dialog editDialog = new EditLineTypeDialog(this, lineTypeService, item);
@@ -58,6 +63,7 @@ public class LineTypeGrid extends SmartTACCalcGrid<LineTypeEntity> {
 
         FilteringTextField nameFieldFilter = new FilteringTextField();
         FilteringTextField lineTypeFieldFilter = new FilteringTextField();
+        FilteringTextField codeFieldFilter = new FilteringTextField();
 
         nameFieldFilter.addValueChangeListener(event -> ((ListDataProvider<LineTypeEntity>)
                 this.getDataProvider()).addFilter(lineTypeEntity ->
@@ -67,7 +73,12 @@ public class LineTypeGrid extends SmartTACCalcGrid<LineTypeEntity> {
                 this.getDataProvider()).addFilter(lineTypeEntity ->
                 StringUtils.containsIgnoreCase(lineTypeEntity.getLineType(), lineTypeFieldFilter.getValue())));
 
+        codeFieldFilter.addValueChangeListener(event -> ((ListDataProvider<LineTypeEntity>)
+                this.getDataProvider()).addFilter(serviceEntity ->
+                StringUtils.containsIgnoreCase(serviceEntity.getCode(), codeFieldFilter.getValue())));
+
         filterRow.getCell(nameColumn).setComponent(nameFieldFilter);
         filterRow.getCell(lineTypeColumn).setComponent(lineTypeFieldFilter);
+        filterRow.getCell(codeColumn).setComponent(codeFieldFilter);
     }
 }

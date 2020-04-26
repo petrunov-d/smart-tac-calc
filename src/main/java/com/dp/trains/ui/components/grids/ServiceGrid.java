@@ -48,6 +48,11 @@ public class ServiceGrid extends SmartTACCalcGrid<ServiceEntity> {
                 .setSortable(true)
                 .setResizable(true);
 
+        Grid.Column<ServiceEntity> codeColumn = this.addColumn(ServiceEntity::getCode)
+                .setHeader(getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_CODE))
+                .setSortable(true)
+                .setResizable(true);
+
         this.addComponentColumn(item -> new Button(getTranslation(SHARED_BUTTON_TEXT_EDIT), VaadinIcon.EDIT.create(), click -> {
 
             Dialog editDialog = new EditServiceDialog(this, serviceService, item);
@@ -69,6 +74,7 @@ public class ServiceGrid extends SmartTACCalcGrid<ServiceEntity> {
         FilteringTextField metricFieldFilter = new FilteringTextField();
         FilteringTextField typeFieldFilter = new FilteringTextField();
         FilteringTextField unitPriceFieldFilter = new FilteringTextField();
+        FilteringTextField codeFieldFilter = new FilteringTextField();
 
         nameFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceEntity>)
                 this.getDataProvider()).addFilter(serviceEntity ->
@@ -86,10 +92,14 @@ public class ServiceGrid extends SmartTACCalcGrid<ServiceEntity> {
                 this.getDataProvider()).addFilter(serviceEntity ->
                 StringUtils.containsIgnoreCase(String.valueOf(serviceEntity.getUnitPrice()), unitPriceFieldFilter.getValue())));
 
+        codeFieldFilter.addValueChangeListener(event -> ((ListDataProvider<ServiceEntity>)
+                this.getDataProvider()).addFilter(serviceEntity ->
+                StringUtils.containsIgnoreCase(serviceEntity.getCode(), codeFieldFilter.getValue())));
+
         filterRow.getCell(nameColumn).setComponent(nameFieldFilter);
         filterRow.getCell(metricColumn).setComponent(metricFieldFilter);
         filterRow.getCell(typeColumn).setComponent(typeFieldFilter);
         filterRow.getCell(unitPriceColumn).setComponent(unitPriceFieldFilter);
-
+        filterRow.getCell(codeColumn).setComponent(codeFieldFilter);
     }
 }

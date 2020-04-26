@@ -224,9 +224,9 @@ public class TaxForServicesPerTrainService implements BaseImportService {
         LineTypeEntity lineTypeEntity =
                 lineTypeService.getByType(calculateTaxPerTrainRowDataDto.getSection().getTypeOfLine());
 
-        Integer lineCode = lineTypeEntity.getCode();
+        Integer lineCode = Integer.valueOf(lineTypeEntity.getCode());
         Integer electrifiedCode = calculateTaxPerTrainRowDataDto.getSection().getIsElectrified() ? 1 : 0;
-        Integer trainTypeCode = trainTypeEntity.getCode();
+        Integer trainTypeCode = Integer.valueOf(trainTypeEntity.getCode());
         Integer kilometersCode = isTrainKilometers ? 0 : 1;
 
         String code = String.format("%d%d%d%d", lineCode, electrifiedCode, trainTypeCode, kilometersCode);

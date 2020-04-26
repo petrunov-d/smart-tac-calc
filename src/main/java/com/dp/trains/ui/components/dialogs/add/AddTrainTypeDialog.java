@@ -52,7 +52,7 @@ public class AddTrainTypeDialog extends SmartTACCalcDialogBase {
         binder.forField(code)
                 .asRequired()
                 .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(INVALID_VALUE_FOR_CODE)))
-                .bind(TrainTypeDto::getCode, TrainTypeDto::setCode);
+                .bind(x -> Integer.valueOf(x.getCode()), (x, y) -> x.setCode(String.valueOf(y)));
 
         binder.forField(name)
                 .asRequired()

@@ -16,7 +16,7 @@ public class StrategicCoefficientDto implements ExcelImportDto {
 
     @ExcelCell(0)
     @JMap(value = "code", classes = StrategicCoefficientEntity.class)
-    private Integer code;
+    private String code;
 
     @ExcelCell(1)
     @JMap(value = "name", classes = StrategicCoefficientEntity.class)

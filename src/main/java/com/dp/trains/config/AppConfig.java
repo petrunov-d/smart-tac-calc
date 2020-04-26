@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

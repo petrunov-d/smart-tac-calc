@@ -2,12 +2,16 @@ package com.dp.trains.ui.components.reports;
 
 import com.dp.trains.services.ReportService;
 import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.dialogs.PdfViewerDialog;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
+
+import java.net.URISyntaxException;
 
 import static com.dp.trains.utils.LocaleKeys.REPORTS_BUTTON_LABEL_GET_AS_WORD;
 import static com.dp.trains.utils.LocaleKeys.REPORTS_BUTTON_LABEL_SINGLE_PRICE_REPORT;
@@ -20,7 +24,21 @@ public class SinglePriceReportContainer extends BaseSmartTacCalcView {
         Button downloadAsWordFileButton = new Button(getTranslation(REPORTS_BUTTON_LABEL_GET_AS_WORD),
                 VaadinIcon.FILE_TEXT_O.create());
 
+        Button viewReportAsPdf = new Button(getTranslation("View Report"),
+                VaadinIcon.EYE.create());
+
         H4 title = new H4(getTranslation(REPORTS_BUTTON_LABEL_SINGLE_PRICE_REPORT));
+
+        viewReportAsPdf.addClickListener(event -> {
+
+            Dialog pdfViewerDialog = null;
+            try {
+                pdfViewerDialog = new PdfViewerDialog();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            pdfViewerDialog.open();
+        });
 
         downloadAsWordFileButton.addClickListener(buttonClickEvent -> {
 
@@ -36,6 +54,6 @@ public class SinglePriceReportContainer extends BaseSmartTacCalcView {
 
         this.add(title);
 
-        this.add(new HorizontalLayout(downloadAsWordFileButton));
+        this.add(new HorizontalLayout(viewReportAsPdf, downloadAsWordFileButton));
     }
 }

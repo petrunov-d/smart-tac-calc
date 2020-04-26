@@ -58,7 +58,7 @@ public class AddStrategicCoefficientDialog extends SmartTACCalcDialogBase {
                 .asRequired()
                 .withValidator(ValidatorFactory.defaultIntRangeValidator(
                         getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_CODE_MESSAGE)))
-                .bind(StrategicCoefficientDto::getCode, StrategicCoefficientDto::setCode);
+                .bind(x -> Integer.valueOf(x.getCode()), (x, y) -> x.setCode(String.valueOf(y)));
 
         binder.forField(name)
                 .asRequired()

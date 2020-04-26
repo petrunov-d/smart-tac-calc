@@ -23,8 +23,8 @@ public class TaxForServicesPerTrainDto implements ExcelImportDto {
     private String station;
 
     @ExcelCell(2)
-    @JMap(value = "codeOfService", classes = TaxForServicesPerTrainEntity.class)
-    private Integer codeOfService;
+    @JMap(value = "code", classes = TaxForServicesPerTrainEntity.class)
+    private String code;
 
     @ExcelCell(3)
     @JMap(value = "tax", classes = TaxForServicesPerTrainEntity.class)

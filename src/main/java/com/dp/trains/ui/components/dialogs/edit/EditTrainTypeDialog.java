@@ -43,7 +43,7 @@ public class EditTrainTypeDialog extends SmartTACCalcDialogBase {
         code.setValueChangeMode(ValueChangeMode.EAGER);
         code.addValueChangeListener(event -> binder.validate());
         code.setRequiredIndicatorVisible(true);
-        code.setValue(trainTypeEntity.getCode());
+        code.setValue(Integer.valueOf(trainTypeEntity.getCode()));
 
         TextArea name = new TextArea();
         name.setValueChangeMode(ValueChangeMode.EAGER);
@@ -54,7 +54,7 @@ public class EditTrainTypeDialog extends SmartTACCalcDialogBase {
         binder.forField(code)
                 .asRequired()
                 .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(INVALID_VALUE_FOR_CODE)))
-                .bind(TrainTypeDto::getCode, TrainTypeDto::setCode);
+                .bind(x -> Integer.valueOf(x.getCode()), (x, y) -> x.setCode(String.valueOf(y)));
 
         binder.forField(name)
                 .asRequired()

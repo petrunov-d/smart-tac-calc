@@ -1,11 +1,13 @@
 package com.dp.trains.ui.views;
 
+import com.dp.trains.event.SmartTACCalcNeedsRefreshEvent;
 import com.dp.trains.services.BaseImportService;
 import com.dp.trains.services.DataCopyingService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.CopyDataFromPreviousYearDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.CommonConstants;
+import com.dp.trains.utils.EventBusHolder;
 import com.dp.trains.utils.SelectedYearPerUserHolder;
 import com.google.common.base.Joiner;
 import com.vaadin.flow.component.Composite;
@@ -19,6 +21,8 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -39,7 +43,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = MainView.NAV_MAIN_VIEW)
-public class MainView extends Composite<Div> {
+public class MainView extends Composite<Div> implements BeforeLeaveObserver {
 
     private static final Integer BEGIN_YEAR = 2015;
 
@@ -135,5 +139,15 @@ public class MainView extends Composite<Div> {
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         getContent().add(verticalLayout);
+        EventBusHolder.getEventBus().register(this);
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
+
+        beforeLeaveEvent.postpone();
+        beforeLeaveEvent.getContinueNavigationAction().proceed();
+
+        EventBusHolder.getEventBus().post(new SmartTACCalcNeedsRefreshEvent());
     }
 }

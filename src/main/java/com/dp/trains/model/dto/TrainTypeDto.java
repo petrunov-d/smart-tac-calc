@@ -16,7 +16,7 @@ public class TrainTypeDto implements ExcelImportDto {
 
     @ExcelCell(0)
     @JMap(value = "code", classes = TrainTypeEntity.class)
-    private Integer code;
+    private String code;
 
     @ExcelCell(1)
     @JMap(value = "name", classes = TrainTypeEntity.class)

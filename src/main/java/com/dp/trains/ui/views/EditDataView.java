@@ -1,10 +1,12 @@
 package com.dp.trains.ui.views;
 
+import com.dp.trains.event.SmartTACCalcNeedsRefreshEvent;
 import com.dp.trains.model.entities.*;
 import com.dp.trains.ui.components.factories.AddItemDialogFactory;
 import com.dp.trains.ui.components.factories.EditableDataGridFactory;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
+import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -18,7 +20,6 @@ import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.slf4j.Slf4j;
@@ -59,16 +60,12 @@ public class EditDataView extends Composite<Div> {
         getContent().add(railStationEntityGrid);
         currentlyActiveGrid = railStationEntityGrid;
         selectedClass = RailStationEntity.class;
+    }
 
-        VaadinSession session = VaadinSession.getCurrent();
+    @Subscribe
+    public void listenForRefresh(SmartTACCalcNeedsRefreshEvent smartTACCalcNeedsRefreshEvent) {
 
-        if (session.getAttribute("shouldRefreshInitially") == null ||
-                session.getAttribute("shouldRefreshInitially").equals(true)) {
-
-            UI.getCurrent().getPage().reload();
-
-            session.setAttribute("shouldRefreshInitially", false);
-        }
+        UI.getCurrent().getPage().reload();
     }
 
     public void constructMenuBar() {
