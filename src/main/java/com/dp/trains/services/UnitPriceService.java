@@ -44,6 +44,8 @@ public class UnitPriceService implements BaseImportService {
     private final TrafficDataService trafficDataService;
     private final FinancialDataService financialDataService;
 
+    private final MarkupCoefficientService markupCoefficientService;
+
     @Qualifier("unitPriceMapper")
     private final DefaultDtoEntityMapperService<UnitPriceDto, UnitPriceEntity> unitPriceMapper;
 
