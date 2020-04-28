@@ -84,7 +84,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     @Autowired
     private ServiceChargesPerTrainService serviceChargesPerTrainService;
     @Autowired
-    private TaxForServicesPerTrainService taxForServicesPerTrainService;
+    private TaxPerTrainService taxPerTrainService;
     @Autowired
     private CarrierCompanyService carrierCompanyService;
 
@@ -352,11 +352,18 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private void calculateFinalTax() {
 
+        Boolean hasPreviousRecords = this.taxPerTrainService.hasRecordsForTrainNumber(this.trainNumber.getValue());
+
         this.calculateFinalTax.setEnabled(false);
 
-        CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.taxForServicesPerTrainService
+        CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.taxPerTrainService
                 .calculateFinalTaxForTrain(this.calculatePricePerTrainLayout.gatherAllRowData(),
-                        strategicCoefficientSelect.getValue(), trainNumber.getValue(), trainType.getValue());
+                        strategicCoefficientSelect.getValue(),
+                        trainNumber.getValue(),
+                        calendar.getValue(),
+                        note.getValue(),
+                        trainLength.getValue(),
+                        trainType.getValue());
 
         if (calculateFinalTaxPerTrainDto.getStackTrace() != null) {
 

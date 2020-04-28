@@ -14,5 +14,7 @@ public class CalculateTaxPerTrainRowDataDto {
 
     private SectionNeighboursDto section;
     private Double tonnage;
+    private String locomotiveSeries;
+    private Double locomotiveWeight;
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList;
 }

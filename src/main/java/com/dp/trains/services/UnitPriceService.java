@@ -5,6 +5,7 @@ import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.UnitPriceDataIntegrity;
 import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.model.entities.FinancialDataEntity;
+import com.dp.trains.model.entities.MarkupCoefficientEntity;
 import com.dp.trains.model.entities.TrafficDataEntity;
 import com.dp.trains.model.entities.UnitPriceEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
@@ -231,18 +232,26 @@ public class UnitPriceService implements BaseImportService {
 
         int financialDataCount = financialDataService.count();
         int trafficDataCount = trafficDataService.count();
+        int unitPriceCount = this.count();
+        int markupCoefficientCount = markupCoefficientService.count();
 
-        if (financialDataCount == 0 && trafficDataCount == 0) {
+        if (financialDataCount == 0 && trafficDataCount == 0 && unitPriceCount == 0 && markupCoefficientCount == 0) {
 
             return UnitPriceDataIntegrity.ALL_DATA_MISSING;
 
-        } else if (financialDataService.count() == 0) {
+        } else if (financialDataCount == 0) {
 
             return UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA;
 
-        } else if (trafficDataService.count() == 0) {
+        } else if (trafficDataCount == 0) {
 
             return UnitPriceDataIntegrity.MISSING_TRAFFIC_DATA;
+        } else if (unitPriceCount == 0) {
+
+            return UnitPriceDataIntegrity.MISSING_UNIT_PRICE_DATA;
+        } else if (markupCoefficientCount == 0) {
+
+            return UnitPriceDataIntegrity.MISSING_MARKUP_COEFFICIENTS_DATA;
         }
 
         return UnitPriceDataIntegrity.ALL_DATA_PRESENT;
@@ -254,17 +263,20 @@ public class UnitPriceService implements BaseImportService {
         List<FinancialDataEntity> financialDataEntities = financialDataService.getAll();
         List<TrafficDataEntity> trafficDataEntities = trafficDataService.getAll();
         List<UnitPriceEntity> unitPriceEntities = Lists.newArrayList(this.fetch(0, 0));
+        List<MarkupCoefficientEntity> markupCoefficientEntities = Lists.newArrayList(this.markupCoefficientService.fetch(0, 0));
 
         int financialDataEntitiesSize = financialDataEntities.size();
         int trafficDataEntitiesSize = trafficDataEntities.size();
+        int markupCoefficientEntitiesSize = markupCoefficientEntities.size();
 
-        if ((financialDataEntitiesSize == 0 || trafficDataEntitiesSize == 0 || unitPriceEntities.size() == 0) ||
-                (financialDataEntitiesSize != trafficDataEntitiesSize ||
-                        unitPriceEntities.size() != financialDataEntitiesSize)) {
+        if ((financialDataEntitiesSize == 0 || trafficDataEntitiesSize == 0 || unitPriceEntities.size() == 0 ||
+                markupCoefficientEntitiesSize == 0) || (financialDataEntitiesSize != trafficDataEntitiesSize ||
+                unitPriceEntities.size() != financialDataEntitiesSize ||
+                unitPriceEntities.size() != markupCoefficientEntitiesSize)) {
 
             throw new IllegalStateException("Data Integrity Violation -> Financial Data Size:"
                     + financialDataEntitiesSize + " Traffic Data Size: " + trafficDataEntitiesSize +
-                    " Unit Price Size:" + unitPriceEntities.size());
+                    " Unit Price Size:" + unitPriceEntities.size() + " Markup Coefficients size: " + markupCoefficientEntitiesSize);
         }
 
         for (int i = 0; i < financialDataEntitiesSize; i++) {
@@ -273,12 +285,14 @@ public class UnitPriceService implements BaseImportService {
             BigDecimal trafficDataDirectCostValue = trafficDataEntities.get(i).getDirectCostValue();
 
             BigDecimal result = financialDataDirectCostValue.divide(trafficDataDirectCostValue, MathContext.DECIMAL64);
+            BigDecimal resultTimesMarkupCoefficient = result.multiply(BigDecimal.valueOf(markupCoefficientEntities.get(i).getCoefficient()));
 
             log.info("Financial Data Direct Cost Value: " + financialDataDirectCostValue.toString() +
-                    " Traffic Data Direct Cost Value: " + trafficDataDirectCostValue.toString() + " Result :" +
+                    " Traffic Data Direct Cost Value: " + trafficDataDirectCostValue.toString() +
+                    "Markup Coefficient:" + resultTimesMarkupCoefficient.toString() + " Result :" +
                     result.toString());
 
-            unitPriceEntities.get(i).setUnitPrice(result);
+            unitPriceEntities.get(i).setUnitPrice(resultTimesMarkupCoefficient);
         }
 
         this.unitPriceRepository.saveAll(unitPriceEntities);

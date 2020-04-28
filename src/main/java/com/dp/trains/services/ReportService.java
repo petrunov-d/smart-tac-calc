@@ -30,7 +30,6 @@ public class ReportService {
         JasperReport jasperReport = getJasperReport(REPORT_UNIT_PRICE_FILE_PATH);
 
         Map<String, Object> parameters = Maps.newHashMap();
-        parameters.put("SegmentParameter", "Test");
         parameters.put("UP_1", 1);
         parameters.put("UP_2", 2);
         parameters.put("UP_3", 3);
@@ -55,16 +54,14 @@ public class ReportService {
     }
 
 
-    public void getTacReport(Integer value, LocalDate from, LocalDate to) throws JRException {
+    public void getTacReport(Integer value) throws JRException {
 
         JasperReport jasperReport = getJasperReport(REPORT_TAC_FILE_PATH);
-
     }
 
-    public void getTrainWeightChangeReport(Integer value, LocalDate from, LocalDate to) throws JRException {
+    public void getTrainWeightChangeReport(Integer value) throws JRException {
 
         JasperReport jasperReport = getJasperReport(REPORT_TRAIN_WEIGHT_CHANGE_FILE_PATH);
-
     }
 
     private JasperReport getJasperReport(String reportName) throws JRException {

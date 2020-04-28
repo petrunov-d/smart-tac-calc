@@ -40,16 +40,22 @@ public class CalculateSinglePriceDefaultModeContainer extends VerticalLayout {
 
             if (!unitPriceDataIntegrity.equals(UnitPriceDataIntegrity.ALL_DATA_PRESENT)) {
 
-                String missingDataLabel;
+                String missingDataLabel = null;
 
                 if (unitPriceDataIntegrity.equals(UnitPriceDataIntegrity.ALL_DATA_MISSING)) {
 
                     missingDataLabel = getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_ALL);
                 } else {
 
-                    missingDataLabel = UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA.equals(unitPriceDataIntegrity)
-                            ? getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_FINANCIAL) :
-                            getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_TRAFFIC);
+                    if (UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA.equals(unitPriceDataIntegrity)) {
+                        missingDataLabel = getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_FINANCIAL);
+                    } else if (UnitPriceDataIntegrity.MISSING_TRAFFIC_DATA.equals(unitPriceDataIntegrity)) {
+                        missingDataLabel = getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_TRAFFIC);
+                    } else if (UnitPriceDataIntegrity.MISSING_UNIT_PRICE_DATA.equals(unitPriceDataIntegrity)) {
+                        missingDataLabel = getTranslation(MISSING_UNIT_PRICE_DATA_STRUCTURE);
+                    } else if (UnitPriceDataIntegrity.MISSING_MARKUP_COEFFICIENTS_DATA.equals(unitPriceDataIntegrity)) {
+                        missingDataLabel = getTranslation(MISSING_MARKUP_COEFFICIENTS_DATA);
+                    }
                 }
 
                 Dialog dialog = new BasicInfoDialog(String.format("%s %s %s",

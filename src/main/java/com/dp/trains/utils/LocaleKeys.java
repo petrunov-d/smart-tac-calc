@@ -314,4 +314,9 @@ public class LocaleKeys {
     public static final String LOGIN_FORM_ERROR_MESSAGE_TITLE = "login.form.error.message.title";
     public static final String LOGIN_FORM_ERROR_MESSAGE_MESSAGE = "login.form.error.message.message";
     public static final String LOGIN_FORM_ADDITIONAL_INFORMATION = "login.form.error.additional.information";
+
+    public static final String MISSING_UNIT_PRICE_DATA_STRUCTURE = "calculate.single.price.missing.unit.price.data.structure";
+    public static final String MISSING_MARKUP_COEFFICIENTS_DATA = "calculate.single.price.missing.markup.coefficients";
+
+    public static final String HAS_PREVIOUS_RECORDS_FOR_TRAIN_NUMBER_WARNING = "has.previous.records.for.train.number.warning";
 }

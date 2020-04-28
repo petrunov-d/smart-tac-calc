@@ -83,15 +83,15 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         initializeLineNumberSelect(neighbours);
         initializeTonnageField(tonnageDouble);
         initializeTrainLength(trainLengthDouble);
+        initializeLocomotiveSeriesDtoSelect(selectedLocomotiveSeriesDto, locomotiveSeriesDtos);
 
         this.serviceChargesLabel = new H5();
         this.serviceChargesLabel.setWidth("100%");
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(rowTitle, station, lineNumbers, tonnage, trainLength);
+        horizontalLayout.add(rowTitle, station, lineNumbers, tonnage, trainLength, locomotiveSeriesDtoSelect);
 
         initializeRowButtons(serviceChargesPerTrainService);
-        initializeLocomotiveSeriesDtoSelect(selectedLocomotiveSeriesDto, locomotiveSeriesDtos);
 
         HorizontalLayout serviceLayout = new HorizontalLayout();
 
@@ -131,6 +131,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
                                                      Collection<LocomotiveSeriesDto> locomotiveSeriesDtos) {
 
         this.locomotiveSeriesDtoSelect = new Select<>();
+        this.locomotiveSeriesDtoSelect.setLabel(getTranslation(GRID_CARRIER_COMPANY_LOCOMOTIVE_WEIGHT));
         this.locomotiveSeriesDtoSelect.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
         this.locomotiveSeriesDtoSelect.setItems(locomotiveSeriesDtos);
         this.locomotiveSeriesDtoSelect.setValue(selectedLocomotiveSeriesDto);
@@ -359,6 +360,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
                         .rowIndex(this.getRowIndex())
                         .build())
                 .tonnage(this.tonnage.getValue())
+                .locomotiveSeries(this.locomotiveSeriesDtoSelect.getValue().getSeries())
+                .locomotiveWeight(this.locomotiveSeriesDtoSelect.getValue().getWeight())
                 .serviceChargesPerTrainEntityList(serviceChargesPerTrainEntityList)
                 .build();
     }

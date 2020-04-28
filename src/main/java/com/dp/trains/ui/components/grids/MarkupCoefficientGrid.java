@@ -37,7 +37,7 @@ public class MarkupCoefficientGrid extends SmartTACCalcGrid<MarkupCoefficientEnt
                 .setSortable(true)
                 .setResizable(true);
 
-        Grid.Column<MarkupCoefficientEntity> coefficientColumn = this.addColumn(MarkupCoefficientEntity::getCode)
+        Grid.Column<MarkupCoefficientEntity> coefficientColumn = this.addColumn(MarkupCoefficientEntity::getCoefficient)
                 .setHeader(getTranslation(GRID_STRATEGIC_COEFFICIENT_COLUMN_HEADER_COEFFICIENT))
                 .setSortable(true)
                 .setResizable(true);
