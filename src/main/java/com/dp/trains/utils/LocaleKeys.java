@@ -303,4 +303,15 @@ public class LocaleKeys {
     public static final String REPORT_FROM_DATE = "report.from.date";
     public static final String REPORT_TO_DATE = "report.to.date";
     public static final String REPORT_TRAIN_NUMBER = "report.train.number";
+    public static final String REPORT_GENERATING = "report.generating";
+
+    public static final String LOGIN_FORM_LOGIN = "login.form.login";
+    public static final String LOGIN_FORM_DESCRIPTION = "login.form.description";
+    public static final String LOGIN_FORM_USERNAME = "login.form.username";
+    public static final String LOGIN_FORM_LOG_IN = "login.form.log.in";
+    public static final String LOGIN_FORM_SUBMIT = "login.form.submit";
+    public static final String LOGIN_FORM_PASSWORD = "login.form.password";
+    public static final String LOGIN_FORM_ERROR_MESSAGE_TITLE = "login.form.error.message.title";
+    public static final String LOGIN_FORM_ERROR_MESSAGE_MESSAGE = "login.form.error.message.message";
+    public static final String LOGIN_FORM_ADDITIONAL_INFORMATION = "login.form.error.additional.information";
 }

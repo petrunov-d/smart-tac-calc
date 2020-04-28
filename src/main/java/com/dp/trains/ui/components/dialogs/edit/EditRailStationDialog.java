@@ -80,8 +80,8 @@ public class EditRailStationDialog extends SmartTACCalcDialogBase {
 
         country.addValueChangeListener(event -> binder.validate());
         country.setRequiredIndicatorVisible(false);
-        country.setValue(CountryCode.getByCode(railStationEntity.getStation()).getAlpha3() + " - "
-                + CountryCode.getByCode(railStationEntity.getStation()).getName());
+        country.setValue(CountryCode.getByCode(railStationEntity.getCountry()).getAlpha3() + " - "
+                + CountryCode.getByCode(railStationEntity.getCountry()).getName());
 
         binder.forField(lineNumber)
                 .asRequired()

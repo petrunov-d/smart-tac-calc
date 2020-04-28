@@ -79,7 +79,7 @@ public class ImportDataView extends BaseSmartTacCalcView {
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_CARRIER_COMPANY), new DtoPoijiHolder(CarrierCompanyDto.class,
                     ServiceEnum.CARRIER_COMPANY_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_MARKUP_COEFFICIENT), new DtoPoijiHolder(MarkupCoefficientDto.class,
-                    ServiceEnum.UNIT_PRICE_SERVICE, PoijiOptionsFactory.defaultOptions()))
+                    ServiceEnum.MARKUP_COEFFICIENT_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .build();
 
     private Upload upload;

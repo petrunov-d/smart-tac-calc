@@ -5,6 +5,7 @@ import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.services.StrategicCoefficientService;
 import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
+import com.dp.trains.utils.CommonUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -61,7 +62,13 @@ public class EditStrategicCoefficientDialog extends SmartTACCalcDialogBase {
                 .asRequired()
                 .withValidator(ValidatorFactory.defaultIntRangeValidator(
                         getTranslation(GRID_TRAIN_TYPE_COLUMN_VALIDATION_CODE_MESSAGE)))
-                .bind(x -> Integer.valueOf(x.getCode()), (x, y) -> x.setCode(String.valueOf(y)));
+                .bind(x -> CommonUtils.valueOf2(x.getCode()), (x, y) -> {
+                    if (y == null) {
+                        x.setCode(null);
+                    } else {
+                        x.setCode(String.valueOf(y));
+                    }
+                });
 
         binder.forField(name)
                 .asRequired()

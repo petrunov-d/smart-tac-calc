@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.ExecutionException;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -54,7 +55,7 @@ public class EditDataView extends Composite<Div> {
     }
 
     @PostConstruct
-    public void init() {
+    public void init() throws ExecutionException {
 
         Grid<RailStationEntity> railStationEntityGrid = editableDataGridFactory.getRailStationsGrid();
         getContent().add(railStationEntityGrid);
