@@ -256,7 +256,7 @@ public class LocaleKeys {
     public static final String GRID_CARRIER_COMPANY_LOCOMOTIVE_WEIGHT = "grid.carrier.company.locomotive.weight";
 
     public static final String REPORTS_BUTTON_LABEL_SINGLE_PRICE_REPORT = "reports.button.label.single.price.report";
-    public static final String REPORTS_BUTTON_LABEL_TRAIN_WEIGHT_CHANGE_REPORT = "reports.button.label.train.weight.change.report";
+    public static final String REPORTS_BUTTON_LABEL_SERVICE_CHARGES_PER_TRAIN_REPORT = "reports.button.label.train.weight.change.report";
     public static final String REPORTS_BUTTON_LABEL_TRAIN_TAC_REPORT = "reports.button.label.train.tac.report";
     public static final String REPORTS_BUTTON_LABEL_PRINT = "reports.button.label.print";
     public static final String REPORTS_BUTTON_LABEL_GET_AS_WORD = "reports.button.label.get.as.word";
@@ -319,4 +319,9 @@ public class LocaleKeys {
     public static final String MISSING_MARKUP_COEFFICIENTS_DATA = "calculate.single.price.missing.markup.coefficients";
 
     public static final String HAS_PREVIOUS_RECORDS_FOR_TRAIN_NUMBER_WARNING = "has.previous.records.for.train.number.warning";
+
+    public static final String REPORTS_BUTTON_VIEW_REPORT = "reports.button.view.report";
+    public static final String REPORTS_SINGLE_PRICE_REPORT_MISSING_UNIT_PRICE = "reports.single.price.report.missing.unit.price";
+
+    public static final String CONFIRM_DELETE_OLD_TAC = "calculate.price.per.train.view.old.tac.calculation.confirm";
 }

@@ -61,47 +61,13 @@
             <rightPen lineWidth="0.5" lineColor="#000000"/>
         </box>
     </style>
-    <subDataset name="Empty Dataset1" uuid="f2b668c3-f372-4ce1-a7dd-5e717e6d5abe">
-        <parameter name="SegmentParameter" class="java.lang.String"/>
-        <parameter name="UnitPriceTrainKilometersParameter" class="java.lang.String"/>
-        <parameter name="UnitPriceBruttoTonneKilometersParameter" class="java.lang.String"/>
-        <parameter name="ElectrifiedLineTextParameter" class="java.lang.String"/>
-        <parameter name="NonElecrtifiedTextParameter" class="java.lang.String"/>
-        <parameter name="NonElectrifiedLocalLineParameter" class="java.lang.String"/>
-        <parameter name="RegionalAndHighwayNonElectrifiedLineParameter" class="java.lang.String"/>
-        <parameter name="UP_1" class="java.lang.String"/>
-        <parameter name="UP_2" class="java.lang.String"/>
-        <parameter name="UP_3" class="java.lang.String"/>
-        <parameter name="UP_4" class="java.lang.String"/>
-        <parameter name="UP_5" class="java.lang.String"/>
-        <parameter name="UP_6" class="java.lang.String"/>
-        <parameter name="UP_7" class="java.lang.String"/>
-        <parameter name="UP_8" class="java.lang.String"/>
-        <parameter name="UP_9" class="java.lang.String"/>
-        <parameter name="UP_10" class="java.lang.String"/>
-        <parameter name="UP_11" class="java.lang.String"/>
-        <parameter name="UP_12" class="java.lang.String"/>
-        <field name="Field_1" class="java.lang.String"/>
+    <subDataset name="UnitPriceList" whenResourceMissingType="Empty" uuid="5f9e45d9-9d59-420a-87f2-13721ebc607f">
+        <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+        <parameter name="UP1_IN_TABLE" class="java.lang.String"/>
+        <queryString language="csv">
+            <![CDATA[]]>
+        </queryString>
     </subDataset>
-    <parameter name="SegmentParameter" class="java.lang.String"/>
-    <parameter name="UnitPriceTrainKilometersParameter" class="java.lang.String"/>
-    <parameter name="UnitPriceBruttoTonneKilometersParameter" class="java.lang.String"/>
-    <parameter name="ElectrifiedLineTextParameter" class="java.lang.String"/>
-    <parameter name="NonElecrtifiedTextParameter" class="java.lang.String"/>
-    <parameter name="NonElectrifiedLocalLineParameter" class="java.lang.String"/>
-    <parameter name="RegionalAndHighwayNonElectrifiedLineParameter" class="java.lang.String"/>
-    <parameter name="UP_1" class="java.lang.String"/>
-    <parameter name="UP_2" class="java.lang.String"/>
-    <parameter name="UP_3" class="java.lang.String"/>
-    <parameter name="UP_4" class="java.lang.String"/>
-    <parameter name="UP_5" class="java.lang.String"/>
-    <parameter name="UP_6" class="java.lang.String"/>
-    <parameter name="UP_7" class="java.lang.String"/>
-    <parameter name="UP_8" class="java.lang.String"/>
-    <parameter name="UP_9" class="java.lang.String"/>
-    <parameter name="UP_10" class="java.lang.String"/>
-    <parameter name="UP_11" class="java.lang.String"/>
-    <parameter name="UP_12" class="java.lang.String"/>
     <queryString language="SQL">
         <![CDATA[SELECT * FROM unit_price;]]>
     </queryString>
@@ -135,10 +101,10 @@
     <title>
         <band height="100">
             <frame>
-                <reportElement mode="Opaque" x="-20" y="-20" width="595" height="110" backcolor="#006699"
+                <reportElement mode="Opaque" x="0" y="-20" width="555" height="110" backcolor="#006699"
                                uuid="b66323bd-4533-4793-987f-356d4f74e5fe"/>
                 <staticText>
-                    <reportElement x="40" y="20" width="510" height="70" forecolor="#FFFFFF"
+                    <reportElement x="0" y="20" width="555" height="70" forecolor="#FFFFFF"
                                    uuid="bf7094c1-301f-4af6-9e50-e9ce89f42b99"/>
                     <textElement textAlignment="Center">
                         <font size="20" isBold="true"/>
@@ -151,7 +117,7 @@
     <pageHeader>
         <band height="37">
             <staticText>
-                <reportElement x="80" y="7" width="400" height="30" uuid="c68a3b35-9d6a-4ec5-8c81-2439d96897b4"/>
+                <reportElement x="0" y="3" width="555" height="30" uuid="c68a3b35-9d6a-4ec5-8c81-2439d96897b4"/>
                 <textElement textAlignment="Center">
                     <font size="14"/>
                 </textElement>
@@ -161,244 +127,183 @@
     </pageHeader>
     <columnHeader>
         <band height="400">
-            <componentElement>
-                <reportElement x="0" y="10" width="550" height="120" uuid="5cfc5e66-26bd-43e1-abcd-be91a7605796">
-                    <property name="com.jaspersoft.studio.layout"
-                              value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-                    <property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
-                    <property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
-                    <property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
-                    <property name="com.jaspersoft.studio.components.autoresize.next" value="true"/>
-                    <property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-                </reportElement>
-                <jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components"
-                          xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd"
-                          whenNoDataType="Blank">
-                    <datasetRun subDataset="Empty Dataset1" uuid="df2afcba-d619-42f4-8125-1d30f6433189">
-                        <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-                    </datasetRun>
-                    <jr:column width="153" uuid="804a9a72-be31-4cb1-a3c3-6da8262bc9f8">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-                        <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="153" height="30"
-                                               uuid="d0ed5a69-9cda-41e7-8d37-6634862320b1"/>
-                                <textFieldExpression><![CDATA[$P{SegmentParameter}]]></textFieldExpression>
-                            </textField>
-                        </jr:tableHeader>
-                        <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="153" height="30"
-                                               uuid="5b102af4-6101-4cff-9112-83c11511806e"/>
-                                <textFieldExpression><![CDATA[$P{ElectrifiedLineTextParameter}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnHeader>
-                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="153" height="30"
-                                               uuid="f683a63d-d31e-4524-8100-2e3c2312326f"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{NonElectrifiedLocalLineParameter}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnFooter>
-                        <jr:detailCell style="Table 1_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="153" height="30"
-                                               uuid="b48e2423-4aea-411b-b35f-d760669949a4"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{RegionalAndHighwayNonElectrifiedLineParameter}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
-                    </jr:column>
-                    <jr:column width="182" uuid="a61c3439-2be7-4f10-9ac9-8201d277738e">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-                        <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="7fde16c5-5f92-4917-b804-ebec75083e9a"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{UnitPriceTrainKilometersParameter}]]></textFieldExpression>
-                            </textField>
-                        </jr:tableHeader>
-                        <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="e1ae371b-8e18-402f-9fdc-0ec734022b93"/>
-                                <textFieldExpression><![CDATA[$P{UP_1}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnHeader>
-                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="bcf541ba-0c0d-4563-abd6-716d6d9c9ce6"/>
-                                <textFieldExpression><![CDATA[$P{UP_5}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnFooter>
-                        <jr:detailCell style="Table 1_TD" height="30">
-                            <property name="com.jaspersoft.studio.layout"
-                                      value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="aa3c236c-c57c-4cf0-9719-2e3b7402ddb9"/>
-                                <textFieldExpression><![CDATA[$P{UP_3}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
-                    </jr:column>
-                    <jr:column width="215" uuid="22b6b2d4-7e42-4474-8a01-f57358e3a14c">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-                        <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="215" height="30"
-                                               uuid="66ede8af-c588-46ab-88cc-634d1de500c7"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{UnitPriceBruttoTonneKilometersParameter}]]></textFieldExpression>
-                            </textField>
-                        </jr:tableHeader>
-                        <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="215" height="30"
-                                               uuid="da1933d0-b98f-4ea6-82d1-e8f5ccb5c3de"/>
-                                <textFieldExpression><![CDATA[$P{UP_2}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnHeader>
-                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="215" height="30"
-                                               uuid="a5c65c72-6731-4675-a50a-a5a2366f575f"/>
-                                <textFieldExpression><![CDATA[$P{UP_6}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnFooter>
-                        <jr:detailCell style="Table 1_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="215" height="30"
-                                               uuid="095c4678-1f0b-4894-b587-d2ae52b865bb"/>
-                                <textFieldExpression><![CDATA[$P{UP_4}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
-                    </jr:column>
-                </jr:table>
-            </componentElement>
             <staticText>
-                <reportElement x="111" y="190" width="333" height="30" uuid="617ab88a-676e-4593-828d-cfe905d307cf"/>
+                <reportElement x="0" y="190" width="555" height="30" uuid="617ab88a-676e-4593-828d-cfe905d307cf"/>
                 <textElement textAlignment="Center">
                     <font size="14"/>
                 </textElement>
                 <text><![CDATA[Цене приступа у теретном саобраћају]]></text>
             </staticText>
             <componentElement>
-                <reportElement x="0" y="220" width="550" height="120" uuid="96bda87c-98fe-46d4-955f-567efa038ad1">
+                <reportElement x="0" y="30" width="555" height="120" uuid="26c45f00-7fe2-4071-a780-14f90a2cb99a">
                     <property name="com.jaspersoft.studio.layout"
                               value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
                     <property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
                     <property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
                     <property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
-                    <property name="com.jaspersoft.studio.components.autoresize.next" value="true"/>
-                    <property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
                 </reportElement>
                 <jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components"
                           xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd"
                           whenNoDataType="Blank">
-                    <datasetRun subDataset="Empty Dataset1" uuid="9c11aeeb-0bfb-4a32-b404-12d441e673d2">
-                        <connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+                    <datasetRun subDataset="UnitPriceList" uuid="3cd7687e-b6f0-4e37-9451-bcb98549ec3e">
+                        <dataSourceExpression>
+                            <![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
                     </datasetRun>
-                    <jr:column width="148" uuid="4a8dd8aa-91e0-4f81-bcd9-e25b6b00eb12">
+                    <jr:column width="170" uuid="8fb7fe96-b58b-4374-8769-17867c8b65fd">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
                         <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="148" height="30"
-                                               uuid="a55fb4b2-bbf7-4a9f-a5de-e72bfdeab159"/>
-                                <textFieldExpression><![CDATA[$P{SegmentParameter}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="7d9cf099-caa2-4fef-a9ad-c8483dc1b787"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Сегмент тржишта]]></text>
+                            </staticText>
                         </jr:tableHeader>
                         <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="148" height="30"
-                                               uuid="cfc7b8d2-15be-4f94-a389-975936fa77be"/>
-                                <textFieldExpression><![CDATA[$P{ElectrifiedLineTextParameter}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="b0d87e39-21a9-4be9-b490-cf967cac50cb"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Електрифициране пруге]]></text>
+                            </staticText>
                         </jr:columnHeader>
                         <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="148" height="30"
-                                               uuid="97ffba63-eff6-4126-9d54-cacd92f393ca"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{NonElectrifiedLocalLineParameter}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="58a44451-1036-4930-9809-b998f3c0bf3e"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Неелектрифициране локалне пруге]]></text>
+                            </staticText>
                         </jr:columnFooter>
                         <jr:detailCell style="Table 1_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="148" height="30"
-                                               uuid="52cec787-1967-474c-9c0c-634cc2e7ed7c"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{RegionalAndHighwayNonElectrifiedLineParameter}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="7a851662-82e6-47b5-b67c-3cd3a3d4dbf0"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Неелектрифициране магистралне и регионалне пруге]]></text>
+                            </staticText>
                         </jr:detailCell>
                     </jr:column>
-                    <jr:column width="182" uuid="30d1cef9-4dac-4839-983e-b41ca6f91f93">
+                    <jr:column width="180" uuid="d0b58de2-c3e2-4868-b407-58a61823b0af">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
                         <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="2e95a30a-0c6b-4257-8d18-bf8c5f524ed9"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{UnitPriceTrainKilometersParameter}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="180" height="30"
+                                               uuid="50f6e841-126c-4bc4-aa4f-f056a991e60b"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Цена приступа по једном возном километру [дин./вкм]]]></text>
+                            </staticText>
                         </jr:tableHeader>
                         <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
                             <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="37229103-c656-47b4-9a3d-673c0083c8c8"/>
-                                <textFieldExpression><![CDATA[$P{UP_7}]]></textFieldExpression>
+                                <reportElement x="0" y="0" width="180" height="30"
+                                               uuid="04ef9d1f-2848-460d-865f-626e8f4161be"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <textFieldExpression><![CDATA[$P{UP1_IN_TABLE}]]></textFieldExpression>
                             </textField>
                         </jr:columnHeader>
-                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="9ce2a85a-cc97-4768-982d-d2fcf4b7d15d"/>
-                                <textFieldExpression><![CDATA[$P{UP_11}]]></textFieldExpression>
-                            </textField>
-                        </jr:columnFooter>
+                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1"/>
                         <jr:detailCell style="Table 1_TD" height="30">
                             <property name="com.jaspersoft.studio.layout"
-                                      value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-                            <textField>
-                                <reportElement x="0" y="0" width="182" height="30"
-                                               uuid="1ec76c90-aefe-4751-b868-d86febff3629"/>
-                                <textFieldExpression><![CDATA[$P{UP_9}]]></textFieldExpression>
-                            </textField>
+                                      value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
                         </jr:detailCell>
                     </jr:column>
-                    <jr:column width="220" uuid="ac047def-7414-4d88-a2b5-613ab0d3e298">
+                    <jr:column width="205" uuid="411f0741-c2dd-4a67-9842-fa36392f4de5">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
                         <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="220" height="30"
-                                               uuid="fe5fb9ee-f8ef-46f8-8949-9061b4025ccb"/>
-                                <textFieldExpression>
-                                    <![CDATA[$P{UnitPriceBruttoTonneKilometersParameter}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="205" height="30"
+                                               uuid="84d785dc-a5e6-4910-8a37-79b13435cd94"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Цена приступа по једном бруто-тонском километру [дин./брткм]]]></text>
+                            </staticText>
+                        </jr:tableHeader>
+                        <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
+                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1"/>
+                        <jr:detailCell style="Table 1_TD" height="30"/>
+                    </jr:column>
+                </jr:table>
+            </componentElement>
+            <componentElement>
+                <reportElement x="0" y="240" width="555" height="120" uuid="381bdb8e-89a2-4c57-8577-d872be2357a4">
+                    <property name="com.jaspersoft.studio.layout"
+                              value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+                    <property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+                    <property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+                    <property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+                </reportElement>
+                <jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components"
+                          xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd"
+                          whenNoDataType="Blank">
+                    <datasetRun subDataset="UnitPriceList" uuid="ae8fa069-3d83-4d82-a7ce-13a8917d9997">
+                        <dataSourceExpression>
+                            <![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+                    </datasetRun>
+                    <jr:column width="170" uuid="89ab4d2f-8fd1-4ea5-9a98-40ea2e746af1">
+                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+                        <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="88660378-a90d-44a7-86d6-1c8595ceff61"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Сегмент тржишта]]></text>
+                            </staticText>
                         </jr:tableHeader>
                         <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="220" height="30"
-                                               uuid="edd98616-420e-4551-891f-e4efe1ee15ba"/>
-                                <textFieldExpression><![CDATA[$P{UP_8}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="38e5d204-16d1-422f-8460-7a5b1fc2b268"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Електрифициране пруге]]></text>
+                            </staticText>
                         </jr:columnHeader>
                         <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="220" height="30"
-                                               uuid="dacb4724-2141-4dd5-a936-d1e949a493b2"/>
-                                <textFieldExpression><![CDATA[$P{UP_12}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="eeeb674a-ef7c-4f1e-b05c-6c514968c835"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Неелектрифициране локалне пруге]]></text>
+                            </staticText>
                         </jr:columnFooter>
                         <jr:detailCell style="Table 1_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="220" height="30"
-                                               uuid="f1eee981-ad8a-4b6c-b1c4-0986bfe8c07d"/>
-                                <textFieldExpression><![CDATA[$P{UP_10}]]></textFieldExpression>
-                            </textField>
+                            <staticText>
+                                <reportElement x="0" y="0" width="170" height="30"
+                                               uuid="3986e306-2c79-417f-9e38-a857dd85b39b"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Неелектрифициране магистралне и регионалне пруге]]></text>
+                            </staticText>
                         </jr:detailCell>
+                    </jr:column>
+                    <jr:column width="180" uuid="0b00acfd-5148-4790-9598-1664d684e609">
+                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+                        <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+                            <staticText>
+                                <reportElement x="0" y="0" width="180" height="30"
+                                               uuid="33550878-14fd-40b5-946f-a390dba184b5"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Цена приступа по једном возном километру [дин./вкм]]]></text>
+                            </staticText>
+                        </jr:tableHeader>
+                        <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
+                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1"/>
+                        <jr:detailCell style="Table 1_TD" height="30">
+                            <property name="com.jaspersoft.studio.layout"
+                                      value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+                        </jr:detailCell>
+                    </jr:column>
+                    <jr:column width="205" uuid="ce7cb9f1-393d-472d-8b35-9704e51db426">
+                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+                        <jr:tableHeader style="Table 1_TH" height="30" rowSpan="1">
+                            <staticText>
+                                <reportElement x="0" y="0" width="205" height="30"
+                                               uuid="e122b3a9-a4bb-4a94-a2b9-ec7e60f29501"/>
+                                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                                <text><![CDATA[Цена приступа по једном бруто-тонском километру [дин./брткм]]]></text>
+                            </staticText>
+                        </jr:tableHeader>
+                        <jr:columnHeader style="Table 1_CH" height="30" rowSpan="1"/>
+                        <jr:columnFooter style="Table 1_CH" height="30" rowSpan="1"/>
+                        <jr:detailCell style="Table 1_TD" height="30"/>
                     </jr:column>
                 </jr:table>
             </componentElement>

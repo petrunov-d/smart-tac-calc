@@ -1,10 +1,11 @@
 package com.dp.trains.ui.views;
 
 import com.dp.trains.services.ReportService;
+import com.dp.trains.services.UnitPriceService;
 import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.reports.ServiceChargesPerTrainReportContainer;
 import com.dp.trains.ui.components.reports.SinglePriceReportContainer;
 import com.dp.trains.ui.components.reports.TacReportContainer;
-import com.dp.trains.ui.components.reports.TrainWieghtChangeReportContainer;
 import com.dp.trains.ui.layout.MainLayout;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.H1;
@@ -26,26 +27,30 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Route(value = ReportsView.NAV_REPORTS_VIEW, layout = MainLayout.class)
 public class ReportsView extends BaseSmartTacCalcView {
 
-    @Autowired
-    private ReportService reportService;
+    private final ReportService reportService;
+    private final UnitPriceService unitPriceService;
 
     static final String NAV_REPORTS_VIEW = "reports";
 
     private final VerticalLayout container;
     private VerticalLayout currentlyActiveView;
 
-    public ReportsView() {
+    public ReportsView(@Autowired ReportService reportService, @Autowired UnitPriceService unitPriceService) {
 
         super();
 
-        container = new VerticalLayout();
-        container.setSizeFull();
-        container.add(new H1(getTranslation(SHARED_APP_TITLE)));
+        this.reportService = reportService;
+        this.unitPriceService = unitPriceService;
+
+        this.container = new VerticalLayout();
+        this.container.setSizeFull();
+        this.container.add(new H1(getTranslation(SHARED_APP_TITLE)));
 
         constructMenuBar();
 
-        container.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
-        currentlyActiveView = new SinglePriceReportContainer(reportService);
+        this.container.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        this.currentlyActiveView = new SinglePriceReportContainer(this.unitPriceService,
+                this.reportService);
 
         add(container, getFooter());
     }
@@ -67,17 +72,17 @@ public class ReportsView extends BaseSmartTacCalcView {
 
             container.remove(currentlyActiveView);
 
-            currentlyActiveView = new SinglePriceReportContainer(reportService);
+            currentlyActiveView = new SinglePriceReportContainer(this.unitPriceService, this.reportService);
 
             container.add(currentlyActiveView);
         });
 
-        MenuItem miTrainWeightChangeReport = menuBar.addItem(getTranslation(REPORTS_BUTTON_LABEL_TRAIN_WEIGHT_CHANGE_REPORT));
+        MenuItem miTrainWeightChangeReport = menuBar.addItem(getTranslation(REPORTS_BUTTON_LABEL_SERVICE_CHARGES_PER_TRAIN_REPORT));
 
         miTrainWeightChangeReport.addClickListener(event -> {
 
             container.remove(currentlyActiveView);
-            currentlyActiveView = new TrainWieghtChangeReportContainer(reportService);
+            currentlyActiveView = new TacReportContainer(this.reportService);
             container.add(currentlyActiveView);
         });
 
@@ -86,7 +91,7 @@ public class ReportsView extends BaseSmartTacCalcView {
         miTacReport.addClickListener(event -> {
 
             container.remove(currentlyActiveView);
-            currentlyActiveView = new TacReportContainer(reportService);
+            currentlyActiveView = new ServiceChargesPerTrainReportContainer(reportService);
             container.add(currentlyActiveView);
         });
 

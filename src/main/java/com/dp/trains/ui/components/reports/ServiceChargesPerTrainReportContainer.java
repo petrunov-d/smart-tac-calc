@@ -20,14 +20,14 @@ import java.io.IOException;
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class TacReportContainer extends BaseReportView {
+public class ServiceChargesPerTrainReportContainer extends BaseReportView {
 
     private final Button viewReportAsPdf;
     private final Button downloadAsExcelButton;
 
     private final IntegerField trainNumber;
 
-    public TacReportContainer(ReportService reportService) {
+    public ServiceChargesPerTrainReportContainer(ReportService reportService) {
 
         super();
 
@@ -45,7 +45,7 @@ public class TacReportContainer extends BaseReportView {
         this.viewReportAsPdf = new Button(getTranslation(REPORTS_BUTTON_VIEW_REPORT), VaadinIcon.EYE.create());
         this.viewReportAsPdf.setEnabled(false);
 
-        H4 title = new H4(getTranslation(REPORTS_BUTTON_LABEL_TRAIN_TAC_REPORT));
+        H4 title = new H4(getTranslation(REPORTS_BUTTON_LABEL_SERVICE_CHARGES_PER_TRAIN_REPORT));
 
         viewReportAsPdf.addClickListener(event -> {
 
@@ -57,7 +57,7 @@ public class TacReportContainer extends BaseReportView {
 
             try {
 
-                outputStream = reportService.getTacReportAsPdf(this.trainNumber.getValue());
+                outputStream = reportService.getServiceChargesPerTrainAsPdf(this.trainNumber.getValue());
 
                 reportGenerationInProgressDialog.close();
 
@@ -78,7 +78,7 @@ public class TacReportContainer extends BaseReportView {
 
             try {
 
-                File file = reportService.getTacReportAsExcel(this.trainNumber.getValue());
+                File file = reportService.getServiceChargesPerTrainAsXls(this.trainNumber.getValue());
 
                 Dialog fileDownloadDialog = new FileDownloadDialog(file);
                 fileDownloadDialog.open();

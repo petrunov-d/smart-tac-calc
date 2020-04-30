@@ -71,7 +71,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         EventBusHolder.getEventBus().register(this);
 
-        errorsDescriptions = getDescriptions();
+        this.errorsDescriptions = getDescriptions();
         init(appLayout);
     }
 
@@ -80,7 +80,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         log.info("Got exception event: " + exceptionRaisedEvent.toString());
 
-        String errorMessage = errorsDescriptions.get(exceptionRaisedEvent.getThrowable().getClass());
+        String errorMessage = this.errorsDescriptions.get(exceptionRaisedEvent.getThrowable().getClass());
 
         if (errorMessage == null) {
 

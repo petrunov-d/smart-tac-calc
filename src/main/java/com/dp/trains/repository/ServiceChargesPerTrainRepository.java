@@ -12,4 +12,6 @@ public interface ServiceChargesPerTrainRepository extends JpaRepository<ServiceC
 
     List<ServiceChargesPerTrainEntity> findByTrainNumberAndRailStationEntity(Integer trainNumber,
                                                                              RailStationEntity railStationEntity);
+
+    List<ServiceChargesPerTrainEntity> findAllByTrainNumber(Integer trainNumber);
 }

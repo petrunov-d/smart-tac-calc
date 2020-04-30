@@ -18,7 +18,6 @@ public class ServiceRegistry {
     private final SectionsService sectionsService;
     private final ServiceService serviceService;
     private final StrategicCoefficientService strategicCoefficientService;
-    private final TaxForServicesPerTrainService taxForServicesPerTrainService;
     private final TrafficDataService trafficDataService;
     private final TrainTypeService trainTypeService;
     private final UnitPriceService unitPriceService;
@@ -42,8 +41,6 @@ public class ServiceRegistry {
                 return serviceService;
             case STRATEGIC_COEFFICIENTS_SERVICE:
                 return strategicCoefficientService;
-            case TAX_FOR_SERVICES_PER_TRAIN:
-                return taxForServicesPerTrainService;
             case TRAFFIC_DATA_SERVICE:
                 return trafficDataService;
             case TRAIN_TYPE_SERVICE:

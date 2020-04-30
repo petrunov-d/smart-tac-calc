@@ -32,6 +32,24 @@ public class TaxPerTrainService {
     private final UnitPriceService unitPriceService;
 
     @Transactional
+    public void deleteByTrainNumber(Integer trainNumber) {
+
+        this.taxPerTrainRepository.deleteAllByTrainNumber(trainNumber);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaxPerTrainEntity> getByTrainNumber(Integer trainNumber) {
+
+        return this.taxPerTrainRepository.findAllByTrainNumber(trainNumber);
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean hasRecordsForTrainNumber(Integer trainNumber) {
+
+        return !this.getByTrainNumber(trainNumber).isEmpty();
+    }
+
+    @Transactional
     public CalculateFinalTaxPerTrainDto calculateFinalTaxForTrain(List<CalculateTaxPerTrainRowDataDto> allRowData,
                                                                   StrategicCoefficientEntity strategicCoefficientEntity,
                                                                   Integer trainNumber,
@@ -233,17 +251,5 @@ public class TaxPerTrainService {
         }
 
         return unitPriceService.findByCode(code);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TaxPerTrainEntity> getByTrainNumber(Integer trainNumber) {
-
-        return this.taxPerTrainRepository.findAllByTrainNumber(trainNumber);
-    }
-
-    @Transactional(readOnly = true)
-    public Boolean hasRecordsForTrainNumber(Integer trainNumber) {
-
-        return !this.getByTrainNumber(trainNumber).isEmpty();
     }
 }

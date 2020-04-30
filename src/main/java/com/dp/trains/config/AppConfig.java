@@ -25,6 +25,7 @@ public class AppConfig {
 
     @Bean
     public MethodInvokingFactoryBean methodInvokingFactoryBean() {
+
         MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
         methodInvokingFactoryBean.setTargetClass(SecurityContextHolder.class);
         methodInvokingFactoryBean.setTargetMethod("setStrategyName");

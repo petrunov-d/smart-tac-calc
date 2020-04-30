@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components.csp;
 
-import com.dp.trains.model.dto.UnitPriceDataIntegrity;
+import com.dp.trains.model.dto.UnitPriceDataIntegrityEnum;
 import com.dp.trains.services.UnitPriceService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.vaadin.flow.component.button.Button;
@@ -36,24 +36,24 @@ public class CalculateSinglePriceDefaultModeContainer extends VerticalLayout {
                 VaadinIcon.CALC_BOOK.create());
         calculate.addClickListener(e -> {
 
-            UnitPriceDataIntegrity unitPriceDataIntegrity = unitPriceService.getDataIntegrityState();
+            UnitPriceDataIntegrityEnum unitPriceDataIntegrityEnum = unitPriceService.getDataIntegrityState();
 
-            if (!unitPriceDataIntegrity.equals(UnitPriceDataIntegrity.ALL_DATA_PRESENT)) {
+            if (!unitPriceDataIntegrityEnum.equals(UnitPriceDataIntegrityEnum.ALL_DATA_PRESENT)) {
 
                 String missingDataLabel = null;
 
-                if (unitPriceDataIntegrity.equals(UnitPriceDataIntegrity.ALL_DATA_MISSING)) {
+                if (unitPriceDataIntegrityEnum.equals(UnitPriceDataIntegrityEnum.ALL_DATA_MISSING)) {
 
                     missingDataLabel = getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_ALL);
                 } else {
 
-                    if (UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA.equals(unitPriceDataIntegrity)) {
+                    if (UnitPriceDataIntegrityEnum.MISSING_FINANCIAL_DATA.equals(unitPriceDataIntegrityEnum)) {
                         missingDataLabel = getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_FINANCIAL);
-                    } else if (UnitPriceDataIntegrity.MISSING_TRAFFIC_DATA.equals(unitPriceDataIntegrity)) {
+                    } else if (UnitPriceDataIntegrityEnum.MISSING_TRAFFIC_DATA.equals(unitPriceDataIntegrityEnum)) {
                         missingDataLabel = getTranslation(CALCULATE_SINGLE_PRICE_DEFAULT_MODE_MISSING_DATA_TRAFFIC);
-                    } else if (UnitPriceDataIntegrity.MISSING_UNIT_PRICE_DATA.equals(unitPriceDataIntegrity)) {
+                    } else if (UnitPriceDataIntegrityEnum.MISSING_UNIT_PRICE_DATA.equals(unitPriceDataIntegrityEnum)) {
                         missingDataLabel = getTranslation(MISSING_UNIT_PRICE_DATA_STRUCTURE);
-                    } else if (UnitPriceDataIntegrity.MISSING_MARKUP_COEFFICIENTS_DATA.equals(unitPriceDataIntegrity)) {
+                    } else if (UnitPriceDataIntegrityEnum.MISSING_MARKUP_COEFFICIENTS_DATA.equals(unitPriceDataIntegrityEnum)) {
                         missingDataLabel = getTranslation(MISSING_MARKUP_COEFFICIENTS_DATA);
                     }
                 }

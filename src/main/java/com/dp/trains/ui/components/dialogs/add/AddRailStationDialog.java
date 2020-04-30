@@ -25,8 +25,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
@@ -70,9 +69,10 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
 
         Select<String> country = new Select<>();
 
-        country.setItems(Arrays.stream(CountryCode.values())
+        country.setItems((Collection<String>) Arrays.stream(CountryCode.values())
                 .map(x -> x.getAlpha3() + " - " + x.getName())
-                .collect(Collectors.toSet()));
+                .sorted(Comparator.comparing(x -> x))
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
 
         country.addValueChangeListener(event -> binder.validate());
         country.setRequiredIndicatorVisible(false);

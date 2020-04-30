@@ -10,4 +10,6 @@ import java.util.List;
 public interface TaxPerTrainRepository extends JpaRepository<TaxPerTrainEntity, Long> {
 
     List<TaxPerTrainEntity> findAllByTrainNumber(Integer trainNumber);
+
+    void deleteAllByTrainNumber(Integer trainNumber);
 }

@@ -1,7 +1,6 @@
 package com.dp.trains.ui.components.dialogs;
 
-import com.dp.trains.event.CPPTResetPageEvent;
-import com.dp.trains.utils.EventBusHolder;
+import com.dp.trains.services.TaxPerTrainService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -9,21 +8,20 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeLeaveEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
-public class ConfirmLeaveCalculateTaxPerTrainPageDialog extends SmartTACCalcDialogBase {
+public class ConfirmDeletePreviousTacDialog extends SmartTACCalcDialogBase {
 
-    public ConfirmLeaveCalculateTaxPerTrainPageDialog(BeforeLeaveEvent beforeLeaveEvent) {
+    public ConfirmDeletePreviousTacDialog(TaxPerTrainService taxPerTrainService, Integer trainNumber) {
 
         super();
 
         VerticalLayout verticalLayout = new VerticalLayout();
 
-        H3 h3Heading = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CONFIRM_LEAVE_MESSAGE));
+        H3 h3Heading = new H3(getTranslation(CONFIRM_DELETE_OLD_TAC));
 
         Button okButton = new Button(getTranslation(COPY_DATA_FROM_PREVIOUS_YEAR_DIALOG_BUTTON_OK),
                 VaadinIcon.CHECK_CIRCLE_O.create());
@@ -32,13 +30,13 @@ public class ConfirmLeaveCalculateTaxPerTrainPageDialog extends SmartTACCalcDial
 
         okButton.addClickListener(event -> {
 
-            EventBusHolder.getEventBus().post(new CPPTResetPageEvent());
-            beforeLeaveEvent.getContinueNavigationAction().proceed();
+            taxPerTrainService.deleteByTrainNumber(trainNumber);
             this.close();
         });
 
         cancel.addClickListener(event -> this.close());
 
+        verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         verticalLayout.add(h3Heading);
         verticalLayout.add(new HorizontalLayout(okButton, cancel));
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);

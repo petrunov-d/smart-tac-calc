@@ -12,6 +12,7 @@ import com.dp.trains.model.entities.TrainTypeEntity;
 import com.dp.trains.services.*;
 import com.dp.trains.ui.components.cppt.CalculatePricePerTrainLayout;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
+import com.dp.trains.ui.components.dialogs.ConfirmDeletePreviousTacDialog;
 import com.dp.trains.ui.components.dialogs.ConfirmLeaveCalculateTaxPerTrainPageDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
@@ -65,6 +66,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private NumberField tonnage;
     private NumberField trainLength;
     private IntegerField trainNumber;
+
     private TextArea calendar;
     private TextArea note;
 
@@ -75,22 +77,21 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private final CalculatePricePerTrainLayout calculatePricePerTrainLayout;
 
-    @Autowired
-    private TrainTypeService trainTypeService;
-    @Autowired
-    private SectionsService sectionsService;
-    @Autowired
-    private StrategicCoefficientService strategicCoefficientService;
-    @Autowired
-    private ServiceChargesPerTrainService serviceChargesPerTrainService;
-    @Autowired
-    private TaxPerTrainService taxPerTrainService;
-    @Autowired
-    private CarrierCompanyService carrierCompanyService;
+    private final TrainTypeService trainTypeService;
+    private final SectionsService sectionsService;
+    private final StrategicCoefficientService strategicCoefficientService;
+    private final ServiceChargesPerTrainService serviceChargesPerTrainService;
+    private final TaxPerTrainService taxPerTrainService;
+    private final CarrierCompanyService carrierCompanyService;
 
-    public CalculatePricePerTrainView() {
+    public CalculatePricePerTrainView(@Autowired SectionsService sectionsService,
+                                      @Autowired TrainTypeService trainTypeService,
+                                      @Autowired StrategicCoefficientService strategicCoefficientService,
+                                      @Autowired ServiceChargesPerTrainService serviceChargesPerTrainService,
+                                      @Autowired TaxPerTrainService taxPerTrainService,
+                                      @Autowired CarrierCompanyService carrierCompanyService) {
 
-        calculatePricePerTrainLayout = new CalculatePricePerTrainLayout();
+        this.calculatePricePerTrainLayout = new CalculatePricePerTrainLayout();
 
         HorizontalLayout baseParametersLayout = new HorizontalLayout();
 
@@ -117,52 +118,59 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
         calculatePricePerTrainLayout.add(baseParametersLayout);
 
         getContent().add(calculatePricePerTrainLayout, footerContainer);
+
+        this.sectionsService = sectionsService;
+        this.trainTypeService = trainTypeService;
+        this.strategicCoefficientService = strategicCoefficientService;
+        this.serviceChargesPerTrainService = serviceChargesPerTrainService;
+        this.taxPerTrainService = taxPerTrainService;
+        this.carrierCompanyService = carrierCompanyService;
     }
 
     private void initializeStrategicCoefficientsSelect() {
 
-        strategicCoefficientSelect = new Select<>();
-        strategicCoefficientSelect.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
+        this.strategicCoefficientSelect = new Select<>();
+        this.strategicCoefficientSelect.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_STRATEGIC_COEFFICIENT));
     }
 
     private void initializeLocomotiveSeriesDtoSelect() {
 
-        locomotiveSeriesDtoSelect = new Select<>();
-        locomotiveSeriesDtoSelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_LOCOMOTIVE_SERIES)));
-        locomotiveSeriesDtoSelect.setEnabled(false);
+        this.locomotiveSeriesDtoSelect = new Select<>();
+        this.locomotiveSeriesDtoSelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_LOCOMOTIVE_SERIES)));
+        this.locomotiveSeriesDtoSelect.setEnabled(false);
     }
 
     private void initializeCalendar() {
 
-        calendar = new TextArea();
-        calendar.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALENDAR));
+        this.calendar = new TextArea();
+        this.calendar.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALENDAR));
     }
 
     private void initializeNote() {
 
-        note = new TextArea();
-        note.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_NOTE));
+        this.note = new TextArea();
+        this.note.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_NOTE));
     }
 
     private void initializeTrainLength() {
 
-        trainLength = new NumberField();
-        trainLength.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
+        this.trainLength = new NumberField();
+        this.trainLength.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
     }
 
     private void initializeCarrierCompanySelect() {
 
-        carrierCompanySelect = new Select<>();
-        carrierCompanySelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY)));
-        carrierCompanySelect.addValueChangeListener(event -> {
+        this.carrierCompanySelect = new Select<>();
+        this.carrierCompanySelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY)));
+        this.carrierCompanySelect.addValueChangeListener(event -> {
 
             Collection<LocomotiveSeriesDto> locomotiveSeriesDtoList =
                     this.carrierCompanyService.getByCarrierName(event.getValue().getCarrierName());
 
-            locomotiveSeriesDtoSelect.setEnabled(true);
-            locomotiveSeriesDtoSelect.setItems(locomotiveSeriesDtoList);
-            calculatePricePerTrainLayout.setLocomotiveSeriesDtos(locomotiveSeriesDtoList);
-            locomotiveSeriesDtoSelect.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
+            this.locomotiveSeriesDtoSelect.setEnabled(true);
+            this.locomotiveSeriesDtoSelect.setItems(locomotiveSeriesDtoList);
+            this.calculatePricePerTrainLayout.setLocomotiveSeriesDtos(locomotiveSeriesDtoList);
+            this.locomotiveSeriesDtoSelect.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
         });
     }
 
@@ -175,16 +183,16 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private void initializeTrainType() {
 
-        trainType = new Select<>();
-        trainType.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_TYPE));
-        trainType.addValueChangeListener(event -> shouldEnableAddButton());
+        this.trainType = new Select<>();
+        this.trainType.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_TYPE));
+        this.trainType.addValueChangeListener(event -> shouldEnableAddButton());
     }
 
     private void initializeTrainNumber() {
 
-        trainNumber = new IntegerField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_NUMBER));
-        trainNumber.setValueChangeMode(ValueChangeMode.EAGER);
-        trainNumber.addValueChangeListener(event -> {
+        this.trainNumber = new IntegerField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_NUMBER));
+        this.trainNumber.setValueChangeMode(ValueChangeMode.EAGER);
+        this.trainNumber.addValueChangeListener(event -> {
 
             calculatePricePerTrainLayout.updateTrainNumberForRows(event.getValue());
             shouldEnableAddButton();
@@ -202,14 +210,14 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     @PostConstruct
     public void populateDropDowns() {
 
-        trainType.setItems(trainTypeService.fetch(0, 0));
-        trainType.setItemLabelGenerator(TrainTypeEntity::getName);
+        this.trainType.setItems(trainTypeService.fetch(0, 0));
+        this.trainType.setItemLabelGenerator(TrainTypeEntity::getName);
 
-        carrierCompanySelect.setItems(this.carrierCompanyService.fetch(0, 0));
-        carrierCompanySelect.setItemLabelGenerator(CarrierCompanyEntity::getCarrierName);
+        this.carrierCompanySelect.setItems(this.carrierCompanyService.fetch(0, 0));
+        this.carrierCompanySelect.setItemLabelGenerator(CarrierCompanyEntity::getCarrierName);
 
-        strategicCoefficientSelect.setItems(strategicCoefficientService.fetch(0, 0));
-        strategicCoefficientSelect.setItemLabelGenerator(StrategicCoefficientEntity::getName);
+        this.strategicCoefficientSelect.setItems(strategicCoefficientService.fetch(0, 0));
+        this.strategicCoefficientSelect.setItemLabelGenerator(StrategicCoefficientEntity::getName);
 
         EventBusHolder.getEventBus().register(this);
     }
@@ -218,7 +226,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         HorizontalLayout finalTaxLayout = new HorizontalLayout();
 
-        titleFinalTax = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
+        this.titleFinalTax = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
 
         finalTaxLayout.add(new VerticalLayout(titleFinalTax));
 
@@ -227,8 +235,8 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private HorizontalLayout getKilometersSummaryLayout() {
 
-        totalKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
-        totalBruttoKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
+        this.totalKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
+        this.totalBruttoKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
 
         HorizontalLayout kilometersSummaryFieldsLayout = new HorizontalLayout();
 
@@ -242,24 +250,24 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private HorizontalLayout getButtonOptionsBar() {
 
-        add = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD), VaadinIcon.PLUS.create());
-        add.setEnabled(false);
+        this.add = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD), VaadinIcon.PLUS.create());
+        this.add.setEnabled(false);
 
-        finalize = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD_FINAL_STATION), VaadinIcon.BAN.create());
-        finalize.setEnabled(false);
+        this.finalize = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD_FINAL_STATION), VaadinIcon.BAN.create());
+        this.finalize.setEnabled(false);
 
-        calculateFinalTax = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALCULATE_FINAL_TAX), VaadinIcon.CALC_BOOK.create());
-        calculateFinalTax.setEnabled(false);
+        this.calculateFinalTax = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CALCULATE_FINAL_TAX), VaadinIcon.CALC_BOOK.create());
+        this.calculateFinalTax.setEnabled(false);
 
         Button doNewCalculation = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_DO_NEW_CALCULATION), VaadinIcon.REFRESH.create());
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.add(add, finalize, doNewCalculation, calculateFinalTax);
 
-        add.addClickListener(e -> addRow(false));
-        finalize.addClickListener(e -> addRow(true));
+        this.add.addClickListener(e -> addRow(false));
+        this.finalize.addClickListener(e -> addRow(true));
 
-        calculateFinalTax.addClickListener(event -> calculateFinalTax());
+        this.calculateFinalTax.addClickListener(event -> calculateFinalTax());
         doNewCalculation.addClickListener(e -> resetPageState());
 
         return buttonLayout;
@@ -267,19 +275,19 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
     private void addRow(boolean isFinal) {
 
-        calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
+        this.calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
                 isFinal,
-                sectionsService,
-                serviceChargesPerTrainService,
-                tonnage.getValue(),
-                locomotiveSeriesDtoSelect.getDataProvider().fetch(new Query<>()).collect(Collectors.toCollection(ArrayList::new)),
-                locomotiveSeriesDtoSelect.getValue(),
-                trainLength.getValue());
+                this.sectionsService,
+                this.serviceChargesPerTrainService,
+                this.tonnage.getValue(),
+                this.locomotiveSeriesDtoSelect.getDataProvider().fetch(new Query<>()).collect(Collectors.toCollection(ArrayList::new)),
+                this.locomotiveSeriesDtoSelect.getValue(),
+                this.trainLength.getValue());
 
-        carrierCompanySelect.setEnabled(false);
-        locomotiveSeriesDtoSelect.setEnabled(false);
-        add.setEnabled(false);
-        finalize.setEnabled(false);
+        this.carrierCompanySelect.setEnabled(false);
+        this.locomotiveSeriesDtoSelect.setEnabled(false);
+        this.add.setEnabled(false);
+        this.finalize.setEnabled(false);
     }
 
     private void resetPageState() {
@@ -353,6 +361,12 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     private void calculateFinalTax() {
 
         Boolean hasPreviousRecords = this.taxPerTrainService.hasRecordsForTrainNumber(this.trainNumber.getValue());
+
+        if (hasPreviousRecords) {
+
+            Dialog confirmDeletePreviousTacDialog = new ConfirmDeletePreviousTacDialog(taxPerTrainService, trainNumber.getValue());
+            confirmDeletePreviousTacDialog.open();
+        }
 
         this.calculateFinalTax.setEnabled(false);
 

@@ -2,7 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.UnitPriceDataIntegrity;
+import com.dp.trains.model.dto.UnitPriceDataIntegrityEnum;
 import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.model.entities.FinancialDataEntity;
 import com.dp.trains.model.entities.MarkupCoefficientEntity;
@@ -228,7 +228,7 @@ public class UnitPriceService implements BaseImportService {
     }
 
     @Transactional(readOnly = true)
-    public UnitPriceDataIntegrity getDataIntegrityState() {
+    public UnitPriceDataIntegrityEnum getDataIntegrityState() {
 
         int financialDataCount = financialDataService.count();
         int trafficDataCount = trafficDataService.count();
@@ -237,24 +237,24 @@ public class UnitPriceService implements BaseImportService {
 
         if (financialDataCount == 0 && trafficDataCount == 0 && unitPriceCount == 0 && markupCoefficientCount == 0) {
 
-            return UnitPriceDataIntegrity.ALL_DATA_MISSING;
+            return UnitPriceDataIntegrityEnum.ALL_DATA_MISSING;
 
         } else if (financialDataCount == 0) {
 
-            return UnitPriceDataIntegrity.MISSING_FINANCIAL_DATA;
+            return UnitPriceDataIntegrityEnum.MISSING_FINANCIAL_DATA;
 
         } else if (trafficDataCount == 0) {
 
-            return UnitPriceDataIntegrity.MISSING_TRAFFIC_DATA;
+            return UnitPriceDataIntegrityEnum.MISSING_TRAFFIC_DATA;
         } else if (unitPriceCount == 0) {
 
-            return UnitPriceDataIntegrity.MISSING_UNIT_PRICE_DATA;
+            return UnitPriceDataIntegrityEnum.MISSING_UNIT_PRICE_DATA;
         } else if (markupCoefficientCount == 0) {
 
-            return UnitPriceDataIntegrity.MISSING_MARKUP_COEFFICIENTS_DATA;
+            return UnitPriceDataIntegrityEnum.MISSING_MARKUP_COEFFICIENTS_DATA;
         }
 
-        return UnitPriceDataIntegrity.ALL_DATA_PRESENT;
+        return UnitPriceDataIntegrityEnum.ALL_DATA_PRESENT;
     }
 
     @Transactional

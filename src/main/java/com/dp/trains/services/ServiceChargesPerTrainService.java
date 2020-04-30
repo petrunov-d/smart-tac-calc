@@ -1,6 +1,7 @@
 package com.dp.trains.services;
 
 import com.dp.trains.model.dto.ServiceChargesPerTrainDto;
+import com.dp.trains.model.dto.ServiceChargesPerTrainReportDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.repository.ServiceChargesPerTrainRepository;
@@ -10,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class ServiceChargesPerTrainService {
 
     private final ServiceChargesPerTrainRepository serviceChargesPerTrainRepository;
+
     private final RailStationService railStationService;
 
     @Transactional
@@ -114,5 +118,24 @@ public class ServiceChargesPerTrainService {
         serviceChargesPerTrainEntityFromDb.setServiceCount(serviceDto.getServiceCount());
 
         return serviceChargesPerTrainRepository.save(serviceChargesPerTrainEntityFromDb);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ServiceChargesPerTrainReportDto> getReportDtosForTrainNumber(Integer trainNumber) {
+
+        List<ServiceChargesPerTrainEntity> entities = this.serviceChargesPerTrainRepository.findAllByTrainNumber(trainNumber);
+
+        return entities.stream()
+                .map(x -> ServiceChargesPerTrainReportDto
+                        .builder()
+                        .trainNumber(x.getTrainNumber())
+                        .railStationName(x.getRailStationEntity().getStation())
+                        .railStationType(x.getRailStationEntity().getType())
+                        .serviceName(x.getServiceEntity().getName())
+                        .serviceCount(x.getServiceCount())
+                        .totalPrice(BigDecimal.valueOf(x.getServiceCount() * x.getServiceEntity().getUnitPrice()))
+                        .servicePrice(x.getServiceEntity().getUnitPrice())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

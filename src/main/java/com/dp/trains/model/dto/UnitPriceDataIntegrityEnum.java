@@ -1,6 +1,6 @@
 package com.dp.trains.model.dto;
 
-public enum UnitPriceDataIntegrity {
+public enum UnitPriceDataIntegrityEnum {
 
     MISSING_FINANCIAL_DATA,
     MISSING_TRAFFIC_DATA,
