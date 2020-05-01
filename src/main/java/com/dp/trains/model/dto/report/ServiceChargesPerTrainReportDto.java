@@ -1,4 +1,4 @@
-package com.dp.trains.model.dto;
+package com.dp.trains.model.dto.report;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

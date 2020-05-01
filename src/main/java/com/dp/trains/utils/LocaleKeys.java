@@ -324,4 +324,6 @@ public class LocaleKeys {
     public static final String REPORTS_SINGLE_PRICE_REPORT_MISSING_UNIT_PRICE = "reports.single.price.report.missing.unit.price";
 
     public static final String CONFIRM_DELETE_OLD_TAC = "calculate.price.per.train.view.old.tac.calculation.confirm";
+
+    public static final String CLEAR_UNIT_PRICE_DATA = "clear.unit.price.data";
 }

@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components.csp;
 
-import com.dp.trains.model.dto.UnitPriceDataIntegrityEnum;
+import com.dp.trains.model.viewmodels.UnitPriceDataIntegrityEnum;
 import com.dp.trains.services.UnitPriceService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.vaadin.flow.component.button.Button;

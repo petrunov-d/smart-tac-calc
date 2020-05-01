@@ -1,7 +1,7 @@
 package com.dp.trains.utils;
 
+import com.dp.trains.model.dto.report.TaxPerTrainReportDto;
 import com.dp.trains.model.entities.TaxPerTrainEntity;
-import com.dp.trains.model.helpers.TaxPerTrainHashHolder;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -12,7 +12,6 @@ import com.google.common.hash.Hashing;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,12 +19,11 @@ import java.util.Objects;
 @Slf4j
 public class TaxPerTrainEntityMerger {
 
-    private Map<TaxPerTrainHashHolder, List<TaxPerTrainEntity>> backingMap = Maps.newHashMap();
+    private Map<Long, List<TaxPerTrainEntity>> backingMap = Maps.newHashMap();
 
     public TaxPerTrainEntityMerger(List<TaxPerTrainEntity> entities) {
 
         Long previousHash = null;
-        int previousIndex = 0;
 
         for (int i = 0; i < entities.size(); i++) {
 
@@ -36,81 +34,70 @@ public class TaxPerTrainEntityMerger {
                 previousHash = getHashForEntity(currentEntity);
             }
 
-            Long current = getHashForEntity(currentEntity);
+            Long currentHash = getHashForEntity(currentEntity);
 
-            if (Objects.equals(current, previousHash)) {
+            if (Objects.equals(currentHash, previousHash) && i > 0) {
 
-                TaxPerTrainHashHolder testKey = new TaxPerTrainHashHolder(previousIndex, current);
+                List<TaxPerTrainEntity> oldList = backingMap.get(currentHash);
+                oldList.add(currentEntity);
+                backingMap.put(currentHash, oldList);
 
-                if (areSequential(getKey(backingMap.keySet(), new TaxPerTrainHashHolder(previousIndex, current)), i)) {
+            } else if (backingMap.get(currentHash) != null) {
 
-                    List<TaxPerTrainEntity> oldList = backingMap.get(testKey);
-                    oldList.add(currentEntity);
-                    backingMap.put(new TaxPerTrainHashHolder(i, current), oldList);
-
-                } else {
-
-                    TaxPerTrainHashHolder taxPerTrainHashHolder = new TaxPerTrainHashHolder(i, current);
-                    this.backingMap.put(taxPerTrainHashHolder, Lists.newArrayList(currentEntity));
-                }
+                this.backingMap.put(hashLong(currentHash), Lists.newArrayList(currentEntity));
 
             } else {
 
-                TaxPerTrainHashHolder taxPerTrainHashHolder = new TaxPerTrainHashHolder(i, current);
-                this.backingMap.put(taxPerTrainHashHolder, Lists.newArrayList(currentEntity));
+                this.backingMap.put(currentHash, Lists.newArrayList(currentEntity));
             }
 
-            previousIndex = i;
-            previousHash = current;
+            previousHash = currentHash;
         }
     }
 
-    public List<TaxPerTrainEntity> getReportDtos() {
+    public List<TaxPerTrainReportDto> getReportDtos() {
 
-        List<TaxPerTrainEntity> result = Lists.newArrayList();
+        List<TaxPerTrainReportDto> result = Lists.newArrayList();
 
-        for (Map.Entry<TaxPerTrainHashHolder, List<TaxPerTrainEntity>> entry : backingMap.entrySet()) {
+        for (Map.Entry<Long, List<TaxPerTrainEntity>> entry : backingMap.entrySet()) {
 
             List<TaxPerTrainEntity> currentList = entry.getValue();
 
-            TaxPerTrainEntity taxPerTrainEntityMerged = new TaxPerTrainEntity();
-            taxPerTrainEntityMerged.setKilometersOnNonElectrifiedLocalLines(0.0);
-            taxPerTrainEntityMerged.setKilometersOnNonElectrifiedHighwayAndRegionalLines(0.0);
-            taxPerTrainEntityMerged.setKilometersOnElectrifiedLines(0.0);
-            taxPerTrainEntityMerged.setTax(BigDecimal.ZERO);
+            TaxPerTrainReportDto taxPerTrainReportDto = new TaxPerTrainReportDto();
+            taxPerTrainReportDto.setKilometersOnNonElectrifiedLocalLines(0.0);
+            taxPerTrainReportDto.setKilometersOnNonElectrifiedHighwayAndRegionalLines(0.0);
+            taxPerTrainReportDto.setKilometersOnElectrifiedLines(0.0);
+            taxPerTrainReportDto.setTax(BigDecimal.ZERO);
 
             for (TaxPerTrainEntity taxPerTrainEntity : currentList) {
 
-                taxPerTrainEntityMerged.setCalendarOfMovement(taxPerTrainEntity.getCalendarOfMovement());
-                taxPerTrainEntityMerged.setCorrelationId(taxPerTrainEntity.getCorrelationId());
-                taxPerTrainEntityMerged.setIsElectrified(taxPerTrainEntity.getIsElectrified());
-                taxPerTrainEntityMerged.setKilometersOnElectrifiedLines(
-                        taxPerTrainEntityMerged.getKilometersOnElectrifiedLines()
+                taxPerTrainReportDto.setCalendarOfMovement(taxPerTrainEntity.getCalendarOfMovement());
+                taxPerTrainReportDto.setIsElectrified(taxPerTrainEntity.getIsElectrified());
+                taxPerTrainReportDto.setKilometersOnElectrifiedLines(
+                        taxPerTrainReportDto.getKilometersOnElectrifiedLines()
                                 + taxPerTrainEntity.getKilometersOnElectrifiedLines());
-                taxPerTrainEntityMerged.setKilometersOnNonElectrifiedHighwayAndRegionalLines(
-                        taxPerTrainEntityMerged.getKilometersOnNonElectrifiedHighwayAndRegionalLines()
+                taxPerTrainReportDto.setKilometersOnNonElectrifiedHighwayAndRegionalLines(
+                        taxPerTrainReportDto.getKilometersOnNonElectrifiedHighwayAndRegionalLines()
                                 + taxPerTrainEntity.getKilometersOnNonElectrifiedHighwayAndRegionalLines()
                 );
-                taxPerTrainEntityMerged.setKilometersOnNonElectrifiedLocalLines(
-                        taxPerTrainEntityMerged.getKilometersOnNonElectrifiedLocalLines()
+                taxPerTrainReportDto.setKilometersOnNonElectrifiedLocalLines(
+                        taxPerTrainReportDto.getKilometersOnNonElectrifiedLocalLines()
                                 + taxPerTrainEntity.getKilometersOnNonElectrifiedLocalLines());
-                taxPerTrainEntityMerged.setLocomotiveSeries(taxPerTrainEntity.getLocomotiveSeries());
-                taxPerTrainEntityMerged.setLocomotiveWeight(taxPerTrainEntity.getLocomotiveWeight());
-                taxPerTrainEntityMerged.setNotes(taxPerTrainEntity.getNotes());
-                taxPerTrainEntityMerged.setId(taxPerTrainEntity.getId());
-                taxPerTrainEntityMerged.setStartStation(taxPerTrainEntity.getStartStation());
-                taxPerTrainEntityMerged.setEndStation(taxPerTrainEntity.getEndStation());
-                taxPerTrainEntityMerged.setStrategicCoefficient(taxPerTrainEntity.getStrategicCoefficient());
-                taxPerTrainEntityMerged.setTotalTrainWeight(taxPerTrainEntity.getTotalTrainWeight());
-                taxPerTrainEntityMerged.setTrainLength(taxPerTrainEntity.getTrainLength());
-                taxPerTrainEntityMerged.setTrainWeightWithoutLocomotive(taxPerTrainEntity.getTrainWeightWithoutLocomotive());
-                taxPerTrainEntityMerged.setTrainType(taxPerTrainEntity.getTrainType());
-                taxPerTrainEntityMerged.setTrainNumber(taxPerTrainEntity.getTrainNumber());
-                taxPerTrainEntityMerged.setTax(taxPerTrainEntityMerged.getTax().add(taxPerTrainEntity.getTax()));
-
+                taxPerTrainReportDto.setLocomotiveSeries(taxPerTrainEntity.getLocomotiveSeries());
+                taxPerTrainReportDto.setLocomotiveWeight(taxPerTrainEntity.getLocomotiveWeight());
+                taxPerTrainReportDto.setNotes(taxPerTrainEntity.getNotes());
+                taxPerTrainReportDto.setStartStation(taxPerTrainEntity.getStartStation());
+                taxPerTrainReportDto.setEndStation(taxPerTrainEntity.getEndStation());
+                taxPerTrainReportDto.setStrategicCoefficient(taxPerTrainEntity.getStrategicCoefficient());
+                taxPerTrainReportDto.setTotalTrainWeight(taxPerTrainEntity.getTotalTrainWeight());
+                taxPerTrainReportDto.setTrainLength(taxPerTrainEntity.getTrainLength());
+                taxPerTrainReportDto.setTrainWeightWithoutLocomotive(taxPerTrainEntity.getTrainWeightWithoutLocomotive());
+                taxPerTrainReportDto.setTrainType(taxPerTrainEntity.getTrainType());
+                taxPerTrainReportDto.setTrainNumber(taxPerTrainEntity.getTrainNumber());
+                taxPerTrainReportDto.setTax(taxPerTrainReportDto.getTax().add(taxPerTrainEntity.getTax()));
             }
 
-            result.add(taxPerTrainEntityMerged);
+            result.add(taxPerTrainReportDto);
         }
 
         return result;
@@ -137,17 +124,5 @@ public class TaxPerTrainEntityMerger {
                                 .putString(from.getLocomotiveSeries(), Charsets.UTF_8)).hash();
 
         return hashCode.asLong();
-    }
-
-    private boolean areSequential(TaxPerTrainHashHolder taxPerTrainHashHolder, int i) {
-
-        return taxPerTrainHashHolder.getIndex() + 1 == i;
-    }
-
-    private TaxPerTrainHashHolder getKey(Collection<TaxPerTrainHashHolder> taxPerTrainHashHolders, TaxPerTrainHashHolder current) {
-
-        return taxPerTrainHashHolders.stream()
-                .filter(x -> x.getIndex() == current.getIndex() && Objects.equals(x.getHash(), current.getHash()))
-                .findFirst().get();
     }
 }

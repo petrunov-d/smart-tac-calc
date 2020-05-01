@@ -2,6 +2,7 @@ package com.dp.trains.ui.views;
 
 import com.dp.trains.model.dto.Authority;
 import com.dp.trains.services.TrainsUserDetailService;
+import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.dialogs.ChangePasswordDialog;
 import com.dp.trains.ui.components.dialogs.add.AddUserDialog;
 import com.dp.trains.ui.components.factories.EditableDataGridFactory;
@@ -34,7 +35,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = UserManagementView.NAV_USER_MANAGEMENT_VIEW, layout = MainLayout.class)
-public class UserManagementView extends Composite<Div> {
+public class UserManagementView extends BaseSmartTacCalcView {
 
     static final String NAV_USER_MANAGEMENT_VIEW = "user_management_view";
 
@@ -62,8 +63,8 @@ public class UserManagementView extends Composite<Div> {
             verticalLayout = loadUserUI();
         }
 
-        getContent().add(verticalLayout);
-        getContent().setHeightFull();
+        this.add(verticalLayout);
+        this.setHeightFull();
     }
 
     @PostConstruct
@@ -74,9 +75,9 @@ public class UserManagementView extends Composite<Div> {
 
         if (grantedAuthorities.contains(Authority.ADMIN.getName())) {
 
-            userGrid = editableDataGridFactory.getUsersGrid();
-            userGrid.setSizeFull();
-            getContent().add(userGrid);
+            this.userGrid = editableDataGridFactory.getUsersGrid();
+            this.userGrid.setSizeFull();
+            this.add(userGrid);
         }
     }
 

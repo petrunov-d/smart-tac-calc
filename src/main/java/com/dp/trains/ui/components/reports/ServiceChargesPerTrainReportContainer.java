@@ -1,6 +1,7 @@
 package com.dp.trains.ui.components.reports;
 
-import com.dp.trains.services.ReportService;
+import com.dp.trains.services.ServiceChargesPerTrainService;
+import com.dp.trains.services.reports.ServiceChargesPerTrainReportService;
 import com.dp.trains.ui.components.dialogs.FileDownloadDialog;
 import com.dp.trains.ui.components.dialogs.PdfViewerDialog;
 import com.dp.trains.ui.components.dialogs.ReportGenerationInProgressDialog;
@@ -27,7 +28,7 @@ public class ServiceChargesPerTrainReportContainer extends BaseReportView {
 
     private final IntegerField trainNumber;
 
-    public ServiceChargesPerTrainReportContainer(ReportService reportService) {
+    public ServiceChargesPerTrainReportContainer(ServiceChargesPerTrainReportService serviceChargesPerTrainReportService) {
 
         super();
 
@@ -57,7 +58,7 @@ public class ServiceChargesPerTrainReportContainer extends BaseReportView {
 
             try {
 
-                outputStream = reportService.getServiceChargesPerTrainAsPdf(this.trainNumber.getValue());
+                outputStream = serviceChargesPerTrainReportService.getServiceChargesPerTrainAsPdf(this.trainNumber.getValue());
 
                 reportGenerationInProgressDialog.close();
 
@@ -78,7 +79,7 @@ public class ServiceChargesPerTrainReportContainer extends BaseReportView {
 
             try {
 
-                File file = reportService.getServiceChargesPerTrainAsXls(this.trainNumber.getValue());
+                File file = serviceChargesPerTrainReportService.getServiceChargesPerTrainAsXls(this.trainNumber.getValue());
 
                 Dialog fileDownloadDialog = new FileDownloadDialog(file);
                 fileDownloadDialog.open();

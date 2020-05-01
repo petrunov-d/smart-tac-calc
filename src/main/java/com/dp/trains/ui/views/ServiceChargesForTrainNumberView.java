@@ -30,15 +30,19 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
 @UIScope
 @SpringComponent
-@Route(value = AddServiceChargesForTrainNumberView.NAV_ADD_SERVICE_CHARGE_FOR_TRAIN_NUMBER, layout = MainLayout.class)
-public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
+@Route(value = ServiceChargesForTrainNumberView.NAV_ADD_SERVICE_CHARGE_FOR_TRAIN_NUMBER, layout = MainLayout.class)
+public class ServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
 
     static final String NAV_ADD_SERVICE_CHARGE_FOR_TRAIN_NUMBER = "add_service_charge_for_train";
 
@@ -56,7 +60,7 @@ public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
     private IntegerField trainNumber;
     private IntegerField serviceCount;
 
-    public AddServiceChargesForTrainNumberView() {
+    public ServiceChargesForTrainNumberView() {
 
         super();
 
@@ -169,7 +173,9 @@ public class AddServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
     @PostConstruct
     public void init() {
 
-        railStationEntitySelect.setItems(railStationService.fetch(0, 0));
+        railStationEntitySelect.setItems((Collection<RailStationEntity>) railStationService.fetch(0, 0)
+                .stream().sorted(Comparator.comparing(RailStationEntity::getStation))
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
         railStationEntitySelect.setItemLabelGenerator(RailStationEntity::getStation);
 
         serviceEntitySelect.setItems(serviceService.fetch(0, 0));

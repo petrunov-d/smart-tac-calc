@@ -30,7 +30,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     private Collection<LocomotiveSeriesDto> locomotiveSeriesDtos;
     private LocomotiveSeriesDto selectedLocomotiveSeriesDto;
 
-    private List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
+    private final List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
 
     public CalculatePricePerTrainLayout() {
 

@@ -1,4 +1,4 @@
-package com.dp.trains.model.dto;
+package com.dp.trains.model.viewmodels;
 
 public enum UnitPriceDataIntegrityEnum {
 

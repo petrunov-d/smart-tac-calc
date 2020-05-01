@@ -1,7 +1,7 @@
 package com.dp.trains.services;
 
 import com.dp.trains.model.dto.ServiceChargesPerTrainDto;
-import com.dp.trains.model.dto.ServiceChargesPerTrainReportDto;
+import com.dp.trains.model.dto.report.ServiceChargesPerTrainReportDto;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.repository.ServiceChargesPerTrainRepository;

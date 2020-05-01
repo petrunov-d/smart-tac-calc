@@ -1,6 +1,6 @@
 package com.dp.trains.ui.components.reports;
 
-import com.dp.trains.services.ReportService;
+import com.dp.trains.services.reports.TacReportService;
 import com.dp.trains.ui.components.dialogs.FileDownloadDialog;
 import com.dp.trains.ui.components.dialogs.PdfViewerDialog;
 import com.dp.trains.ui.components.dialogs.ReportGenerationInProgressDialog;
@@ -27,7 +27,7 @@ public class TacReportContainer extends BaseReportView {
 
     private final IntegerField trainNumber;
 
-    public TacReportContainer(ReportService reportService) {
+    public TacReportContainer(TacReportService tacReportService) {
 
         super();
 
@@ -57,7 +57,7 @@ public class TacReportContainer extends BaseReportView {
 
             try {
 
-                outputStream = reportService.getTacReportAsPdf(this.trainNumber.getValue());
+                outputStream = tacReportService.getTacReportAsPdf(this.trainNumber.getValue());
 
                 reportGenerationInProgressDialog.close();
 
@@ -78,7 +78,7 @@ public class TacReportContainer extends BaseReportView {
 
             try {
 
-                File file = reportService.getTacReportAsExcel(this.trainNumber.getValue());
+                File file = tacReportService.getTacReportAsExcel(this.trainNumber.getValue());
 
                 Dialog fileDownloadDialog = new FileDownloadDialog(file);
                 fileDownloadDialog.open();

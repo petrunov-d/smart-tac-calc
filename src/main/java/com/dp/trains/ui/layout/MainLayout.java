@@ -132,7 +132,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_EDIT_DATA), EDIT.create(), EditDataView.class)
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_CALCULATE_SINGLE_PRICE), CALC_BOOK.create(), CalculateSinglePriceView.class)
                 .add(getTranslation(MAIN_LAYOUT_VIEW_SINGLE_PRICE), INFO_CIRCLE_O.create(), ViewSinglePriceView.class)
-                .add(getTranslation(MAIN_LAYOUT_ADD_SERVICE_CHARGES_FOR_TRAIN_NUMBER), SPLINE_CHART.create(), AddServiceChargesForTrainNumberView.class)
+                .add(getTranslation(MAIN_LAYOUT_ADD_SERVICE_CHARGES_FOR_TRAIN_NUMBER), SPLINE_CHART.create(), ServiceChargesForTrainNumberView.class)
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_CALCULATE_PRICE_PER_TRAIN), TRAIN.create(), CalculatePricePerTrainView.class)
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_REPORTS), CHART_GRID.create(), ReportsView.class)
                 .add(getTranslation(MAIN_LAYOUT_MENU_ITEM_USERS), USER.create(), UserManagementView.class)

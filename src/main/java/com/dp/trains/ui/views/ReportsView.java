@@ -1,7 +1,8 @@
 package com.dp.trains.ui.views;
 
-import com.dp.trains.services.ReportService;
-import com.dp.trains.services.UnitPriceService;
+import com.dp.trains.services.reports.ServiceChargesPerTrainReportService;
+import com.dp.trains.services.reports.TacReportService;
+import com.dp.trains.services.reports.UnitPriceReportService;
 import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.reports.ServiceChargesPerTrainReportContainer;
 import com.dp.trains.ui.components.reports.SinglePriceReportContainer;
@@ -27,20 +28,24 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Route(value = ReportsView.NAV_REPORTS_VIEW, layout = MainLayout.class)
 public class ReportsView extends BaseSmartTacCalcView {
 
-    private final ReportService reportService;
-    private final UnitPriceService unitPriceService;
+    private final UnitPriceReportService unitPriceReportService;
+    private final TacReportService tacReportService;
+    private final ServiceChargesPerTrainReportService serviceChargesPerTrainReportService;
 
     static final String NAV_REPORTS_VIEW = "reports";
 
     private final VerticalLayout container;
     private VerticalLayout currentlyActiveView;
 
-    public ReportsView(@Autowired ReportService reportService, @Autowired UnitPriceService unitPriceService) {
+    public ReportsView(UnitPriceReportService unitPriceReportService,
+                       TacReportService tacReportService,
+                       ServiceChargesPerTrainReportService serviceChargesPerTrainReportService) {
 
         super();
 
-        this.reportService = reportService;
-        this.unitPriceService = unitPriceService;
+        this.unitPriceReportService = unitPriceReportService;
+        this.tacReportService = tacReportService;
+        this.serviceChargesPerTrainReportService = serviceChargesPerTrainReportService;
 
         this.container = new VerticalLayout();
         this.container.setSizeFull();
@@ -49,8 +54,7 @@ public class ReportsView extends BaseSmartTacCalcView {
         constructMenuBar();
 
         this.container.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
-        this.currentlyActiveView = new SinglePriceReportContainer(this.unitPriceService,
-                this.reportService);
+        this.currentlyActiveView = new SinglePriceReportContainer(this.unitPriceReportService);
 
         add(container, getFooter());
     }
@@ -72,17 +76,8 @@ public class ReportsView extends BaseSmartTacCalcView {
 
             container.remove(currentlyActiveView);
 
-            currentlyActiveView = new SinglePriceReportContainer(this.unitPriceService, this.reportService);
+            currentlyActiveView = new SinglePriceReportContainer(this.unitPriceReportService);
 
-            container.add(currentlyActiveView);
-        });
-
-        MenuItem miTrainWeightChangeReport = menuBar.addItem(getTranslation(REPORTS_BUTTON_LABEL_SERVICE_CHARGES_PER_TRAIN_REPORT));
-
-        miTrainWeightChangeReport.addClickListener(event -> {
-
-            container.remove(currentlyActiveView);
-            currentlyActiveView = new TacReportContainer(this.reportService);
             container.add(currentlyActiveView);
         });
 
@@ -91,7 +86,16 @@ public class ReportsView extends BaseSmartTacCalcView {
         miTacReport.addClickListener(event -> {
 
             container.remove(currentlyActiveView);
-            currentlyActiveView = new ServiceChargesPerTrainReportContainer(reportService);
+            currentlyActiveView = new TacReportContainer(this.tacReportService);
+            container.add(currentlyActiveView);
+        });
+
+        MenuItem miServiceChargesPerTrainReport = menuBar.addItem(getTranslation(REPORTS_BUTTON_LABEL_SERVICE_CHARGES_PER_TRAIN_REPORT));
+
+        miServiceChargesPerTrainReport.addClickListener(event -> {
+
+            container.remove(currentlyActiveView);
+            currentlyActiveView = new ServiceChargesPerTrainReportContainer(serviceChargesPerTrainReportService);
             container.add(currentlyActiveView);
         });
 

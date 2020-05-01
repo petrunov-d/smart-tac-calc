@@ -2,13 +2,16 @@ package com.dp.trains.ui.views;
 
 import com.dp.trains.model.entities.UnitPriceEntity;
 import com.dp.trains.services.UnitPriceService;
+import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.common.FilteringTextField;
 import com.dp.trains.ui.layout.MainLayout;
-import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -28,7 +31,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @SpringComponent
 @SuppressWarnings("unchecked")
 @Route(value = ViewSinglePriceView.NAV_VIEW_SINGLE_PRICE, layout = MainLayout.class)
-public class ViewSinglePriceView extends Composite<Div> {
+public class ViewSinglePriceView extends BaseSmartTacCalcView {
 
     @Autowired
     private UnitPriceService unitPriceService;
@@ -41,7 +44,7 @@ public class ViewSinglePriceView extends Composite<Div> {
 
         Grid<UnitPriceEntity> unitPriceGrid = new Grid<>();
 
-        getContent().setHeightFull();
+        this.setHeightFull();
 
         CallbackDataProvider<UnitPriceEntity, Void> provider = DataProvider
                 .fromCallbacks(query -> unitPriceService.fetch(query.getOffset(), query.getLimit()).stream(),
@@ -74,8 +77,6 @@ public class ViewSinglePriceView extends Composite<Div> {
 
         unitPriceGrid.setSizeFull();
 
-        getContent().add(unitPriceGrid);
-
         HeaderRow filterRow = unitPriceGrid.appendHeaderRow();
 
         FilteringTextField codeFieldFilter = new FilteringTextField();
@@ -104,6 +105,15 @@ public class ViewSinglePriceView extends Composite<Div> {
         filterRow.getCell(nameColumn).setComponent(nameFieldFilter);
         filterRow.getCell(measureColumn).setComponent(measureFieldFilter);
         filterRow.getCell(unitPriceColumn).setComponent(unitPriceFieldFilter);
+
+        Button clearButton = new Button(getTranslation(CLEAR_UNIT_PRICE_DATA), VaadinIcon.CLOSE_CIRCLE.create());
+        clearButton.addClickListener(event -> this.unitPriceService.deleteAll());
+
+        VerticalLayout verticalLayout = new VerticalLayout(clearButton);
+        verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+
+       this.add(clearButton);
+       this.add(unitPriceGrid);
     }
 
     @PostConstruct

@@ -2,7 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.dto.UnitPriceDataIntegrityEnum;
+import com.dp.trains.model.viewmodels.UnitPriceDataIntegrityEnum;
 import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.model.entities.FinancialDataEntity;
 import com.dp.trains.model.entities.MarkupCoefficientEntity;
