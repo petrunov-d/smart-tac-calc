@@ -55,7 +55,7 @@ public class EditDataView extends Composite<Div> {
     }
 
     @PostConstruct
-    public void init() throws ExecutionException {
+    public void init() {
 
         Grid<RailStationEntity> railStationEntityGrid = editableDataGridFactory.getRailStationsGrid();
         getContent().add(railStationEntityGrid);
@@ -177,7 +177,7 @@ public class EditDataView extends Composite<Div> {
             selectedClass = CarrierCompanyEntity.class;
         });
 
-        layout.add(menuBar);
+
 
         Button button = new Button(new Icon(VaadinIcon.PLUS));
         button.setText(getTranslation(EDIT_DATA_VIEW_BUTTON_TEXT_ADD_ITEM));
@@ -193,10 +193,11 @@ public class EditDataView extends Composite<Div> {
             dialog.open();
         });
 
-        layout.add(button);
 
-        layout.setAlignSelf(FlexComponent.Alignment.START, menuBar);
-        layout.setAlignSelf(FlexComponent.Alignment.END, button);
+        layout.add(button);
+        layout.add(menuBar);
+        layout.setAlignSelf(FlexComponent.Alignment.START, button);
+        layout.setAlignSelf(FlexComponent.Alignment.END, menuBar);
 
         getContent().add(layout);
     }
