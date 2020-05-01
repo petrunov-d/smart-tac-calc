@@ -53,7 +53,7 @@ public class ImportDataView extends BaseSmartTacCalcView {
     private static final String FILE_TYPE_MS_XLS = "application/vnd.ms-excel";
     private static final String FILE_TYPE_MS_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    private BiMap<String, DtoPoijiHolder> importItems = new ImmutableBiMap.Builder<String, DtoPoijiHolder>()
+    private final BiMap<String, DtoPoijiHolder> importItems = new ImmutableBiMap.Builder<String, DtoPoijiHolder>()
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_RAIL_STATIONS), new DtoPoijiHolder(RailStationDto.class,
                     ServiceEnum.RAIL_STATION_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_SECTIONS), new DtoPoijiHolder(RawExcelSectionDto.class,
@@ -72,8 +72,6 @@ public class ImportDataView extends BaseSmartTacCalcView {
                     ServiceEnum.TRAFFIC_DATA_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_LINE_NUMBERS), new DtoPoijiHolder(LineNumberDto.class,
                     ServiceEnum.LINE_NUMBER_SERVICE, PoijiOptionsFactory.defaultOptions()))
-            .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_TAX_FOR_SERVICES_PER_TRAIN), new DtoPoijiHolder(TaxForServicesPerTrainDto.class,
-                    ServiceEnum.TAX_FOR_SERVICES_PER_TRAIN, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_UNIT_PRICE), new DtoPoijiHolder(UnitPriceDto.class,
                     ServiceEnum.UNIT_PRICE_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .put(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_CARRIER_COMPANY), new DtoPoijiHolder(CarrierCompanyDto.class,
@@ -82,8 +80,8 @@ public class ImportDataView extends BaseSmartTacCalcView {
                     ServiceEnum.MARKUP_COEFFICIENT_SERVICE, PoijiOptionsFactory.defaultOptions()))
             .build();
 
-    private Upload upload;
-    private Select<String> dataTypeSelect;
+    private final Upload upload;
+    private final Select<String> dataTypeSelect;
     private DtoPoijiHolder currentlySelectedPair;
 
     @Autowired

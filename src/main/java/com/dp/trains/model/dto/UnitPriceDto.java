@@ -16,7 +16,7 @@ public class UnitPriceDto implements ExcelImportDto {
 
     @ExcelCell(0)
     @JMap(value = "code", classes = UnitPriceEntity.class)
-    private Integer code;
+    private String code;
 
     @ExcelCell(1)
     @JMap(value = "name", classes = UnitPriceEntity.class)
