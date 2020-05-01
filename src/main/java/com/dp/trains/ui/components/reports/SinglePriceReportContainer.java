@@ -48,9 +48,10 @@ public class SinglePriceReportContainer extends BaseReportView {
         unitPriceReportSelect = new Select<>();
 
         List<UnitPriceReportSelectDto> unitPriceReportSelectDtos = Lists.newArrayList();
-        unitPriceReportSelectDtos.add(new UnitPriceReportSelectDto(ID_PASSENGER_REPORT, "Passenger Train Unit Price Report"));
-        unitPriceReportSelectDtos.add(new UnitPriceReportSelectDto(ID_FREIGHT_REPORT, "Freight Train Unit Price Report"));
+        unitPriceReportSelectDtos.add(new UnitPriceReportSelectDto(ID_PASSENGER_REPORT, REPORT_PASSENGER_TRAIN_SELECT));
+        unitPriceReportSelectDtos.add(new UnitPriceReportSelectDto(ID_FREIGHT_REPORT, REPORT_FREIGHT_TRAIN_SELECT));
 
+        unitPriceReportSelect.setItemLabelGenerator(UnitPriceReportSelectDto::getDescription);
         unitPriceReportSelect.setItems(unitPriceReportSelectDtos);
 
         unitPriceReportSelect.addValueChangeListener(event -> {

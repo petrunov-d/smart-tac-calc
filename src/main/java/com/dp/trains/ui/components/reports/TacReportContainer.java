@@ -1,6 +1,7 @@
 package com.dp.trains.ui.components.reports;
 
 import com.dp.trains.services.reports.TacReportService;
+import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.FileDownloadDialog;
 import com.dp.trains.ui.components.dialogs.PdfViewerDialog;
 import com.dp.trains.ui.components.dialogs.ReportGenerationInProgressDialog;
@@ -49,46 +50,59 @@ public class TacReportContainer extends BaseReportView {
 
         viewReportAsPdf.addClickListener(event -> {
 
-            Dialog reportGenerationInProgressDialog = new ReportGenerationInProgressDialog();
+            if (tacReportService.getCountByTrainNumber(trainNumber.getValue()) == 0) {
 
-            File outputStream;
+                BasicInfoDialog basicInfoDialog = new BasicInfoDialog(getTranslation(REPORT_PARAMETERS_NO_DATA));
+                basicInfoDialog.open();
+            } else {
 
-            reportGenerationInProgressDialog.open();
+                Dialog reportGenerationInProgressDialog = new ReportGenerationInProgressDialog();
 
-            try {
+                File outputStream;
 
-                outputStream = tacReportService.getTacReportAsPdf(this.trainNumber.getValue());
+                reportGenerationInProgressDialog.open();
 
-                reportGenerationInProgressDialog.close();
+                try {
 
-                Dialog pdfViewerDialog = new PdfViewerDialog(outputStream);
+                    outputStream = tacReportService.getTacReportAsPdf(this.trainNumber.getValue());
 
-                pdfViewerDialog.open();
+                    reportGenerationInProgressDialog.close();
 
-            } catch (JRException | IOException jrException) {
+                    Dialog pdfViewerDialog = new PdfViewerDialog(outputStream);
 
-                log.error("Error generating report: ", jrException);
+                    pdfViewerDialog.open();
+
+                } catch (JRException | IOException jrException) {
+
+                    log.error("Error generating report: ", jrException);
+                }
             }
         });
 
         downloadAsExcelButton.addClickListener(buttonClickEvent -> {
 
-            Dialog d = new ReportGenerationInProgressDialog();
-            d.open();
+            if (tacReportService.getCountByTrainNumber(trainNumber.getValue()) == 0) {
 
-            try {
+                BasicInfoDialog basicInfoDialog = new BasicInfoDialog(getTranslation(REPORT_PARAMETERS_NO_DATA));
+                basicInfoDialog.open();
+            } else {
+                Dialog d = new ReportGenerationInProgressDialog();
+                d.open();
 
-                File file = tacReportService.getTacReportAsExcel(this.trainNumber.getValue());
+                try {
 
-                Dialog fileDownloadDialog = new FileDownloadDialog(file);
-                fileDownloadDialog.open();
+                    File file = tacReportService.getTacReportAsExcel(this.trainNumber.getValue());
 
-            } catch (JRException | IOException jrException) {
+                    Dialog fileDownloadDialog = new FileDownloadDialog(file);
+                    fileDownloadDialog.open();
 
-                log.error("Error generating report: ", jrException);
+                } catch (JRException | IOException jrException) {
+
+                    log.error("Error generating report: ", jrException);
+                }
+
+                d.close();
             }
-
-            d.close();
         });
 
         this.add(title);

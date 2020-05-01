@@ -12,4 +12,6 @@ public interface TaxPerTrainRepository extends JpaRepository<TaxPerTrainEntity, 
     List<TaxPerTrainEntity> findAllByTrainNumber(Integer trainNumber);
 
     void deleteAllByTrainNumber(Integer trainNumber);
+
+    Integer countAllByTrainNumber(Integer trainNumber);
 }

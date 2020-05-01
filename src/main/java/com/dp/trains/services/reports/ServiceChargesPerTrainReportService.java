@@ -64,4 +64,9 @@ public class ServiceChargesPerTrainReportService extends BaseReportService {
 
         return JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
     }
+
+    public Integer getCountByTrainNumber(Integer trainNumber) {
+
+        return this.serviceChargesPerTrainService.getCountByTrainNumber(trainNumber);
+    }
 }

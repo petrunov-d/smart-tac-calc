@@ -69,4 +69,9 @@ public class TacReportService extends BaseReportService {
 
         return JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
     }
+
+    public Integer getCountByTrainNumber(Integer trainNumber) {
+
+        return this.taxPerTrainService.getCountByTrainNumber(trainNumber);
+    }
 }

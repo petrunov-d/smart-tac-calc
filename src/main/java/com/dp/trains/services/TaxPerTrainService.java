@@ -38,6 +38,12 @@ public class TaxPerTrainService {
     }
 
     @Transactional(readOnly = true)
+    public Integer getCountByTrainNumber(Integer trainNumber) {
+
+        return taxPerTrainRepository.countAllByTrainNumber(trainNumber);
+    }
+
+    @Transactional(readOnly = true)
     public List<TaxPerTrainEntity> getByTrainNumber(Integer trainNumber) {
 
         return this.taxPerTrainRepository.findAllByTrainNumber(trainNumber);

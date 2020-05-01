@@ -1,7 +1,7 @@
 package com.dp.trains.ui.components.reports;
 
-import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.services.reports.ServiceChargesPerTrainReportService;
+import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.FileDownloadDialog;
 import com.dp.trains.ui.components.dialogs.PdfViewerDialog;
 import com.dp.trains.ui.components.dialogs.ReportGenerationInProgressDialog;
@@ -50,46 +50,60 @@ public class ServiceChargesPerTrainReportContainer extends BaseReportView {
 
         viewReportAsPdf.addClickListener(event -> {
 
-            Dialog reportGenerationInProgressDialog = new ReportGenerationInProgressDialog();
+            if (serviceChargesPerTrainReportService.getCountByTrainNumber(trainNumber.getValue()) == 0) {
 
-            File outputStream;
+                BasicInfoDialog basicInfoDialog = new BasicInfoDialog(getTranslation(REPORT_PARAMETERS_NO_DATA));
+                basicInfoDialog.open();
+            } else {
 
-            reportGenerationInProgressDialog.open();
+                Dialog reportGenerationInProgressDialog = new ReportGenerationInProgressDialog();
 
-            try {
+                File outputStream;
 
-                outputStream = serviceChargesPerTrainReportService.getServiceChargesPerTrainAsPdf(this.trainNumber.getValue());
+                reportGenerationInProgressDialog.open();
 
-                reportGenerationInProgressDialog.close();
+                try {
 
-                Dialog pdfViewerDialog = new PdfViewerDialog(outputStream);
+                    outputStream = serviceChargesPerTrainReportService.getServiceChargesPerTrainAsPdf(this.trainNumber.getValue());
 
-                pdfViewerDialog.open();
+                    reportGenerationInProgressDialog.close();
 
-            } catch (JRException | IOException jrException) {
+                    Dialog pdfViewerDialog = new PdfViewerDialog(outputStream);
 
-                log.error("Error generating report: ", jrException);
+                    pdfViewerDialog.open();
+
+                } catch (JRException | IOException jrException) {
+
+                    log.error("Error generating report: ", jrException);
+                }
             }
         });
 
         downloadAsExcelButton.addClickListener(buttonClickEvent -> {
 
-            Dialog d = new ReportGenerationInProgressDialog();
-            d.open();
+            if (serviceChargesPerTrainReportService.getCountByTrainNumber(trainNumber.getValue()) == 0) {
 
-            try {
+                BasicInfoDialog basicInfoDialog = new BasicInfoDialog(getTranslation(REPORT_PARAMETERS_NO_DATA));
+                basicInfoDialog.open();
+            } else {
 
-                File file = serviceChargesPerTrainReportService.getServiceChargesPerTrainAsXls(this.trainNumber.getValue());
+                Dialog d = new ReportGenerationInProgressDialog();
+                d.open();
 
-                Dialog fileDownloadDialog = new FileDownloadDialog(file);
-                fileDownloadDialog.open();
+                try {
 
-            } catch (JRException | IOException jrException) {
+                    File file = serviceChargesPerTrainReportService.getServiceChargesPerTrainAsXls(this.trainNumber.getValue());
 
-                log.error("Error generating report: ", jrException);
+                    Dialog fileDownloadDialog = new FileDownloadDialog(file);
+                    fileDownloadDialog.open();
+
+                } catch (JRException | IOException jrException) {
+
+                    log.error("Error generating report: ", jrException);
+                }
+
+                d.close();
             }
-
-            d.close();
         });
 
         this.add(title);

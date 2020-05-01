@@ -1,5 +1,6 @@
 package com.dp.trains.model.entities;
 
+import com.dp.trains.model.entities.listeners.RailStationEntityListener;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "rail_station")
 @EqualsAndHashCode(callSuper = true)
+@EntityListeners(RailStationEntityListener.class)
 public class RailStationEntity extends YearDiscriminatingEntity {
 
     @Id

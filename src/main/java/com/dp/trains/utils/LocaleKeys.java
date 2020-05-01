@@ -319,11 +319,12 @@ public class LocaleKeys {
     public static final String MISSING_MARKUP_COEFFICIENTS_DATA = "calculate.single.price.missing.markup.coefficients";
 
     public static final String HAS_PREVIOUS_RECORDS_FOR_TRAIN_NUMBER_WARNING = "has.previous.records.for.train.number.warning";
-
     public static final String REPORTS_BUTTON_VIEW_REPORT = "reports.button.view.report";
     public static final String REPORTS_SINGLE_PRICE_REPORT_MISSING_UNIT_PRICE = "reports.single.price.report.missing.unit.price";
-
     public static final String CONFIRM_DELETE_OLD_TAC = "calculate.price.per.train.view.old.tac.calculation.confirm";
-
     public static final String CLEAR_UNIT_PRICE_DATA = "clear.unit.price.data";
+
+    public static final String REPORT_PARAMETERS_NO_DATA = "report.parameters.no.data";
+    public static final String REPORT_PASSENGER_TRAIN_SELECT = "report.passenger.train.select";
+    public static final String REPORT_FREIGHT_TRAIN_SELECT = "report.freight.train.select";
 }

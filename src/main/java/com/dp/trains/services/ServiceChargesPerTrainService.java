@@ -33,6 +33,12 @@ public class ServiceChargesPerTrainService {
     }
 
     @Transactional(readOnly = true)
+    public Integer getCountByTrainNumber(Integer trainNumber) {
+
+        return serviceChargesPerTrainRepository.countAllByTrainNumber(trainNumber);
+    }
+
+    @Transactional(readOnly = true)
     public List<ServiceChargesPerTrainEntity> findByTrainNumberAndRailRoadStation(Integer trainNumber,
                                                                                   String railRoadStation) {
 

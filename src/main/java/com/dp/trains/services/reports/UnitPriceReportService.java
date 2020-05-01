@@ -23,8 +23,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UnitPriceReportService extends BaseReportService {
 
-    private static final String REPORT_UNIT_PRICE_REPORT_FOR_FREIGHT_TRAINS = "/reports/unit_price_report_for_passenger_trains.jrxml";
-    private static final String REPORT_UNIT_PRICE_REPORT_FOR_PASSENGER_TRAINS = "/reports/unit_price_report_for_freight_trains.jrxml";
+    private static final String REPORT_UNIT_PRICE_REPORT_FOR_FREIGHT_TRAINS = "/reports/unit_price_report_for_freight_trains.jrxml";
+    private static final String REPORT_UNIT_PRICE_REPORT_FOR_PASSENGER_TRAINS = "/reports/unit_price_report_for_passenger_trains.jrxml";
 
     private static final String FILE_PREFIX_UNIT_PRICE_PASSENGER_TRAIN_REPORT = "report_single_price_passenger_train";
     private static final String FILE_PREFIX_UNIT_PRICE_FREIGHT_TRAIN_REPORT = "report_single_price_freight_train";

@@ -38,9 +38,7 @@ public class TaxPerTrainEntityMerger {
 
             if (Objects.equals(currentHash, previousHash) && i > 0) {
 
-                List<TaxPerTrainEntity> oldList = backingMap.get(currentHash);
-                oldList.add(currentEntity);
-                backingMap.put(currentHash, oldList);
+                backingMap.get(currentHash).add(currentEntity);
 
             } else if (backingMap.get(currentHash) != null) {
 
