@@ -156,12 +156,12 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     @Subscribe
     public void handleStationChangedFromRow(CPPTStationChangedEvent cPPTStationChangedEvent) {
 
-        currentStation = StationViewModel.builder()
+        this.currentStation = StationViewModel.builder()
                 .selectedStation(cPPTStationChangedEvent.getSelectedStation())
                 .isKeyStation(cPPTStationChangedEvent.getIsKeyStation())
                 .build();
 
-        log.info("Current Key Station set to:" + currentStation.toString());
+        log.info("Current Key Station set to:" + this.currentStation.toString());
     }
 
     @Subscribe

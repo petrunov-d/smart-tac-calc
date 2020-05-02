@@ -36,7 +36,7 @@ public class LoginView extends Composite<Div> implements BeforeEnterObserver {
 
     static final String ROUTE = "login";
 
-    private LoginForm login = new LoginForm();
+    private final LoginForm login = new LoginForm();
 
     public LoginView() {
 

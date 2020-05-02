@@ -33,6 +33,11 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 public class EditRailStationDialog extends SmartTACCalcDialogBase {
 
+    private final ComboBox<Integer> lineNumber;
+    private final TextArea station;
+    private final TextArea type;
+    private final Checkbox isKeyStation;
+
     public EditRailStationDialog(Grid currentlyActiveGrid, RailStationService railStationService,
                                  LineNumberService lineNumberService,
                                  RailStationEntity railStationEntity) {
@@ -44,28 +49,29 @@ public class EditRailStationDialog extends SmartTACCalcDialogBase {
 
         RailStationDto railStationDto = new RailStationDto();
 
-        ComboBox<Integer> lineNumber = new ComboBox<>();
-
-        lineNumber.setItems(lineNumberService.getLineNumbersAsInts());
+        lineNumber = new ComboBox<>();
+        Set<Integer> lineNumbers = lineNumberService.getLineNumbersAsInts();
+        lineNumbers.add(-1);
+        lineNumber.setItems(lineNumbers);
         lineNumber.addValueChangeListener(event -> binder.validate());
         lineNumber.setRequiredIndicatorVisible(true);
         lineNumber.setValue(railStationEntity.getLineNumber());
 
-        TextArea station = new TextArea();
+        station = new TextArea();
 
         station.setValueChangeMode(ValueChangeMode.EAGER);
         station.addValueChangeListener(event -> binder.validate());
         station.setRequiredIndicatorVisible(true);
         station.setValue(railStationEntity.getStation() == null ? "" : railStationEntity.getStation());
 
-        TextArea type = new TextArea();
+        type = new TextArea();
 
         type.setValueChangeMode(ValueChangeMode.EAGER);
         type.addValueChangeListener(event -> binder.validate());
         type.setRequiredIndicatorVisible(true);
         type.setValue(railStationEntity.getType() == null ? "" : railStationEntity.getType());
 
-        Checkbox isKeyStation = new Checkbox();
+        isKeyStation = new Checkbox();
 
         isKeyStation.addValueChangeListener(event -> binder.validate());
         isKeyStation.setRequiredIndicatorVisible(true);
@@ -78,14 +84,18 @@ public class EditRailStationDialog extends SmartTACCalcDialogBase {
                 .sorted(Comparator.comparing(x -> x))
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
 
-        country.addValueChangeListener(event -> binder.validate());
+        country.addValueChangeListener(event -> {
+            checkIfIsInSerbia(event.getValue());
+            binder.validate();
+        });
         country.setRequiredIndicatorVisible(false);
         country.setValue(CountryCode.getByCode(railStationEntity.getCountry()).getAlpha3() + " - "
                 + CountryCode.getByCode(railStationEntity.getCountry()).getName());
 
         binder.forField(lineNumber)
                 .asRequired()
-                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
+                .withValidator(ValidatorFactory.intRangeValidator(-1, Integer.MAX_VALUE,
+                        getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
                 .bind(RailStationDto::getLineNumber, RailStationDto::setLineNumber);
 
         binder.forField(station)
@@ -161,5 +171,20 @@ public class EditRailStationDialog extends SmartTACCalcDialogBase {
         VerticalLayout verticalLayout = getDefaultDialogLayout("", layoutWithBinder, actions);
 
         this.add(verticalLayout);
+    }
+
+    private void checkIfIsInSerbia(String value) {
+
+        if (value != null && !"".equals(value.trim())) {
+
+            CountryCode countryCode = CountryCode.getByAlpha3Code(value.substring(0, value.indexOf('-') - 1));
+
+            if (!countryCode.equals(CountryCode.RS)) {
+
+                this.lineNumber.setValue(-1);
+                this.isKeyStation.setValue(false);
+                this.type.setValue("N/A");
+            }
+        }
     }
 }

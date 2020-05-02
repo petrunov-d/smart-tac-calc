@@ -11,7 +11,7 @@ import java.util.Map;
 public class UnitPriceRetrieverByCode {
 
     private static final int MINIMUM_FRACTION_DIGITS = 0;
-    private static final int MAXIMUM_FRACTION_DIGITS = 0;
+    private static final int MAXIMUM_FRACTION_DIGITS = 5;
 
     private final DecimalFormat decimalFormat = new DecimalFormat();
     private final Map<String, UnitPriceEntity> backingMap = Maps.newHashMap();

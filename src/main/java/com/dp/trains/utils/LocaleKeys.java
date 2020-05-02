@@ -327,4 +327,6 @@ public class LocaleKeys {
     public static final String REPORT_PARAMETERS_NO_DATA = "report.parameters.no.data";
     public static final String REPORT_PASSENGER_TRAIN_SELECT = "report.passenger.train.select";
     public static final String REPORT_FREIGHT_TRAIN_SELECT = "report.freight.train.select";
+    public static final String REPORT_GENERATE_EXCEL_FILE_BUTTON_LABEL = "report.button.generate.excel.file";
+    public static final String CONFIRM_DELETE_UNIT_PRICE = "confirm.delete.unit.prices.for.current.year";
 }

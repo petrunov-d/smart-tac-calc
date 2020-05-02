@@ -33,6 +33,11 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @Slf4j
 public class AddRailStationDialog extends SmartTACCalcDialogBase {
 
+    private final ComboBox<Integer> lineNumber;
+    private final TextArea station;
+    private final TextArea type;
+    private final Checkbox isKeyStation;
+
     public AddRailStationDialog(Grid currentlyActiveGrid, RailStationService railStationService,
                                 LineNumberService lineNumberService) {
 
@@ -43,25 +48,27 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
 
         RailStationDto railStationDto = new RailStationDto();
 
-        ComboBox<Integer> lineNumber = new ComboBox<>();
+        lineNumber = new ComboBox<>();
 
-        lineNumber.setItems(lineNumberService.getLineNumbersAsInts());
+        Set<Integer> lineNumbers = lineNumberService.getLineNumbersAsInts();
+        lineNumbers.add(-1);
+        lineNumber.setItems(lineNumbers);
         lineNumber.addValueChangeListener(event -> binder.validate());
         lineNumber.setRequiredIndicatorVisible(true);
 
-        TextArea station = new TextArea();
+        station = new TextArea();
 
         station.setValueChangeMode(ValueChangeMode.EAGER);
         station.addValueChangeListener(event -> binder.validate());
         station.setRequiredIndicatorVisible(true);
 
-        TextArea type = new TextArea();
+        type = new TextArea();
 
         type.setValueChangeMode(ValueChangeMode.EAGER);
         type.addValueChangeListener(event -> binder.validate());
         type.setRequiredIndicatorVisible(true);
 
-        Checkbox isKeyStation = new Checkbox();
+        isKeyStation = new Checkbox();
 
         isKeyStation.addValueChangeListener(event -> binder.validate());
         isKeyStation.setRequiredIndicatorVisible(true);
@@ -74,13 +81,18 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
                 .sorted(Comparator.comparing(x -> x))
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
 
-        country.addValueChangeListener(event -> binder.validate());
+        country.addValueChangeListener(event -> {
+
+            checkIfIsInSerbia(event.getValue());
+            binder.validate();
+        });
+
         country.setRequiredIndicatorVisible(false);
         country.setValue(CountryCode.RS.getAlpha3() + " - " + CountryCode.RS.getName());
 
         binder.forField(lineNumber)
                 .asRequired()
-                .withValidator(ValidatorFactory.defaultIntRangeValidator(getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
+                .withValidator(ValidatorFactory.intRangeValidator(-1, Integer.MAX_VALUE, getTranslation(GRID_SERVICE_COLUMN_VALIDATION_LINE_NUMBER)))
                 .bind(RailStationDto::getLineNumber, RailStationDto::setLineNumber);
 
         binder.forField(station)
@@ -165,5 +177,20 @@ public class AddRailStationDialog extends SmartTACCalcDialogBase {
         VerticalLayout verticalLayout = getDefaultDialogLayout(getTranslation(DIALOG_ADD_RAIL_STATION_TITLE), layoutWithBinder, actions);
 
         this.add(verticalLayout);
+    }
+
+    private void checkIfIsInSerbia(String value) {
+
+        if (value != null && !"".equals(value.trim())) {
+
+            CountryCode countryCode = CountryCode.getByAlpha3Code(value.substring(0, value.indexOf('-') - 1));
+
+            if (!countryCode.equals(CountryCode.RS)) {
+
+                this.lineNumber.setValue(-1);
+                this.isKeyStation.setValue(false);
+                this.type.setValue("N/A");
+            }
+        }
     }
 }

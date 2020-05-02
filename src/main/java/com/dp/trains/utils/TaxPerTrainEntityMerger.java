@@ -42,7 +42,8 @@ public class TaxPerTrainEntityMerger {
 
             } else if (backingMap.get(currentHash) != null) {
 
-                this.backingMap.put(hashLong(currentHash), Lists.newArrayList(currentEntity));
+                Long reHash = hashLong(currentHash);
+                this.backingMap.put(reHash, Lists.newArrayList(currentEntity));
 
             } else {
 

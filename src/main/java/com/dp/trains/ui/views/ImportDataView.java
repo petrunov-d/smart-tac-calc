@@ -97,9 +97,9 @@ public class ImportDataView extends BaseSmartTacCalcView {
 
         verticalLayout.add(headerText);
 
-        upload = getUploadItem();
-        upload.setVisible(false);
-        dataTypeSelect = getSelectItem();
+        this.upload = getUploadItem();
+        this.upload.setVisible(false);
+        this.dataTypeSelect = getSelectItem();
 
         verticalLayout.add(dataTypeSelect);
         verticalLayout.add(upload);

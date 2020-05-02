@@ -27,6 +27,12 @@ public class ValidatorFactory {
         return new IntegerRangeValidator(errorMessage, 0, Integer.MAX_VALUE);
     }
 
+    public static IntegerRangeValidator intRangeValidator(Integer minValue, Integer maxValue, String errorMessage) {
+
+        return new IntegerRangeValidator(errorMessage, minValue, maxValue);
+    }
+
+
     public static DoubleRangeValidator defaultDoubleRangeValidator(String errorMessage) {
 
         return new DoubleRangeValidator(errorMessage, 0.0, Double.MAX_VALUE);

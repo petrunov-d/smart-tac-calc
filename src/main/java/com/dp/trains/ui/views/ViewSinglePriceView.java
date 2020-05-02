@@ -4,14 +4,14 @@ import com.dp.trains.model.entities.UnitPriceEntity;
 import com.dp.trains.services.UnitPriceService;
 import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.common.FilteringTextField;
+import com.dp.trains.ui.components.dialogs.ConfirmClearUnitPriceDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -107,13 +107,14 @@ public class ViewSinglePriceView extends BaseSmartTacCalcView {
         filterRow.getCell(unitPriceColumn).setComponent(unitPriceFieldFilter);
 
         Button clearButton = new Button(getTranslation(CLEAR_UNIT_PRICE_DATA), VaadinIcon.CLOSE_CIRCLE.create());
-        clearButton.addClickListener(event -> this.unitPriceService.deleteAll());
+        clearButton.addClickListener(event -> {
 
-        VerticalLayout verticalLayout = new VerticalLayout(clearButton);
-        verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+            Dialog confirmDialog = new ConfirmClearUnitPriceDialog(unitPriceService);
+            confirmDialog.open();
+        });
 
-       this.add(clearButton);
-       this.add(unitPriceGrid);
+        this.add(clearButton);
+        this.add(unitPriceGrid);
     }
 
     @PostConstruct

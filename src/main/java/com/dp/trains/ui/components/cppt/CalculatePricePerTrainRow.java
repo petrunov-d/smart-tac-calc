@@ -114,10 +114,10 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     private void initializeTrainLength(Double trainLengthDouble) {
 
-        trainLength = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
-        trainLength.setValue(trainLengthDouble);
-        trainLength.setValueChangeMode(ValueChangeMode.EAGER);
-        trainLength.addValueChangeListener(event -> {
+        this.trainLength = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
+        this.trainLength.setValue(trainLengthDouble);
+        this.trainLength.setValueChangeMode(ValueChangeMode.EAGER);
+        this.trainLength.addValueChangeListener(event -> {
 
             EventBusHolder.getEventBus().post(CPPTTrainLengthChangedFromRowEvent.builder()
                     .trainLength(event.getValue())
@@ -147,25 +147,25 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     private void initializeRowButtons(ServiceChargesPerTrainService serviceChargesPerTrainService) {
 
-        removeButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_REMOVE), VaadinIcon.CLOSE_SMALL.create());
-        removeButton.setWidth("100%");
-        removeButton.addClickListener(event -> EventBusHolder.getEventBus().post(CPPTRowRemovedEvent.builder()
+        this.removeButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_REMOVE), VaadinIcon.CLOSE_SMALL.create());
+        this.removeButton.setWidth("100%");
+        this.removeButton.addClickListener(event -> EventBusHolder.getEventBus().post(CPPTRowRemovedEvent.builder()
                 .rowIndex(getRowIndex()).build()));
 
-        serviceButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES), VaadinIcon.TRAIN.create());
-        serviceButton.setEnabled(false);
-        serviceButton.setWidth("100%");
+        this.serviceButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES), VaadinIcon.TRAIN.create());
+        this.serviceButton.setEnabled(false);
+        this.serviceButton.setWidth("100%");
 
-        serviceButton.addClickListener(event -> {
+        this.serviceButton.addClickListener(event -> {
 
             Dialog servicesDialog = new ViewServiceChargesForTrainDialog(serviceChargesPerTrainService);
             servicesDialog.open();
         });
 
-        doneButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_DONE), VaadinIcon.CHECK_CIRCLE_O.create());
-        doneButton.setWidth("100%");
-        doneButton.setEnabled(false);
-        doneButton.addClickListener(event -> {
+        this.doneButton = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_BUTTON_DONE), VaadinIcon.CHECK_CIRCLE_O.create());
+        this.doneButton.setWidth("100%");
+        this.doneButton.setEnabled(false);
+        this.doneButton.addClickListener(event -> {
 
             if (station.getValue() != null && lineNumbers.getValue() != null && tonnage.getValue() != null) {
 

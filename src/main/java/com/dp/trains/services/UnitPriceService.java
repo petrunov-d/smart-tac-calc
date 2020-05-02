@@ -2,13 +2,13 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
-import com.dp.trains.model.viewmodels.UnitPriceDataIntegrityEnum;
 import com.dp.trains.model.dto.UnitPriceDto;
 import com.dp.trains.model.entities.FinancialDataEntity;
 import com.dp.trains.model.entities.MarkupCoefficientEntity;
 import com.dp.trains.model.entities.TrafficDataEntity;
 import com.dp.trains.model.entities.UnitPriceEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
+import com.dp.trains.model.viewmodels.UnitPriceDataIntegrityEnum;
 import com.dp.trains.repository.UnitPriceRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -185,6 +185,7 @@ public class UnitPriceService implements BaseImportService {
                 unitPriceEntity.setId(null);
                 unitPriceEntity.setYear(previousYear + 1);
                 unitPriceEntity.setShouldUpdateYear(false);
+                unitPriceEntity.setUnitPrice(null);
                 return unitPriceEntity;
 
             } catch (JsonProcessingException e) {

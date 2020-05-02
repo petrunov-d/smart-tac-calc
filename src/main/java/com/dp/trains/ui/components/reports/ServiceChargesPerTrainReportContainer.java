@@ -39,7 +39,7 @@ public class ServiceChargesPerTrainReportContainer extends BaseReportView {
         this.trainNumber.addValueChangeListener(event -> toggleGenerateReportButton());
         this.trainNumber.setRequiredIndicatorVisible(true);
 
-        this.downloadAsExcelButton = new Button(getTranslation(REPORTS_BUTTON_LABEL_GET_AS_EXCEL),
+        this.downloadAsExcelButton = new Button(getTranslation(REPORT_GENERATE_EXCEL_FILE_BUTTON_LABEL),
                 VaadinIcon.DOWNLOAD.create());
         this.downloadAsExcelButton.setEnabled(false);
 

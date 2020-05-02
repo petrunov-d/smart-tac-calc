@@ -30,11 +30,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -55,10 +51,10 @@ public class ServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
     @Autowired
     private ServiceChargesPerTrainService serviceChargesPerTrainService;
 
-    private Select<RailStationEntity> railStationEntitySelect;
-    private Select<ServiceEntity> serviceEntitySelect;
-    private IntegerField trainNumber;
-    private IntegerField serviceCount;
+    private final Select<RailStationEntity> railStationEntitySelect;
+    private final Select<ServiceEntity> serviceEntitySelect;
+    private final IntegerField trainNumber;
+    private final IntegerField serviceCount;
 
     public ServiceChargesForTrainNumberView() {
 
@@ -66,15 +62,15 @@ public class ServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
 
         VerticalLayout verticalLayout = new VerticalLayout();
 
-        railStationEntitySelect = new Select<>();
-        railStationEntitySelect.setRequiredIndicatorVisible(true);
-        serviceEntitySelect = new Select<>();
-        serviceEntitySelect.setRequiredIndicatorVisible(true);
-        trainNumber = new IntegerField();
-        trainNumber.setRequiredIndicatorVisible(true);
+        this.railStationEntitySelect = new Select<>();
+        this.railStationEntitySelect.setRequiredIndicatorVisible(true);
+        this.serviceEntitySelect = new Select<>();
+        this.serviceEntitySelect.setRequiredIndicatorVisible(true);
+        this.trainNumber = new IntegerField();
+        this.trainNumber.setRequiredIndicatorVisible(true);
 
-        serviceCount = new IntegerField();
-        serviceCount.setRequiredIndicatorVisible(true);
+        this.serviceCount = new IntegerField();
+        this.serviceCount.setRequiredIndicatorVisible(true);
 
         H2 h2 = new H2(getTranslation(ADD_SERVICE_CHARGES_PER_TRAIN_PAGE_TITLE));
 
@@ -173,12 +169,10 @@ public class ServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
     @PostConstruct
     public void init() {
 
-        railStationEntitySelect.setItems((Collection<RailStationEntity>) railStationService.fetch(0, 0)
-                .stream().sorted(Comparator.comparing(RailStationEntity::getStation))
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
-        railStationEntitySelect.setItemLabelGenerator(RailStationEntity::getStation);
+        this.railStationEntitySelect.setItems(this.railStationService.fetch(0, 0));
+        this.railStationEntitySelect.setItemLabelGenerator(RailStationEntity::getStation);
 
-        serviceEntitySelect.setItems(serviceService.fetch(0, 0));
-        serviceEntitySelect.setItemLabelGenerator(ServiceEntity::getName);
+        this.serviceEntitySelect.setItems(serviceService.fetch(0, 0));
+        this.serviceEntitySelect.setItemLabelGenerator(ServiceEntity::getName);
     }
 }

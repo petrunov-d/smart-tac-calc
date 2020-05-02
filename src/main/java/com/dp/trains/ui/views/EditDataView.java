@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.ExecutionException;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -176,7 +175,6 @@ public class EditDataView extends Composite<Div> {
             currentlyActiveGrid = carrierCompanyEntityGrid;
             selectedClass = CarrierCompanyEntity.class;
         });
-
 
 
         Button button = new Button(new Icon(VaadinIcon.PLUS));
