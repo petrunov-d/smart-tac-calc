@@ -19,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 public class TaxPerTrainEntityMerger {
 
-    private Map<Long, List<TaxPerTrainEntity>> backingMap = Maps.newHashMap();
+    private Map<Long, List<TaxPerTrainEntity>> backingMap = Maps.newLinkedHashMap();
 
     public TaxPerTrainEntityMerger(List<TaxPerTrainEntity> entities) {
 
@@ -68,6 +68,9 @@ public class TaxPerTrainEntityMerger {
             taxPerTrainReportDto.setKilometersOnElectrifiedLines(0.0);
             taxPerTrainReportDto.setTax(BigDecimal.ZERO);
 
+            String startStation = currentList.get(0).getStartStation();
+            String endStation = null;
+
             for (TaxPerTrainEntity taxPerTrainEntity : currentList) {
 
                 taxPerTrainReportDto.setCalendarOfMovement(taxPerTrainEntity.getCalendarOfMovement());
@@ -94,7 +97,12 @@ public class TaxPerTrainEntityMerger {
                 taxPerTrainReportDto.setTrainType(taxPerTrainEntity.getTrainType());
                 taxPerTrainReportDto.setTrainNumber(taxPerTrainEntity.getTrainNumber());
                 taxPerTrainReportDto.setTax(taxPerTrainReportDto.getTax().add(taxPerTrainEntity.getTax()));
+
+                endStation = taxPerTrainEntity.getEndStation();
             }
+
+            taxPerTrainReportDto.setStartStation(startStation);
+            taxPerTrainReportDto.setEndStation(endStation);
 
             result.add(taxPerTrainReportDto);
         }
