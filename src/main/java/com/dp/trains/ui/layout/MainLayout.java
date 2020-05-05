@@ -109,7 +109,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
         horizontalLayout.setMargin(true);
 
         return AppBarBuilder.get()
-                .add(new Span(String.format("%s %s ", getTranslation(MAIN_LAYOUT_SPAN_VERSION_LABEL), "0.1.2")))
+                .add(new Span(String.format("%s %s ", getTranslation(MAIN_LAYOUT_SPAN_VERSION_LABEL), "0.1.3")))
                 .add(horizontalLayout)
                 .add(img)
                 .build();

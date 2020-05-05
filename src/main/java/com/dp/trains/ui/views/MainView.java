@@ -99,13 +99,11 @@ public class MainView extends Composite<Div> implements BeforeLeaveObserver {
                 } else {
 
                     Map<BaseImportService, Integer> dataForCurrentYear = dataCopyingService.getDataForYear(selectedYear);
-
                     log.info("Data For current year: " + Joiner.on(",").withKeyValueSeparator("=").join(dataForCurrentYear));
 
                     if (!dataCopyingService.hasAllData(dataForCurrentYear)) {
 
                         Map<BaseImportService, Integer> dataForLastYear = dataCopyingService.getDataForYear(selectedYear - 1);
-
                         List<BaseImportService> mergeResultList = dataCopyingService.merge(dataForLastYear, dataForCurrentYear);
 
                         if (dataCopyingService.isCompletelyEmpty(dataForLastYear) || mergeResultList.isEmpty()) {

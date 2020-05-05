@@ -17,6 +17,15 @@
     <properties>
         <java.version>1.8</java.version>
         <vaadin.version>14.1.25</vaadin.version>
+        <jasperreports.version>6.12.2</jasperreports.version>
+        <commons.version>2.6</commons.version>
+        <guava.version>29.0-jre</guava.version>
+        <poiji.version>2.7.0</poiji.version>
+        <app.layout.version>4.0.0.rc1</app.layout.version>
+        <eclipse.collections.version>10.2.0</eclipse.collections.version>
+        <file.download.version>3.0.1</file.download.version>
+        <jmapper.version>1.6.1.CR2</jmapper.version>
+        <nv.i18n.version>1.27</nv.i18n.version>
     </properties>
 
     <profiles>
@@ -105,13 +114,13 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.12.2</version>
+            <version>${jasperreports.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports-fonts</artifactId>
-            <version>6.12.2</version>
+            <version>${jasperreports.version}</version>
         </dependency>
 
         <dependency>
@@ -139,67 +148,65 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>${commons.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.2-jre</version>
+            <version>${guava.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>5.2.3.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.ozlerhakan</groupId>
             <artifactId>poiji</artifactId>
-            <version>2.5.0</version>
+            <version>${poiji.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.appreciated</groupId>
             <artifactId>app-layout-addon</artifactId>
-            <version>4.0.0.rc1</version>
+            <version>${app.layout.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.googlecode.jmapper-framework</groupId>
             <artifactId>jmapper-core</artifactId>
-            <version>1.6.1.CR2</version>
+            <version>${jmapper.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5</artifactId>
-            <version>2.10.3</version>
         </dependency>
 
         <dependency>
             <groupId>com.neovisionaries</groupId>
             <artifactId>nv-i18n</artifactId>
-            <version>1.27</version>
+            <version>${nv.i18n.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.collections</groupId>
             <artifactId>eclipse-collections-api</artifactId>
-            <version>10.2.0</version>
+            <version>${eclipse.collections.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.collections</groupId>
             <artifactId>eclipse-collections</artifactId>
-            <version>10.2.0</version>
+            <version>${eclipse.collections.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.vaadin.olli</groupId>
             <artifactId>file-download-wrapper</artifactId>
-            <version>3.0.1</version>
+            <version>${file.download.version}</version>
         </dependency>
 
     </dependencies>

@@ -23,7 +23,6 @@ import java.util.List;
 public class TrafficDataService implements BaseImportService {
 
     private final TrafficDataRepository trafficDataRepository;
-    private final ObjectMapper defaultObjectMapper;
 
     @Qualifier("trafficDataMapper")
     private final DefaultDtoEntityMapperService<TrafficDataDto, TrafficDataEntity> trafficDataMapper;

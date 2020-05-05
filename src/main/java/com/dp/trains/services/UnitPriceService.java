@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.groupingBy;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings({"unchecked", "StreamToLoop", "rawtypes", "OptionalGetWithoutIsPresent"})
+@SuppressWarnings({"unchecked", "StreamToLoop", "rawtypes"})
 public class UnitPriceService implements BaseImportService {
 
     private final ObjectMapper defaultObjectMapper;
