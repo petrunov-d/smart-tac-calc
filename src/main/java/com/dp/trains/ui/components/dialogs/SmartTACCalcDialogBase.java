@@ -47,7 +47,6 @@ public class SmartTACCalcDialogBase extends Dialog {
     public void open() {
 
         super.open();
-
         DialogRegistry.get().addDialog(this);
     }
 

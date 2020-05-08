@@ -25,5 +25,3 @@ public class EventBusHolder {
         return instance;
     }
 }
-
-
