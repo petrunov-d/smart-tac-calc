@@ -177,8 +177,8 @@
                                 <reportElement x="0" y="0" width="150" height="60"
                                                uuid="7134e69b-03dd-4cd0-9501-24f21505ce6c"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
-                                      pdfEncoding="Identity-H"/>
+                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                          pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Цена услуге]]></text>
                             </staticText>

@@ -2,8 +2,9 @@ package com.dp.trains.services;
 
 import com.dp.trains.model.dto.PasswordChangeDto;
 import com.dp.trains.model.dto.UserDto;
-import com.dp.trains.model.entities.AuthorityEntity;
-import com.dp.trains.model.entities.UserEntity;
+import com.dp.trains.model.entities.user.AuthorityEntity;
+import com.dp.trains.model.entities.user.UserAccessEntitiy;
+import com.dp.trains.model.entities.user.UserEntity;
 import com.dp.trains.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -73,6 +74,15 @@ public class TrainsUserDetailService implements UserDetailsService {
         userEntity.setUsername(userDto.getUsername());
         userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
+        Set<UserAccessEntitiy> accessesSet = userDto.getUserAccesses()
+                .stream()
+                .map(x -> UserAccessEntitiy
+                        .builder()
+                        .username(userEntity)
+                        .userAccess(x.name())
+                        .build())
+                .collect(Collectors.toSet());
+
         Set<AuthorityEntity> authorityEntitySet = userDto.getAuthorities()
                 .stream()
                 .map(x -> AuthorityEntity
@@ -82,6 +92,7 @@ public class TrainsUserDetailService implements UserDetailsService {
                         .build())
                 .collect(Collectors.toSet());
 
+        userEntity.setUserAccesses(accessesSet);
         userEntity.setAuthorities(authorityEntitySet);
 
 
@@ -123,6 +134,15 @@ public class TrainsUserDetailService implements UserDetailsService {
         userEntityFromDb.setUsername(userDto.getUsername());
         userEntityFromDb.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
+        Set<UserAccessEntitiy> accessesSet = userDto.getUserAccesses()
+                .stream()
+                .map(x -> UserAccessEntitiy
+                        .builder()
+                        .username(userEntity)
+                        .userAccess(x.name())
+                        .build())
+                .collect(Collectors.toSet());
+
         Set<AuthorityEntity> authorityEntitySet = userDto.getAuthorities()
                 .stream()
                 .map(x -> AuthorityEntity
@@ -133,7 +153,7 @@ public class TrainsUserDetailService implements UserDetailsService {
                 .collect(Collectors.toSet());
 
         userEntityFromDb.setAuthorities(authorityEntitySet);
-
+        userEntityFromDb.setUserAccesses(accessesSet);
 
         log.info("About to update item " + userEntityFromDb.toString() + " to " + userEntityFromDb.toString());
 

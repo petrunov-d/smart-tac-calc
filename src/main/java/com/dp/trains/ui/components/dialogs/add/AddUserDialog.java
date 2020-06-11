@@ -3,6 +3,7 @@ package com.dp.trains.ui.components.dialogs.add;
 import com.dp.trains.model.dto.Authority;
 import com.dp.trains.model.dto.UserDto;
 import com.dp.trains.services.TrainsUserDetailService;
+import com.dp.trains.ui.components.common.UserPermissionsContainer;
 import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
@@ -19,6 +20,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -53,20 +55,12 @@ public class AddUserDialog extends SmartTACCalcDialogBase {
 
         password.addValueChangeListener(valueChangeEvent -> {
 
-            if (!valueChangeEvent.getValue().equals(passwordConfirm.getValue())) {
-                password.setInvalid(true);
-            } else {
-                password.setInvalid(false);
-            }
+            password.setInvalid(!valueChangeEvent.getValue().equals(passwordConfirm.getValue()));
         });
 
         passwordConfirm.addValueChangeListener(valueChangeEvent -> {
 
-            if (!valueChangeEvent.getValue().equals(password.getValue())) {
-                passwordConfirm.setInvalid(true);
-            } else {
-                passwordConfirm.setInvalid(false);
-            }
+            passwordConfirm.setInvalid(!valueChangeEvent.getValue().equals(password.getValue()));
         });
 
         Checkbox userRole = new Checkbox();
@@ -89,6 +83,8 @@ public class AddUserDialog extends SmartTACCalcDialogBase {
                 .withValidator(ValidatorFactory.passwordValidator(getTranslation(ADD_USER_DIALOG_VALIDATION_ERROR_NEW_PASSWORD)))
                 .bind(UserDto::getPasswordConfirm, UserDto::setPasswordConfirm);
 
+        UserPermissionsContainer userPermissionsContainer = new UserPermissionsContainer(Lists.newArrayList());
+
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
@@ -105,13 +101,15 @@ public class AddUserDialog extends SmartTACCalcDialogBase {
 
                 if (userRole.getValue()) {
 
-                    userDto.getAuthorities().add(Authority.USER);
+                    userDto.getAuthorities().add(Authority.ADMIN);
                 }
 
                 if (adminRole.getValue()) {
 
-                    userDto.getAuthorities().add(Authority.ADMIN);
+                    userDto.getAuthorities().add(Authority.USER);
                 }
+
+                userDto.setUserAccesses(userPermissionsContainer.getData());
 
                 trainsUserDetailService.add(userDto);
 
@@ -139,6 +137,7 @@ public class AddUserDialog extends SmartTACCalcDialogBase {
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.add(h3Heading);
         verticalLayout.add(layoutWithBinder);
+        verticalLayout.add(userPermissionsContainer);
         verticalLayout.add(actions);
 
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);

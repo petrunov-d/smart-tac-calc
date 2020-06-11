@@ -49,17 +49,6 @@ public class MarkupCoefficientGrid extends SmartTACCalcGrid<MarkupCoefficientEnt
             editDialog.open();
         }));
 
-        this.addComponentColumn(item -> new Button(getTranslation(SHARED_BUTTON_TEXT_DELETE),
-                VaadinIcon.TRASH.create(), click -> {
-
-            ListDataProvider<MarkupCoefficientEntity> dataProvider = (ListDataProvider<MarkupCoefficientEntity>) this
-                    .getDataProvider();
-
-            markupCoefficientService.remove(item);
-            dataProvider.getItems().remove(item);
-            dataProvider.refreshAll();
-        }));
-
         HeaderRow filterRow = this.appendHeaderRow();
 
         FilteringTextField nameFieldFilter = new FilteringTextField();

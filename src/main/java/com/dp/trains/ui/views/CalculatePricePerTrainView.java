@@ -9,18 +9,17 @@ import com.dp.trains.model.dto.LocomotiveSeriesDto;
 import com.dp.trains.model.entities.CarrierCompanyEntity;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.model.entities.TrainTypeEntity;
+import com.dp.trains.model.entities.user.UserAccess;
 import com.dp.trains.services.*;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
 import com.dp.trains.ui.components.cppt.CalculatePricePerTrainLayout;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
-import com.dp.trains.ui.components.dialogs.ConfirmDeletePreviousTacDialog;
-import com.dp.trains.ui.components.dialogs.ConfirmLeaveCalculateTaxPerTrainPageDialog;
+import com.dp.trains.ui.components.dialogs.ConfirmDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -51,7 +50,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = CalculatePricePerTrainView.NAV_CALCULATE_PRICE_PER_TRAIN, layout = MainLayout.class)
-public class CalculatePricePerTrainView extends Composite<Div> implements BeforeLeaveObserver {
+public class CalculatePricePerTrainView extends UserPermissionAwareView implements BeforeLeaveObserver {
 
     static final String NAV_CALCULATE_PRICE_PER_TRAIN = "calculate_price_per_train";
 
@@ -91,6 +90,8 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
                                       @Autowired TaxPerTrainService taxPerTrainService,
                                       @Autowired CarrierCompanyService carrierCompanyService) {
 
+        super();
+
         this.calculatePricePerTrainLayout = new CalculatePricePerTrainLayout();
 
         HorizontalLayout baseParametersLayout = new HorizontalLayout();
@@ -117,7 +118,7 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
         calculatePricePerTrainLayout.add(getButtonOptionsBar());
         calculatePricePerTrainLayout.add(baseParametersLayout);
 
-        getContent().add(calculatePricePerTrainLayout, footerContainer);
+        this.add(calculatePricePerTrainLayout, footerContainer);
 
         this.sectionsService = sectionsService;
         this.trainTypeService = trainTypeService;
@@ -348,14 +349,21 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
     }
 
     @Override
-    public void beforeLeave(BeforeLeaveEvent event) {
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
 
-        event.postpone();
+        beforeLeaveEvent.postpone();
 
-        ConfirmLeaveCalculateTaxPerTrainPageDialog confirmLeaveCalculateTaxPerTrainPageDialog =
-                new ConfirmLeaveCalculateTaxPerTrainPageDialog(event);
+        ConfirmDialog confirmDialog = new ConfirmDialog
+                .Builder()
+                .withTitle(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_CONFIRM_LEAVE_MESSAGE))
+                .withOkButtonListener(clickEvent -> {
 
-        confirmLeaveCalculateTaxPerTrainPageDialog.open();
+                    EventBusHolder.getEventBus().post(new CPPTResetPageEvent());
+                    beforeLeaveEvent.getContinueNavigationAction().proceed();
+                })
+                .build();
+
+        confirmDialog.open();
     }
 
     private void calculateFinalTax() {
@@ -364,8 +372,13 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
 
         if (hasPreviousRecords) {
 
-            Dialog confirmDeletePreviousTacDialog = new ConfirmDeletePreviousTacDialog(taxPerTrainService, trainNumber.getValue());
-            confirmDeletePreviousTacDialog.open();
+            ConfirmDialog confirmDialog = new ConfirmDialog
+                    .Builder()
+                    .withTitle(getTranslation(CONFIRM_DELETE_OLD_TAC))
+                    .withOkButtonListener(event -> taxPerTrainService.deleteByTrainNumber(trainNumber.getValue()))
+                    .build();
+
+            confirmDialog.open();
         }
 
         this.calculateFinalTax.setEnabled(false);
@@ -400,5 +413,11 @@ public class CalculatePricePerTrainView extends Composite<Div> implements Before
                     getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX),
                     calculateFinalTaxPerTrainDto.getFinalTax()));
         }
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+
+        return UserAccess.CALCULATE_SINGLE_PRICE;
     }
 }

@@ -44,23 +44,11 @@ public class ChangePasswordDialog extends SmartTACCalcDialogBase {
         newPasswordConfirm.setValueChangeMode(ValueChangeMode.EAGER);
         newPasswordConfirm.setRequiredIndicatorVisible(true);
 
-        newPassword.addValueChangeListener(valueChangeEvent -> {
+        newPassword.addValueChangeListener(valueChangeEvent ->
+                newPassword.setInvalid(!valueChangeEvent.getValue().equals(newPasswordConfirm.getValue())));
 
-            if (!valueChangeEvent.getValue().equals(newPasswordConfirm.getValue())) {
-                newPassword.setInvalid(true);
-            } else {
-                newPassword.setInvalid(false);
-            }
-        });
-
-        newPasswordConfirm.addValueChangeListener(valueChangeEvent -> {
-
-            if (!valueChangeEvent.getValue().equals(newPassword.getValue())) {
-                newPasswordConfirm.setInvalid(true);
-            } else {
-                newPasswordConfirm.setInvalid(false);
-            }
-        });
+        newPasswordConfirm.addValueChangeListener(valueChangeEvent ->
+                newPasswordConfirm.setInvalid(!valueChangeEvent.getValue().equals(newPassword.getValue())));
 
         binder.forField(oldPassword)
                 .asRequired()

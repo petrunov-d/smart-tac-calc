@@ -1,4 +1,4 @@
-package com.dp.trains.model.entities;
+package com.dp.trains.model.entities.user;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

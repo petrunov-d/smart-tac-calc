@@ -1,7 +1,8 @@
 package com.dp.trains.ui.views;
 
+import com.dp.trains.model.entities.user.UserAccess;
 import com.dp.trains.services.UnitPriceService;
-import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
 import com.dp.trains.ui.components.csp.CalculateSinglePriceByAverageContainer;
 import com.dp.trains.ui.components.csp.CalculateSinglePriceDefaultModeContainer;
 import com.dp.trains.ui.layout.MainLayout;
@@ -25,7 +26,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = CalculateSinglePriceView.NAV_CALCULATE_SINGLE_PRICE, layout = MainLayout.class)
-public class CalculateSinglePriceView extends BaseSmartTacCalcView {
+public class CalculateSinglePriceView extends UserPermissionAwareView {
 
     @Autowired
     private UnitPriceService unitPriceService;
@@ -94,5 +95,11 @@ public class CalculateSinglePriceView extends BaseSmartTacCalcView {
         layout.add(menuBar);
 
         container.add(layout);
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+
+        return UserAccess.CALCULATE_SINGLE_PRICE;
     }
 }

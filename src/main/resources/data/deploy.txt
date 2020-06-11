@@ -6,6 +6,7 @@ rm -rf trains.zip
 tar -zxvf trains.tar.gz
 tar -zcvf trains.tar.gz /trains
 ssh -p 3224 skodat@78.90.10.189
-scp -P 3224 /Users/datskopetrunov/Downloads/trains/target/SmartTACCalc-0.1.2.jar skodat@78.90.10.189:/home/skodat/
+scp -P 3224 /Users/datskopetrunov/Downloads/trains/target/SmartTACCalc-0.1.3.jar skodat@78.90.10.189:/home/skodat/
 mvn com.github.eirslett:frontend-maven-plugin:1.7.6:install-node-and-npm -DnodeVersion="v12.14.0"
 ps auxwww | grep java
+mvn clean package -Pproduction

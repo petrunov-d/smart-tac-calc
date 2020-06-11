@@ -3,9 +3,10 @@ package com.dp.trains.ui.views;
 import com.dp.trains.common.ServiceEnum;
 import com.dp.trains.common.ServiceRegistry;
 import com.dp.trains.model.dto.*;
+import com.dp.trains.model.entities.user.UserAccess;
 import com.dp.trains.services.BaseImportService;
-import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
-import com.dp.trains.ui.components.dialogs.ConfirmImportDialog;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
+import com.dp.trains.ui.components.dialogs.ConfirmDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.DtoPoijiHolder;
 import com.dp.trains.utils.PoijiOptionsFactory;
@@ -14,7 +15,6 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
 import com.poiji.bind.Poiji;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -46,7 +46,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = ImportDataView.NAV_LOAD_DATA_VIEW, layout = MainLayout.class)
-public class ImportDataView extends BaseSmartTacCalcView {
+public class ImportDataView extends UserPermissionAwareView {
 
     static final String NAV_LOAD_DATA_VIEW = "load_data_view";
 
@@ -107,6 +107,11 @@ public class ImportDataView extends BaseSmartTacCalcView {
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         add(verticalLayout, getFooter());
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+        return UserAccess.IMPORT_DATA;
     }
 
     private Upload getUploadItem() {
@@ -196,7 +201,17 @@ public class ImportDataView extends BaseSmartTacCalcView {
 
                 if (baseImportService.count() > 0) {
 
-                    Dialog confirmDialog = new ConfirmImportDialog(baseImportService, dataTypeSelect);
+                    ConfirmDialog confirmDialog = new ConfirmDialog
+                            .Builder()
+                            .withTitle(getTranslation(CONFIRM_IMPORT_DIALOG_TITLE))
+                            .withOkButtonListener(clickEvent -> {
+
+                                baseImportService.deleteAll();
+                                dataTypeSelect.setValue("");
+                            })
+                            .withCancelButtonListener(clickEvent -> dataTypeSelect.setValue(""))
+                            .build();
+
                     confirmDialog.open();
                 }
 

@@ -2,8 +2,9 @@ package com.dp.trains.ui.components.dialogs.edit;
 
 import com.dp.trains.model.dto.Authority;
 import com.dp.trains.model.dto.UserDto;
-import com.dp.trains.model.entities.UserEntity;
+import com.dp.trains.model.entities.user.UserEntity;
 import com.dp.trains.services.TrainsUserDetailService;
+import com.dp.trains.ui.components.common.UserPermissionsContainer;
 import com.dp.trains.ui.components.dialogs.SmartTACCalcDialogBase;
 import com.dp.trains.ui.validators.ValidatorFactory;
 import com.vaadin.flow.component.button.Button;
@@ -22,6 +23,9 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -93,6 +97,9 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
                 .withValidator(ValidatorFactory.passwordValidator(getTranslation(ADD_USER_DIALOG_VALIDATION_ERROR_NEW_PASSWORD)))
                 .bind(UserDto::getPasswordConfirm, UserDto::setPasswordConfirm);
 
+        List strings = userEntity.getUserAccesses().stream().map(x -> x.getUserAccess()).collect(Collectors.toList());
+        UserPermissionsContainer userPermissionsContainer = new UserPermissionsContainer(strings);
+
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
@@ -102,6 +109,7 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
         layoutWithBinder.addFormItem(passwordConfirm, getTranslation(ADD_USER_DIALOG_FORM_ITEM_LABEL_CONFIRM_PASSWORD));
         layoutWithBinder.addFormItem(userRole, getTranslation(ADD_USER_DIALOG_FORM_ITEM_LABEL_IS_USER));
         layoutWithBinder.addFormItem(adminRole, getTranslation(ADD_USER_DIALOG_FORM_ITEM_LABEL_IS_ADMIN));
+        layoutWithBinder.addFormItem(userPermissionsContainer, getTranslation("User Permissions"));
 
         save.addClickListener(event -> {
 
@@ -117,6 +125,8 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
                     userDto.getAuthorities().add(Authority.ADMIN);
                 }
 
+                userDto.setUserAccesses(userPermissionsContainer.getData());
+
                 trainsUserDetailService.update(userEntity, userDto);
 
                 dataProvider.refreshAll();
@@ -131,12 +141,12 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
 
         cancel.addClickListener(event -> {
 
-            reset(binder, password, passwordConfirm, username, userRole, adminRole);
+            reset(binder, password, passwordConfirm, username, userRole, adminRole, userPermissionsContainer);
             dataProvider.refreshAll();
             this.close();
         });
 
-        reset.addClickListener(event -> reset(binder, password, passwordConfirm, username, userRole, adminRole));
+        reset.addClickListener(event -> reset(binder, password, passwordConfirm, username, userRole, adminRole, userPermissionsContainer));
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.add(save, reset, cancel);
@@ -154,7 +164,8 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
     }
 
     private void reset(Binder<UserDto> binder, PasswordField password, PasswordField passwordConfirm,
-                       TextField username, Checkbox userRole, Checkbox adminRole) {
+                       TextField username, Checkbox userRole,
+                       Checkbox adminRole, UserPermissionsContainer userPermissionsContainer) {
 
         binder.readBean(null);
         password.setValue("");
@@ -162,5 +173,6 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
         username.setValue("");
         userRole.setValue(false);
         adminRole.setValue(false);
+        userPermissionsContainer.reset();
     }
 }

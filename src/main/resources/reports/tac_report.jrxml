@@ -459,7 +459,8 @@
                                     <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
-                                <text><![CDATA[Километри на неелектрифицираним магистралним и регионалним пругама]]></text>
+                                <text>
+                                    <![CDATA[Километри на неелектрифицираним магистралним и регионалним пругама]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">

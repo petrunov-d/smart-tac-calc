@@ -1,13 +1,13 @@
 package com.dp.trains.ui.views;
 
 import com.dp.trains.model.entities.UnitPriceEntity;
+import com.dp.trains.model.entities.user.UserAccess;
 import com.dp.trains.services.UnitPriceService;
-import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
 import com.dp.trains.ui.components.common.FilteringTextField;
-import com.dp.trains.ui.components.dialogs.ConfirmClearUnitPriceDialog;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
+import com.dp.trains.ui.components.dialogs.ConfirmDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -31,7 +31,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @SpringComponent
 @SuppressWarnings("unchecked")
 @Route(value = ViewSinglePriceView.NAV_VIEW_SINGLE_PRICE, layout = MainLayout.class)
-public class ViewSinglePriceView extends BaseSmartTacCalcView {
+public class ViewSinglePriceView extends UserPermissionAwareView {
 
     @Autowired
     private UnitPriceService unitPriceService;
@@ -41,6 +41,8 @@ public class ViewSinglePriceView extends BaseSmartTacCalcView {
     Grid.Column<UnitPriceEntity> codeColumn;
 
     public ViewSinglePriceView() {
+
+        super();
 
         Grid<UnitPriceEntity> unitPriceGrid = new Grid<>();
 
@@ -109,12 +111,22 @@ public class ViewSinglePriceView extends BaseSmartTacCalcView {
         Button clearButton = new Button(getTranslation(CLEAR_UNIT_PRICE_DATA), VaadinIcon.CLOSE_CIRCLE.create());
         clearButton.addClickListener(event -> {
 
-            Dialog confirmDialog = new ConfirmClearUnitPriceDialog(unitPriceService);
+            ConfirmDialog confirmDialog = new ConfirmDialog
+                    .Builder()
+                    .withTitle(getTranslation(CONFIRM_DELETE_UNIT_PRICE))
+                    .withOkButtonListener(clickEvent -> unitPriceService.deleteAll())
+                    .build();
+
             confirmDialog.open();
         });
 
         this.add(clearButton);
         this.add(unitPriceGrid);
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+        return UserAccess.VIEW_SINGLE_PRICE;
     }
 
     @PostConstruct

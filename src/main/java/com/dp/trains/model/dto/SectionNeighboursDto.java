@@ -25,6 +25,10 @@ public class SectionNeighboursDto {
 
     public String getDisplayName() {
 
+        if ((!isKeyStation && nonKeyStation == null) || (isKeyStation && destination == null)) {
+            return "N/A";
+        }
+
         return isKeyStation ? destination.getStation() : nonKeyStation.getStation();
     }
 }

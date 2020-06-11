@@ -25,9 +25,8 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -79,7 +78,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         this.neighbours = sectionsService.getDirectNeighboursForSource(selectedStation, isFirst());
 
-        initalizeStationSelect(trainNumber, serviceChargesPerTrainService, neighbours);
+        initializeStationsSelect(trainNumber, serviceChargesPerTrainService, neighbours);
         initializeLineNumberSelect(neighbours);
         initializeTonnageField(tonnageDouble);
         initializeTrainLength(trainLengthDouble);
@@ -257,11 +256,13 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         }
     }
 
-    private void initalizeStationSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
-                                        Collection<SectionNeighboursDto> neighbours) {
+    private void initializeStationsSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
+                                          Collection<SectionNeighboursDto> neighbours) {
 
         Set<SectionNeighboursDto> visibleSectionNeighbourDtos = this.sectionsService.getVisibleSectionNeighbourDtos(
-                this.rowIndex, this.isFinal, neighbours);
+                this.rowIndex, this.isFinal, neighbours).stream()
+                .sorted(Comparator.comparing(SectionNeighboursDto::getLineNumber))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         station = new Select<>();
         station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
@@ -271,7 +272,12 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         station.addValueChangeListener(event -> {
 
             Boolean isKeyStation = event.getValue().getIsKeyStation();
-            String newStation = isKeyStation ? event.getValue().getDestination().getStation() : event.getValue().getNonKeyStation().getStation();
+            String newStation;
+            if (isKeyStation) {
+                newStation = event.getValue().getDestination() == null ? "N/A" : event.getValue().getDestination().getStation();
+            } else {
+                newStation = event.getValue().getNonKeyStation() == null ? "N/A" : event.getValue().getNonKeyStation().getStation();
+            }
 
             EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder().selectedStation(newStation).isKeyStation(isKeyStation).build());
 

@@ -1,9 +1,10 @@
 package com.dp.trains.ui.views;
 
+import com.dp.trains.model.entities.user.UserAccess;
 import com.dp.trains.services.reports.ServiceChargesPerTrainReportService;
 import com.dp.trains.services.reports.TacReportService;
 import com.dp.trains.services.reports.UnitPriceReportService;
-import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
 import com.dp.trains.ui.components.reports.ServiceChargesPerTrainReportContainer;
 import com.dp.trains.ui.components.reports.SinglePriceReportContainer;
 import com.dp.trains.ui.components.reports.TacReportContainer;
@@ -25,7 +26,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = ReportsView.NAV_REPORTS_VIEW, layout = MainLayout.class)
-public class ReportsView extends BaseSmartTacCalcView {
+public class ReportsView extends UserPermissionAwareView {
 
     private final UnitPriceReportService unitPriceReportService;
     private final TacReportService tacReportService;
@@ -103,5 +104,11 @@ public class ReportsView extends BaseSmartTacCalcView {
         layout.add(menuBar);
 
         container.add(layout);
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+
+        return UserAccess.REPORTS;
     }
 }

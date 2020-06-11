@@ -49,6 +49,12 @@ public class AddLineTypeDialog extends SmartTACCalcDialogBase {
         name.addValueChangeListener(event -> binder.validate());
         name.setRequiredIndicatorVisible(true);
 
+        TextArea code = new TextArea();
+
+        code.setValueChangeMode(ValueChangeMode.EAGER);
+        code.addValueChangeListener(event -> binder.validate());
+        code.setRequiredIndicatorVisible(true);
+
         binder.forField(lineType)
                 .asRequired()
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(DIALOG_ADD_LINE_TYPE_INPUT_LINE_TYPE_ERROR)))
@@ -59,12 +65,18 @@ public class AddLineTypeDialog extends SmartTACCalcDialogBase {
                 .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(DIALOG_ADD_LINE_TYPE_INPUT_NAME_ERROR)))
                 .bind(LineTypeDto::getName, LineTypeDto::setName);
 
+        binder.forField(code)
+                .asRequired()
+                .withValidator(ValidatorFactory.requiredStringValidator(getTranslation(GENERAL_ERROR_HINT_CODE_NOT_SET)))
+                .bind(LineTypeDto::getCode, LineTypeDto::setCode);
+
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));
         Button cancel = new Button(getTranslation(SHARED_BUTTON_TEXT_CANCEL), new Icon(VaadinIcon.CLOSE_SMALL));
 
         layoutWithBinder.addFormItem(lineType, getTranslation(DIALOG_ADD_LINE_TYPE_FORM_ITEM_LABEL_LINE_TYPE));
         layoutWithBinder.addFormItem(name, getTranslation(DIALOG_ADD_LINE_TYPE_FORM_ITEM_LABEL_NAME));
+        layoutWithBinder.addFormItem(code, getTranslation(GRID_TRAIN_TYPE_COLUMN_HEADER_CODE));
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.add(save, reset, cancel);
@@ -99,6 +111,7 @@ public class AddLineTypeDialog extends SmartTACCalcDialogBase {
 
             binder.readBean(null);
             name.setValue("");
+            code.setValue("");
             lineType.setValue("M");
             this.close();
         });
@@ -107,6 +120,7 @@ public class AddLineTypeDialog extends SmartTACCalcDialogBase {
 
             binder.readBean(null);
             name.setValue("");
+            code.setValue("");
             lineType.setValue("M");
         });
 

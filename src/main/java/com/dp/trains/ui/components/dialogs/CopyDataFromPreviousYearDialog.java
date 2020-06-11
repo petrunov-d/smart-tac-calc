@@ -51,14 +51,15 @@ public class CopyDataFromPreviousYearDialog extends SmartTACCalcDialogBase {
                 Dialog copyImportDialog = new CopyResultDialog(copyResult, selectedYear);
                 copyImportDialog.open();
 
-                this.close();
-
             } catch (Exception exception) {
 
                 log.error("Exception copying old data", exception);
 
                 progressBar.setVisible(false);
                 UI.getCurrent().navigate(EditDataView.class);
+
+            } finally {
+
                 this.close();
             }
         });

@@ -7,7 +7,6 @@ import com.dp.trains.model.entities.TrafficDataEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
 import com.dp.trains.repository.TrafficDataRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

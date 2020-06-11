@@ -2,18 +2,18 @@ package com.dp.trains.ui.views;
 
 import com.dp.trains.event.SmartTACCalcNeedsRefreshEvent;
 import com.dp.trains.model.entities.*;
+import com.dp.trains.model.entities.user.UserAccess;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
 import com.dp.trains.ui.components.factories.AddItemDialogFactory;
 import com.dp.trains.ui.components.factories.EditableDataGridFactory;
 import com.dp.trains.ui.layout.MainLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
@@ -33,7 +33,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = EditDataView.NAV_EDIT_DATA_VIEW, layout = MainLayout.class)
-public class EditDataView extends Composite<Div> {
+public class EditDataView extends UserPermissionAwareView {
 
     static final String NAV_EDIT_DATA_VIEW = "edit_data_view";
 
@@ -48,16 +48,23 @@ public class EditDataView extends Composite<Div> {
 
     public EditDataView() {
 
+        super();
+
         constructMenuBar();
-        getContent().setHeightFull();
+        this.setHeightFull();
         EventBusHolder.getEventBus().register(this);
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+        return UserAccess.EDIT_DATA;
     }
 
     @PostConstruct
     public void init() {
 
         Grid<RailStationEntity> railStationEntityGrid = editableDataGridFactory.getRailStationsGrid();
-        getContent().add(railStationEntityGrid);
+        this.add(railStationEntityGrid);
         currentlyActiveGrid = railStationEntityGrid;
         selectedClass = RailStationEntity.class;
     }
@@ -82,9 +89,9 @@ public class EditDataView extends Composite<Div> {
 
         miRailroadStations.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<RailStationEntity> railStationEntityGrid = editableDataGridFactory.getRailStationsGrid();
-            getContent().add(railStationEntityGrid);
+            this.add(railStationEntityGrid);
             currentlyActiveGrid = railStationEntityGrid;
             selectedClass = RailStationEntity.class;
         });
@@ -92,9 +99,9 @@ public class EditDataView extends Composite<Div> {
         MenuItem miSections = menuBar.addItem(getTranslation(EDIT_DATA_VIEW_IMPORT_LABEL_SECTIONS));
         miSections.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<SectionEntity> sectionEntityGrid = editableDataGridFactory.getSectionEntityGrid();
-            getContent().add(sectionEntityGrid);
+            this.add(sectionEntityGrid);
             currentlyActiveGrid = sectionEntityGrid;
             selectedClass = SectionEntity.class;
         });
@@ -103,9 +110,9 @@ public class EditDataView extends Composite<Div> {
 
         miLineTypes.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<LineTypeEntity> lineTypeEntityGrid = editableDataGridFactory.getLineTypeGrid();
-            getContent().add(lineTypeEntityGrid);
+            this.add(lineTypeEntityGrid);
             currentlyActiveGrid = lineTypeEntityGrid;
             selectedClass = LineTypeEntity.class;
         });
@@ -114,9 +121,9 @@ public class EditDataView extends Composite<Div> {
 
         miTrainTypes.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<TrainTypeEntity> trainTypeEntityGrid = editableDataGridFactory.getTrainTypeGrid();
-            getContent().add(trainTypeEntityGrid);
+            this.add(trainTypeEntityGrid);
             currentlyActiveGrid = trainTypeEntityGrid;
             selectedClass = TrainTypeEntity.class;
         });
@@ -125,9 +132,9 @@ public class EditDataView extends Composite<Div> {
 
         miServices.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<ServiceEntity> serviceEntityGrid = editableDataGridFactory.getServiceEntityGrid();
-            getContent().add(serviceEntityGrid);
+            this.add(serviceEntityGrid);
             currentlyActiveGrid = serviceEntityGrid;
             selectedClass = ServiceEntity.class;
         });
@@ -136,9 +143,9 @@ public class EditDataView extends Composite<Div> {
 
         miLineNumbers.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<LineNumberEntity> lineNumberEntityGrid = editableDataGridFactory.getLineNumberGrid();
-            getContent().add(lineNumberEntityGrid);
+            this.add(lineNumberEntityGrid);
             currentlyActiveGrid = lineNumberEntityGrid;
             selectedClass = LineNumberEntity.class;
         });
@@ -147,9 +154,9 @@ public class EditDataView extends Composite<Div> {
 
         miStrategicCoefficients.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<StrategicCoefficientEntity> strategicCoefficientsGrid = editableDataGridFactory.getStrategicCoefficientsGrid();
-            getContent().add(strategicCoefficientsGrid);
+            this.add(strategicCoefficientsGrid);
             currentlyActiveGrid = strategicCoefficientsGrid;
             selectedClass = StrategicCoefficientEntity.class;
         });
@@ -158,9 +165,9 @@ public class EditDataView extends Composite<Div> {
 
         miMarkupCoefficients.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<MarkupCoefficientEntity> markupCoefficientEntityGrid = editableDataGridFactory.getMarkupCoefficientsGrid();
-            getContent().add(markupCoefficientEntityGrid);
+            this.add(markupCoefficientEntityGrid);
             currentlyActiveGrid = markupCoefficientEntityGrid;
             selectedClass = MarkupCoefficientEntity.class;
         });
@@ -169,9 +176,9 @@ public class EditDataView extends Composite<Div> {
 
         miCarrierCompany.addClickListener(event -> {
 
-            getContent().remove(currentlyActiveGrid);
+            this.remove(currentlyActiveGrid);
             Grid<CarrierCompanyEntity> carrierCompanyEntityGrid = editableDataGridFactory.getCarrierCompanyGrid();
-            getContent().add(carrierCompanyEntityGrid);
+            this.add(carrierCompanyEntityGrid);
             currentlyActiveGrid = carrierCompanyEntityGrid;
             selectedClass = CarrierCompanyEntity.class;
         });
@@ -197,6 +204,6 @@ public class EditDataView extends Composite<Div> {
         layout.setAlignSelf(FlexComponent.Alignment.START, button);
         layout.setAlignSelf(FlexComponent.Alignment.END, menuBar);
 
-        getContent().add(layout);
+        this.add(layout);
     }
 }

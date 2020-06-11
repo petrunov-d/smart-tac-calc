@@ -3,10 +3,11 @@ package com.dp.trains.ui.views;
 import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.model.entities.ServiceEntity;
+import com.dp.trains.model.entities.user.UserAccess;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.services.ServiceService;
-import com.dp.trains.ui.components.common.BaseSmartTacCalcView;
+import com.dp.trains.ui.components.common.UserPermissionAwareView;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.layout.MainLayout;
 import com.google.common.base.Joiner;
@@ -38,7 +39,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = ServiceChargesForTrainNumberView.NAV_ADD_SERVICE_CHARGE_FOR_TRAIN_NUMBER, layout = MainLayout.class)
-public class ServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
+public class ServiceChargesForTrainNumberView extends UserPermissionAwareView {
 
     static final String NAV_ADD_SERVICE_CHARGE_FOR_TRAIN_NUMBER = "add_service_charge_for_train";
 
@@ -129,6 +130,11 @@ public class ServiceChargesForTrainNumberView extends BaseSmartTacCalcView {
         verticalLayout.add(new HorizontalLayout(save, reset));
 
         add(verticalLayout, getFooter());
+    }
+
+    @Override
+    public UserAccess getViewUserAccessPermission() {
+        return UserAccess.ADD_SERVICE_CHARGE_FOR_TRAIN;
     }
 
     private void reset() {

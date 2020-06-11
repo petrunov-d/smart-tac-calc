@@ -1,6 +1,7 @@
 package com.dp.trains.ui.components.factories;
 
 import com.dp.trains.model.entities.*;
+import com.dp.trains.model.entities.user.UserEntity;
 import com.dp.trains.services.*;
 import com.dp.trains.ui.components.grids.*;
 import com.vaadin.flow.component.grid.Grid;

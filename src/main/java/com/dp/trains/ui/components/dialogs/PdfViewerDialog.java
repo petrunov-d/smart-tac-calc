@@ -20,7 +20,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_BUTTON_TEXT_CANCEL;
 @Slf4j
 public class PdfViewerDialog extends SmartTACCalcDialogBase {
 
-    private File pdfFile;
+    private final File pdfFile;
 
     public PdfViewerDialog(File file) {
 
@@ -61,7 +61,7 @@ public class PdfViewerDialog extends SmartTACCalcDialogBase {
     @Override
     public void close() {
 
-        super.close();
         FileUtils.deleteQuietly(this.pdfFile);
+        super.close();
     }
 }

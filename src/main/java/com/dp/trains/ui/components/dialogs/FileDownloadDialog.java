@@ -21,7 +21,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_BUTTON_TEXT_CANCEL;
 @Slf4j
 public class FileDownloadDialog extends SmartTACCalcDialogBase {
 
-    private File file;
+    private final File file;
 
     public FileDownloadDialog(File file) {
 
@@ -42,7 +42,7 @@ public class FileDownloadDialog extends SmartTACCalcDialogBase {
 
             } catch (FileNotFoundException e) {
 
-                log.error("Error in FileDownloadDialog Viewer Dialog: ", e);
+                log.error("Error in FileDownloadDialog Dialog: ", e);
 
                 return new ByteArrayInputStream(new byte[]{});
             }

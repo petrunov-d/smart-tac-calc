@@ -1,8 +1,8 @@
 package com.dp.trains.ui.components.grids;
 
 import com.dp.trains.model.dto.Authority;
-import com.dp.trains.model.entities.AuthorityEntity;
-import com.dp.trains.model.entities.UserEntity;
+import com.dp.trains.model.entities.user.AuthorityEntity;
+import com.dp.trains.model.entities.user.UserEntity;
 import com.dp.trains.services.TrainsUserDetailService;
 import com.dp.trains.ui.components.common.FilteringTextField;
 import com.dp.trains.ui.components.dialogs.edit.EditUserDialog;

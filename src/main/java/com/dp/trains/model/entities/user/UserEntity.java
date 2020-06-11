@@ -1,4 +1,4 @@
-package com.dp.trains.model.entities;
+package com.dp.trains.model.entities.user;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-@EqualsAndHashCode(exclude = {"authorities"})
+@EqualsAndHashCode(exclude = {"authorities", "userAccesses"})
 public class UserEntity implements UserDetails {
 
     @Id
@@ -31,6 +31,10 @@ public class UserEntity implements UserDetails {
     @ToString.Exclude
     @OneToMany(mappedBy = "username", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<AuthorityEntity> authorities;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "username", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<UserAccessEntitiy> userAccesses;
 
     @Override
     public boolean isAccountNonExpired() {
