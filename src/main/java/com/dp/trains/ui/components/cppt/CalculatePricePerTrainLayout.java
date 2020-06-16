@@ -1,9 +1,10 @@
 package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
-import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
+import com.dp.trains.model.dto.CPPTRowDataDto;
 import com.dp.trains.model.dto.LocomotiveSeriesDto;
-import com.dp.trains.model.viewmodels.StationViewModel;
+import com.dp.trains.model.viewmodels.RailStationViewModel;
+import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.utils.EventBusHolder;
@@ -24,7 +25,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
 public class CalculatePricePerTrainLayout extends VerticalLayout {
 
     private int nextRowIdex = 1;
-    private StationViewModel currentStation;
+    private RailStationViewModel currentStation;
     private Double tonnage;
     private Double trainLength;
     private Collection<LocomotiveSeriesDto> locomotiveSeriesDtos;
@@ -52,6 +53,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     public void addRow(Integer trainNumber,
                        boolean isFinal,
                        SectionsService sectionsService,
+                       RailStationService railStationService,
                        ServiceChargesPerTrainService serviceChargesPerTrainService,
                        Double tonnage,
                        Collection<LocomotiveSeriesDto> locomotiveSeriesDtos,
@@ -80,6 +82,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
                 isFinal,
                 trainNumber,
                 sectionsService,
+                railStationService,
                 serviceChargesPerTrainService,
                 this.currentStation,
                 this.tonnage,
@@ -156,9 +159,10 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     @Subscribe
     public void handleStationChangedFromRow(CPPTStationChangedEvent cPPTStationChangedEvent) {
 
-        this.currentStation = StationViewModel.builder()
-                .selectedStation(cPPTStationChangedEvent.getSelectedStation())
+        this.currentStation = RailStationViewModel.builder()
+                .railStation(cPPTStationChangedEvent.getSelectedStation())
                 .isKeyStation(cPPTStationChangedEvent.getIsKeyStation())
+                .lineNumber(cPPTStationChangedEvent.getLineNumber())
                 .build();
 
         log.info("Current Key Station set to:" + this.currentStation.toString());
@@ -182,12 +186,13 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     public void handleTrainLengthChangedFromRow(CPPTTrainLengthChangedFromRowEvent cpptTrainLengthChangedFromRowEvent) {
 
         this.trainLength = cpptTrainLengthChangedFromRowEvent.getTrainLength();
-        log.info("Tonnage set to:" + this.trainLength);
+        log.info("Train Length set to:" + this.trainLength);
     }
 
-    public List<CalculateTaxPerTrainRowDataDto> gatherAllRowData() {
+    public List<CPPTRowDataDto> gatherAllRowData() {
 
-        return this.calculatePricePerTrainRows.stream()
+        return this.calculatePricePerTrainRows
+                .stream()
                 .map(CalculatePricePerTrainRow::getRowData)
                 .collect(Collectors.toList());
     }

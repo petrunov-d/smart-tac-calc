@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StationViewModel {
+public class RailStationViewModel {
 
-    private String selectedStation;
+    private String railStation;
+    private Integer lineNumber;
     private Boolean isKeyStation;
+    private Boolean keyStationIsFirst;
 }

@@ -2,6 +2,8 @@ package com.dp.trains.ui.components.dialogs.edit;
 
 import com.dp.trains.model.dto.Authority;
 import com.dp.trains.model.dto.UserDto;
+import com.dp.trains.model.entities.user.UserAccess;
+import com.dp.trains.model.entities.user.UserAccessEntitiy;
 import com.dp.trains.model.entities.user.UserEntity;
 import com.dp.trains.services.TrainsUserDetailService;
 import com.dp.trains.ui.components.common.UserPermissionsContainer;
@@ -97,8 +99,10 @@ public class EditUserDialog extends SmartTACCalcDialogBase {
                 .withValidator(ValidatorFactory.passwordValidator(getTranslation(ADD_USER_DIALOG_VALIDATION_ERROR_NEW_PASSWORD)))
                 .bind(UserDto::getPasswordConfirm, UserDto::setPasswordConfirm);
 
-        List strings = userEntity.getUserAccesses().stream().map(x -> x.getUserAccess()).collect(Collectors.toList());
-        UserPermissionsContainer userPermissionsContainer = new UserPermissionsContainer(strings);
+        List<String> strings = userEntity.getUserAccesses().stream().map(UserAccessEntitiy::getUserAccess).collect(Collectors.toList());
+
+        UserPermissionsContainer userPermissionsContainer = new UserPermissionsContainer(strings.stream()
+                .map(UserAccess::valueOf).collect(Collectors.toSet()));
 
         Button save = new Button(getTranslation(SHARED_BUTTON_TEXT_SAVE), new Icon(VaadinIcon.UPLOAD));
         Button reset = new Button(getTranslation(SHARED_BUTTON_TEXT_RESET), new Icon(VaadinIcon.RECYCLE));

@@ -4,11 +4,15 @@ import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.ExcelImportDto;
 import com.dp.trains.model.dto.RailStationDto;
 import com.dp.trains.model.entities.RailStationEntity;
+import com.dp.trains.model.entities.SectionEntity;
+import com.dp.trains.model.entities.SubSectionEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
+import com.dp.trains.model.viewmodels.RailStationViewModel;
 import com.dp.trains.repository.RailStationRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RailStationService implements BaseImportService {
 
+    private final SectionsService sectionsService;
     private final RailStationRepository railStationRepository;
     private final ObjectMapper defaultObjectMapper;
 
@@ -107,6 +112,12 @@ public class RailStationService implements BaseImportService {
         railStationRepository.deleteAll();
     }
 
+    @Transactional
+    public List<RailStationEntity> getAll() {
+
+        return railStationRepository.findAll();
+    }
+
     @Transactional(readOnly = true)
     public RailStationEntity getByRailStationName(String station) {
 
@@ -185,8 +196,123 @@ public class RailStationService implements BaseImportService {
         return this.getClass().getSimpleName();
     }
 
+    @Transactional(readOnly = true)
+    public Set<RailStationViewModel> getNeighbouringRailStations(int rowIndex, boolean isFinalRow, RailStationViewModel selectedStation) {
+
+        String currentStation = selectedStation == null ? null : selectedStation.getRailStation();
+        Set<RailStationViewModel> railStationViewModels = Sets.newLinkedHashSet();
+
+        if (rowIndex == 1) {
+
+            railStationViewModels = this.getAll().stream()
+                    .map(x -> RailStationViewModel.builder()
+                            .railStation(x.getStation())
+                            .lineNumber(x.getLineNumber())
+                            .isKeyStation(x.getIsKeyStation())
+                            .build())
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        } else if (isFinalRow) {
+
+            Set<SectionEntity> sectionEntities = this.sectionsService.findAllByFirstAndLastKeyPoint(currentStation);
+
+            for (SectionEntity sectionEntity : sectionEntities) {
+
+                RailStationViewModel railStationViewModel = RailStationViewModel.builder()
+                        .isKeyStation(true)
+                        .lineNumber(sectionEntity.getLineNumber())
+                        .build();
+
+                if (sectionEntity.getFirstKeyPoint().equals(currentStation)) {
+
+                    railStationViewModel.setRailStation(sectionEntity.getLastKeyPoint());
+                    railStationViewModel.setKeyStationIsFirst(false);
+
+                } else if (sectionEntity.getLastKeyPoint().equals(currentStation)) {
+
+                    railStationViewModel.setRailStation(sectionEntity.getFirstKeyPoint());
+                    railStationViewModel.setKeyStationIsFirst(true);
+                }
+
+                railStationViewModels.add(railStationViewModel);
+
+                for (SubSectionEntity subSectionEntity : sectionEntity.getSubSectionEntities()) {
+
+                    RailStationViewModel railStationViewModelForSubSection = RailStationViewModel.builder()
+                            .isKeyStation(false)
+                            .lineNumber(sectionEntity.getLineNumber())
+                            .railStation(subSectionEntity.getNonKeyStation())
+                            .build();
+
+                    railStationViewModels.add(railStationViewModelForSubSection);
+                }
+            }
+
+        } else {
+
+            if (selectedStation.getIsKeyStation()) {
+
+                Set<SectionEntity> sectionEntities = this.sectionsService.findAllByFirstAndLastKeyPoint(currentStation);
+
+                for (SectionEntity sectionEntity : sectionEntities) {
+
+                    RailStationViewModel railStationViewModel = RailStationViewModel.builder()
+                            .isKeyStation(true)
+                            .lineNumber(sectionEntity.getLineNumber())
+                            .build();
+
+                    if (sectionEntity.getFirstKeyPoint().equals(currentStation)) {
+
+                        railStationViewModel.setRailStation(sectionEntity.getLastKeyPoint());
+                        railStationViewModel.setKeyStationIsFirst(false);
+
+                    } else if (sectionEntity.getLastKeyPoint().equals(currentStation)) {
+
+                        railStationViewModel.setRailStation(sectionEntity.getFirstKeyPoint());
+                        railStationViewModel.setKeyStationIsFirst(true);
+                    }
+
+                    railStationViewModels.add(railStationViewModel);
+                }
+
+                return railStationViewModels;
+
+            } else if (!selectedStation.getIsKeyStation()) {
+
+                SectionEntity sectionEntity = sectionsService.findByNonKeyStation(currentStation);
+
+                RailStationViewModel startKeyStation = RailStationViewModel.builder()
+                        .isKeyStation(true)
+                        .railStation(sectionEntity.getFirstKeyPoint())
+                        .lineNumber(sectionEntity.getLineNumber())
+                        .build();
+
+                RailStationViewModel endKeyStation = RailStationViewModel.builder()
+                        .isKeyStation(true)
+                        .railStation(sectionEntity.getLastKeyPoint())
+                        .lineNumber(sectionEntity.getLineNumber())
+                        .build();
+
+                railStationViewModels.add(startKeyStation);
+                railStationViewModels.add(endKeyStation);
+            }
+        }
+
+        return railStationViewModels.stream()
+                .sorted(Comparator.comparing(RailStationViewModel::getLineNumber))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     @Override
     public String toString() {
         return getDisplayName();
+    }
+
+    public Collection<Integer> getLineNumbersForRailStationNeighbours(Collection<RailStationViewModel> newNeighbouringRailStations) {
+
+        return newNeighbouringRailStations.stream()
+                .map(RailStationViewModel::getLineNumber)
+                .sorted()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

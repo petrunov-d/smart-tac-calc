@@ -38,7 +38,7 @@ public class ViewSinglePriceView extends UserPermissionAwareView {
 
     static final String NAV_VIEW_SINGLE_PRICE = "view_single_price";
 
-    Grid.Column<UnitPriceEntity> codeColumn;
+    private Grid.Column<UnitPriceEntity> codeColumn;
 
     public ViewSinglePriceView() {
 
@@ -54,18 +54,13 @@ public class ViewSinglePriceView extends UserPermissionAwareView {
 
         unitPriceGrid.setDataProvider(provider);
 
-        codeColumn = unitPriceGrid.addColumn(UnitPriceEntity::getCode)
+        this.codeColumn = unitPriceGrid.addColumn(UnitPriceEntity::getCode)
                 .setHeader(getTranslation(CALCULATE_SINGLE_PRICE_GRID_COLUMN_HEADER_CODE))
                 .setSortable(true)
                 .setResizable(true);
 
         Grid.Column<UnitPriceEntity> nameColumn = unitPriceGrid.addColumn(UnitPriceEntity::getName)
                 .setHeader(getTranslation(CALCULATE_SINGLE_PRICE_GRID_COLUMN_HEADER_NAME))
-                .setSortable(true)
-                .setResizable(true);
-
-        Grid.Column<UnitPriceEntity> measureColumn = unitPriceGrid.addColumn(UnitPriceEntity::getMeasure)
-                .setHeader(getTranslation(CALCULATE_SINGLE_PRICE_GRID_COLUMN_HEADER_MEASURE))
                 .setSortable(true)
                 .setResizable(true);
 
@@ -83,7 +78,6 @@ public class ViewSinglePriceView extends UserPermissionAwareView {
 
         FilteringTextField codeFieldFilter = new FilteringTextField();
         FilteringTextField nameFieldFilter = new FilteringTextField();
-        FilteringTextField measureFieldFilter = new FilteringTextField();
         FilteringTextField unitPriceFieldFilter = new FilteringTextField();
 
         codeFieldFilter.addValueChangeListener(event -> ((ListDataProvider<UnitPriceEntity>)
@@ -94,10 +88,6 @@ public class ViewSinglePriceView extends UserPermissionAwareView {
                 unitPriceGrid.getDataProvider()).addFilter(unitPriceEntity ->
                 StringUtils.containsIgnoreCase(unitPriceEntity.getName(), nameFieldFilter.getValue())));
 
-        measureFieldFilter.addValueChangeListener(event -> ((ListDataProvider<UnitPriceEntity>)
-                unitPriceGrid.getDataProvider()).addFilter(unitPriceEntity ->
-                StringUtils.containsIgnoreCase(unitPriceEntity.getMeasure(), measureFieldFilter.getValue())));
-
         unitPriceFieldFilter.addValueChangeListener(event -> ((ListDataProvider<UnitPriceEntity>)
                 unitPriceGrid.getDataProvider()).addFilter(unitPriceEntity ->
                 StringUtils.containsIgnoreCase(String.valueOf(unitPriceEntity.getUnitPrice()),
@@ -105,7 +95,6 @@ public class ViewSinglePriceView extends UserPermissionAwareView {
 
         filterRow.getCell(codeColumn).setComponent(codeFieldFilter);
         filterRow.getCell(nameColumn).setComponent(nameFieldFilter);
-        filterRow.getCell(measureColumn).setComponent(measureFieldFilter);
         filterRow.getCell(unitPriceColumn).setComponent(unitPriceFieldFilter);
 
         Button clearButton = new Button(getTranslation(CLEAR_UNIT_PRICE_DATA), VaadinIcon.CLOSE_CIRCLE.create());

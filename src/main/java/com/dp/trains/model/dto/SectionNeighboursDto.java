@@ -12,23 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class SectionNeighboursDto {
 
+    private Integer rowIndex;
     private Integer lineNumber;
     private String typeOfLine;
     private RailStationEntity source;
     private RailStationEntity destination;
-    private RailStationEntity nonKeyStation;
     private Boolean isElectrified;
-    private Double unitPrice;
     private Double kilometersBetweenStations;
     private Boolean isKeyStation;
-    private int rowIndex;
 
-    public String getDisplayName() {
-
-        if ((!isKeyStation && nonKeyStation == null) || (isKeyStation && destination == null)) {
-            return "N/A";
-        }
-
-        return isKeyStation ? destination.getStation() : nonKeyStation.getStation();
-    }
 }

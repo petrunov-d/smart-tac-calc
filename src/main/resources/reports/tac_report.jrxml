@@ -118,7 +118,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="db17f902-f5df-41f2-9ad7-4db15ebe4164"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Број воза]]></text>
@@ -129,7 +129,7 @@
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="fb88642c-2b23-4fac-abf3-b0405cf39667"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{trainNumber}]]></textFieldExpression>
@@ -144,7 +144,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="8ac4f90c-a7c0-4168-87f2-3cddf3c16861"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Врста воза]]></text>
@@ -155,7 +155,7 @@
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="49ce4be6-ddf7-42da-ae03-55f2fb9ff7a9"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{trainType}]]></textFieldExpression>
@@ -170,7 +170,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="a5d9c9be-1a19-41b2-bffb-dfab8bda83ae"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Jе електрифицирана]]></text>
@@ -181,7 +181,7 @@
                                 <reportElement x="0" y="0" width="30" height="140"
                                                uuid="42e0fc33-326a-4bf2-8436-98bf0b22867a"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{isElectrified}]]></textFieldExpression>
@@ -196,7 +196,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="9f627a17-36b0-46a4-8be0-766319b2d559"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Серија вучног возила]]></text>
@@ -207,7 +207,7 @@
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="9a6f1990-4ffa-43ac-9672-ede55e0ed31a"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{locomotiveSeries}]]></textFieldExpression>
@@ -222,7 +222,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="5decb284-681e-4784-8656-f044c2835475"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Маса вучног возила]]></text>
@@ -233,7 +233,7 @@
                                 <reportElement x="0" y="0" width="51" height="140"
                                                uuid="9bfe562f-ccee-42ed-9e10-6357f338b15d"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{locomotiveWeight}]]></textFieldExpression>
@@ -248,7 +248,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="c34ac99b-db63-485f-ad03-dd366acfb48a"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Маса састава без вучног возила]]></text>
@@ -259,7 +259,7 @@
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="e4fa98e2-42f7-42ed-9f7f-73fdc5982019"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{trainWeightWithoutLocomotive}]]></textFieldExpression>
@@ -274,7 +274,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="a257c565-0b96-4527-b3c1-b40161049b4c"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Маса воза]]></text>
@@ -285,7 +285,7 @@
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="e77951bf-2ede-4d54-802f-832d59be3171"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{totalTrainWeight}]]></textFieldExpression>
@@ -300,7 +300,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="2c939c87-82d7-4524-b8c3-83d961781611"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Дужина воза]]></text>
@@ -311,7 +311,7 @@
                                 <reportElement x="0" y="0" width="41" height="140"
                                                uuid="5855f170-829e-4624-a8f3-d0177fe67191"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{trainLength}]]></textFieldExpression>
@@ -326,7 +326,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="c1fd475d-a810-4950-93e4-e64d24060dda"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Полазна станица]]></text>
@@ -337,7 +337,7 @@
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="e6f1d13e-15a6-46a3-9705-3684682aa248"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{startStation}]]></textFieldExpression>
@@ -352,7 +352,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="3155f111-fe66-4aaf-beb6-635ac6936c22"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Крајња станица]]></text>
@@ -363,7 +363,7 @@
                                 <reportElement x="0" y="0" width="51" height="140"
                                                uuid="b95e593f-6e22-420b-8e41-f93446f59fe1"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{endStation}]]></textFieldExpression>
@@ -378,7 +378,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="671f44a8-9b13-44ef-af28-4e77d1e3aa31"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Календар саобраћаја]]></text>
@@ -389,7 +389,7 @@
                                 <reportElement x="0" y="0" width="57" height="140"
                                                uuid="e451bf17-3c17-46da-b371-f250d4777b30"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{calendarOfMovement}]]></textFieldExpression>
@@ -404,7 +404,7 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="89c67950-2849-4483-bc6d-6e8ad3e31226"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Напомена]]></text>
@@ -415,7 +415,7 @@
                                 <reportElement x="0" y="0" width="40" height="140"
                                                uuid="2f413b29-0b2d-42e3-8db7-1ba377aeba9f"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
@@ -430,18 +430,18 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="62206248-70f8-49ef-996c-f931d8b6e122"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Километри на електрифицираним пругама]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">
-                            <textField>
+                            <textField pattern="#0.000">
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="1bffae97-4285-447c-948e-37fbe737c76d"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{kilometersOnElectrifiedLines}]]></textFieldExpression>
@@ -456,19 +456,19 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="245509ab-210d-48e9-94bc-63d3fab3bef2"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
-                                <text>
-                                    <![CDATA[Километри на неелектрифицираним магистралним и регионалним пругама]]></text>
+                                <text><![CDATA[
+                                    Километри на неелектрифицираним магистралним и регионалним пругама]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">
-                            <textField>
+                            <textField pattern="#0.000">
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="d55dd4ab-a8ca-4f6f-9bc5-8d22ea18e529"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression>
@@ -484,18 +484,18 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="7674b51e-db17-4f99-b838-a7e9ff3f0db2"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Километри на неелектрифицираним локалним пругама]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">
-                            <textField>
+                            <textField pattern="#0.000">
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="ea16a05f-611c-406a-a267-6dd165f111dc"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression>
@@ -511,18 +511,18 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="d666b2c1-b8ca-4b2f-b6ba-8bb50f702800"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Стратешки коефицијент]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">
-                            <textField>
+                            <textField pattern="#0.000">
                                 <reportElement x="0" y="0" width="50" height="140"
                                                uuid="da53c875-58fb-4744-8d02-9f40fca6be0c"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{strategicCoefficient}]]></textFieldExpression>
@@ -537,18 +537,18 @@
                                                isPrintWhenDetailOverflows="true"
                                                uuid="98fb0a07-8f6a-45f2-a84e-bba6cedcfa49"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <text><![CDATA[Цена минималног пакета]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">
-                            <textField>
+                            <textField pattern="#0.000">
                                 <reportElement x="0" y="0" width="32" height="140"
                                                uuid="302a35d4-e994-4a0c-b300-7f3323d44bad"/>
                                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                                    <font fontName="DejaVu Sans" size="12" pdfFontName="DejaVu Sans"
+                                    <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA[$F{tax}]]></textFieldExpression>

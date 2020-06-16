@@ -5,8 +5,8 @@ import com.dp.trains.event.CPPTFinalRowRemovedEvent;
 import com.dp.trains.event.CPPTResetPageEvent;
 import com.dp.trains.event.CPPTRowDoneEvent;
 import com.dp.trains.model.dto.CalculateFinalTaxPerTrainDto;
+import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
 import com.dp.trains.model.dto.LocomotiveSeriesDto;
-import com.dp.trains.model.entities.CarrierCompanyEntity;
 import com.dp.trains.model.entities.StrategicCoefficientEntity;
 import com.dp.trains.model.entities.TrainTypeEntity;
 import com.dp.trains.model.entities.user.UserAccess;
@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
@@ -71,7 +72,7 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
     private Select<TrainTypeEntity> trainType;
     private Select<StrategicCoefficientEntity> strategicCoefficientSelect;
-    private Select<CarrierCompanyEntity> carrierCompanySelect;
+    private Select<String> carrierCompanySelect;
     private Select<LocomotiveSeriesDto> locomotiveSeriesDtoSelect;
 
     private final CalculatePricePerTrainLayout calculatePricePerTrainLayout;
@@ -82,13 +83,15 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
     private final ServiceChargesPerTrainService serviceChargesPerTrainService;
     private final TaxPerTrainService taxPerTrainService;
     private final CarrierCompanyService carrierCompanyService;
+    private final RailStationService railStationService;
 
     public CalculatePricePerTrainView(@Autowired SectionsService sectionsService,
                                       @Autowired TrainTypeService trainTypeService,
                                       @Autowired StrategicCoefficientService strategicCoefficientService,
                                       @Autowired ServiceChargesPerTrainService serviceChargesPerTrainService,
                                       @Autowired TaxPerTrainService taxPerTrainService,
-                                      @Autowired CarrierCompanyService carrierCompanyService) {
+                                      @Autowired CarrierCompanyService carrierCompanyService,
+                                      @Autowired RailStationService railStationService) {
 
         super();
 
@@ -126,6 +129,7 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.serviceChargesPerTrainService = serviceChargesPerTrainService;
         this.taxPerTrainService = taxPerTrainService;
         this.carrierCompanyService = carrierCompanyService;
+        this.railStationService = railStationService;
     }
 
     private void initializeStrategicCoefficientsSelect() {
@@ -165,13 +169,20 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.carrierCompanySelect.setLabel(getTranslation(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_SELECT_CARRIER_COMPANY)));
         this.carrierCompanySelect.addValueChangeListener(event -> {
 
-            Collection<LocomotiveSeriesDto> locomotiveSeriesDtoList =
-                    this.carrierCompanyService.getByCarrierName(event.getValue().getCarrierName());
+            if (event.getValue() != null) {
 
-            this.locomotiveSeriesDtoSelect.setEnabled(true);
-            this.locomotiveSeriesDtoSelect.setItems(locomotiveSeriesDtoList);
-            this.calculatePricePerTrainLayout.setLocomotiveSeriesDtos(locomotiveSeriesDtoList);
-            this.locomotiveSeriesDtoSelect.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
+                Collection<LocomotiveSeriesDto> locomotiveSeriesDtoList = this.carrierCompanyService.getByCarrierName(event.getValue());
+
+                this.locomotiveSeriesDtoSelect.setEnabled(true);
+                this.locomotiveSeriesDtoSelect.setItems(locomotiveSeriesDtoList);
+                this.calculatePricePerTrainLayout.setLocomotiveSeriesDtos(locomotiveSeriesDtoList);
+                this.locomotiveSeriesDtoSelect.setItemLabelGenerator(x -> String.format("%s - %.3f", x.getSeries(), x.getWeight()));
+
+            } else {
+
+                this.carrierCompanySelect.setItems(this.carrierCompanyService.fetchNames());
+                this.carrierCompanySelect.setEnabled(true);
+            }
         });
     }
 
@@ -214,8 +225,7 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.trainType.setItems(trainTypeService.fetch(0, 0));
         this.trainType.setItemLabelGenerator(TrainTypeEntity::getName);
 
-        this.carrierCompanySelect.setItems(this.carrierCompanyService.fetch(0, 0));
-        this.carrierCompanySelect.setItemLabelGenerator(CarrierCompanyEntity::getCarrierName);
+        this.carrierCompanySelect.setItems(this.carrierCompanyService.fetchNames());
 
         this.strategicCoefficientSelect.setItems(strategicCoefficientService.fetch(0, 0));
         this.strategicCoefficientSelect.setItemLabelGenerator(StrategicCoefficientEntity::getName);
@@ -279,16 +289,16 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
                 isFinal,
                 this.sectionsService,
+                this.railStationService,
                 this.serviceChargesPerTrainService,
                 this.tonnage.getValue(),
                 this.locomotiveSeriesDtoSelect.getDataProvider().fetch(new Query<>()).collect(Collectors.toCollection(ArrayList::new)),
                 this.locomotiveSeriesDtoSelect.getValue(),
                 this.trainLength.getValue());
 
-        this.carrierCompanySelect.setEnabled(false);
-        this.locomotiveSeriesDtoSelect.setEnabled(false);
         this.add.setEnabled(false);
         this.finalize.setEnabled(false);
+        toggleMainFields(false);
     }
 
     private void resetPageState() {
@@ -309,6 +319,20 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.totalKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
         this.totalBruttoKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
         this.titleFinalTax.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
+
+        toggleMainFields(true);
+    }
+
+    private void toggleMainFields(boolean b) {
+
+        this.tonnage.setEnabled(b);
+        this.trainLength.setEnabled(b);
+        this.trainNumber.setEnabled(b);
+        this.calendar.setEnabled(b);
+        this.note.setEnabled(b);
+        this.trainType.setEnabled(b);
+        this.carrierCompanySelect.setEnabled(b);
+        this.locomotiveSeriesDtoSelect.setEnabled(b);
     }
 
     @Subscribe
@@ -340,6 +364,7 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.add.setEnabled(true);
         this.finalize.setEnabled(false);
         this.calculateFinalTax.setEnabled(false);
+        toggleMainFields(true);
     }
 
     @Subscribe
@@ -383,8 +408,11 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
         this.calculateFinalTax.setEnabled(false);
 
+        List<CalculateTaxPerTrainRowDataDto> calculateTaxPerTrainRowDataDtos =
+                this.sectionsService.findByRawDtos(this.calculatePricePerTrainLayout.gatherAllRowData());
+
         CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.taxPerTrainService
-                .calculateFinalTaxForTrain(this.calculatePricePerTrainLayout.gatherAllRowData(),
+                .calculateFinalTaxForTrain(calculateTaxPerTrainRowDataDtos,
                         strategicCoefficientSelect.getValue(),
                         trainNumber.getValue(),
                         calendar.getValue(),

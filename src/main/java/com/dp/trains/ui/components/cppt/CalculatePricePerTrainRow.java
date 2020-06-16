@@ -1,11 +1,11 @@
 package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
-import com.dp.trains.model.dto.CalculateTaxPerTrainRowDataDto;
+import com.dp.trains.model.dto.CPPTRowDataDto;
 import com.dp.trains.model.dto.LocomotiveSeriesDto;
-import com.dp.trains.model.dto.SectionNeighboursDto;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
-import com.dp.trains.model.viewmodels.StationViewModel;
+import com.dp.trains.model.viewmodels.RailStationViewModel;
+import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
@@ -25,8 +25,9 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
@@ -36,11 +37,11 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private int rowIndex;
     private Integer trainNumber;
     private final boolean isFinal;
-    private StationViewModel selectedStation;
-    private final Collection<SectionNeighboursDto> neighbours;
+    private RailStationViewModel selectedStation;
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
 
     private final SectionsService sectionsService;
+    private final RailStationService railStationService;
 
     private final H5 rowTitle;
     private final H5 serviceChargesLabel;
@@ -53,15 +54,16 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private NumberField trainLength;
 
     private Select<Integer> lineNumbers;
-    private Select<SectionNeighboursDto> station;
+    private Select<RailStationViewModel> station;
     private Select<LocomotiveSeriesDto> locomotiveSeriesDtoSelect;
 
     public CalculatePricePerTrainRow(int rowIndex,
                                      boolean isFinal,
                                      Integer trainNumber,
                                      SectionsService sectionsService,
+                                     RailStationService railStationService,
                                      ServiceChargesPerTrainService serviceChargesPerTrainService,
-                                     StationViewModel selectedStation,
+                                     RailStationViewModel selectedStation,
                                      Double tonnageDouble,
                                      LocomotiveSeriesDto selectedLocomotiveSeriesDto,
                                      Collection<LocomotiveSeriesDto> locomotiveSeriesDtos,
@@ -74,12 +76,14 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.selectedStation = selectedStation;
         this.trainNumber = trainNumber;
         this.sectionsService = sectionsService;
+        this.railStationService = railStationService;
+
         this.setRowIndex(rowIndex);
 
-        this.neighbours = sectionsService.getDirectNeighboursForSource(selectedStation, isFirst());
+        Set<RailStationViewModel> railStationViewModels =
+                initializeStationsSelect(trainNumber, serviceChargesPerTrainService, selectedStation);
 
-        initializeStationsSelect(trainNumber, serviceChargesPerTrainService, neighbours);
-        initializeLineNumberSelect(neighbours);
+        initializeLineNumberSelect(railStationViewModels);
         initializeTonnageField(tonnageDouble);
         initializeTrainLength(trainLengthDouble);
         initializeLocomotiveSeriesDtoSelect(selectedLocomotiveSeriesDto, locomotiveSeriesDtos);
@@ -109,6 +113,10 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         horizontalLayout.add(serviceButtonLayout);
         this.add(horizontalLayout);
+
+        this.setSpacing(false);
+        this.setMargin(false);
+        this.setPadding(false);
     }
 
     private void initializeTrainLength(Double trainLengthDouble) {
@@ -240,7 +248,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.trainLength.setEnabled(false);
     }
 
-    private void initializeLineNumberSelect(Collection<SectionNeighboursDto> neighbours) {
+    private void initializeLineNumberSelect(Collection<RailStationViewModel> neighbours) {
 
         lineNumbers = new Select<>();
         lineNumbers.addValueChangeListener(event -> checkRowDone());
@@ -252,51 +260,45 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         } else {
 
-            lineNumbers.setItems(this.sectionsService.getLineNumbersFromSectionNeighbourDtos(neighbours));
+            lineNumbers.setItems(this.railStationService.getLineNumbersForRailStationNeighbours(neighbours));
         }
     }
 
-    private void initializeStationsSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
-                                          Collection<SectionNeighboursDto> neighbours) {
+    private Set<RailStationViewModel> initializeStationsSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
+                                                               RailStationViewModel selectedStation) {
 
-        Set<SectionNeighboursDto> visibleSectionNeighbourDtos = this.sectionsService.getVisibleSectionNeighbourDtos(
-                this.rowIndex, this.isFinal, neighbours).stream()
-                .sorted(Comparator.comparing(SectionNeighboursDto::getLineNumber))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<RailStationViewModel> neighbouringRailStations =
+                this.railStationService.getNeighbouringRailStations(getRowIndex(), getIsFinal(), selectedStation);
 
-        station = new Select<>();
-        station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
-        station.setItems(visibleSectionNeighbourDtos);
-        station.addValueChangeListener(event -> checkRowDone());
-        station.setItemLabelGenerator(SectionNeighboursDto::getDisplayName);
-        station.addValueChangeListener(event -> {
+        this.station = new Select<>();
+        this.station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));
+        this.station.setItems(neighbouringRailStations);
+        this.station.addValueChangeListener(event -> checkRowDone());
+        this.station.setItemLabelGenerator(RailStationViewModel::getRailStation);
+        this.station.addValueChangeListener(event -> {
 
             Boolean isKeyStation = event.getValue().getIsKeyStation();
-            String newStation;
-            if (isKeyStation) {
-                newStation = event.getValue().getDestination() == null ? "N/A" : event.getValue().getDestination().getStation();
-            } else {
-                newStation = event.getValue().getNonKeyStation() == null ? "N/A" : event.getValue().getNonKeyStation().getStation();
-            }
+            String newStation = event.getValue().getRailStation();
 
-            EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder().selectedStation(newStation).isKeyStation(isKeyStation).build());
+            EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder().selectedStation(newStation)
+                    .isKeyStation(isKeyStation).lineNumber(event.getValue().getLineNumber()).build());
 
-            this.selectedStation = StationViewModel.builder().selectedStation(newStation).isKeyStation(isKeyStation).build();
+            this.selectedStation = RailStationViewModel.builder().railStation(newStation).isKeyStation(isKeyStation).build();
 
             if (this.selectedStation != null) {
 
                 if (lineNumbers.getDataProvider().size(new Query<>()) == 0) {
 
-                    Collection<SectionNeighboursDto> sectionNeighboursDtos = this.sectionsService
-                            .getDirectNeighboursForSource(selectedStation, isFirst());
+                    Collection<RailStationViewModel> newNeighbouringRailStations = this.railStationService
+                            .getNeighbouringRailStations(getRowIndex(), getIsFinal(), selectedStation);
 
-                    lineNumbers.setItems(this.sectionsService.getLineNumbersFromSectionNeighbourDtos(sectionNeighboursDtos));
+                    lineNumbers.setItems(this.railStationService.getLineNumbersForRailStationNeighbours(newNeighbouringRailStations));
                 }
 
                 if (this.trainNumber != null) {
 
                     this.serviceChargesPerTrainEntityList = serviceChargesPerTrainService
-                            .findByTrainNumberAndRailRoadStation(trainNumber, this.selectedStation.getSelectedStation());
+                            .findByTrainNumberAndRailRoadStation(trainNumber, this.selectedStation.getRailStation());
 
                     serviceChargesLabel.setText(String.format("%s %.3f",
                             getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL),
@@ -307,13 +309,15 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
                 }
             }
         });
+
+        return neighbouringRailStations;
     }
 
     public void setTrainNumber(Integer trainNumber) {
 
         log.debug("Setting train number to: " + trainNumber);
         this.trainNumber = trainNumber;
-        this.station.setValue(new SectionNeighboursDto());
+        this.station.setValue(new RailStationViewModel());
         this.station.setValue(this.station.getValue());
     }
 
@@ -349,22 +353,16 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.rowTitle.setText(rowTitleString);
     }
 
-    public StationViewModel getSelectedStation() {
+    public RailStationViewModel getSelectedStation() {
 
         return this.selectedStation;
     }
 
-    public CalculateTaxPerTrainRowDataDto getRowData() {
+    public CPPTRowDataDto getRowData() {
 
-        SectionNeighboursDto sectionNeighboursDto = this.sectionsService.getByStationAndLineNumber(station.getValue(), neighbours);
-
-        return CalculateTaxPerTrainRowDataDto
+        return CPPTRowDataDto
                 .builder()
-                .section(sectionNeighboursDto
-                        .toBuilder()
-                        .lineNumber(lineNumbers.getValue())
-                        .rowIndex(this.getRowIndex())
-                        .build())
+                .stationViewModel(this.selectedStation)
                 .tonnage(this.tonnage.getValue())
                 .locomotiveSeries(this.locomotiveSeriesDtoSelect.getValue().getSeries())
                 .locomotiveWeight(this.locomotiveSeriesDtoSelect.getValue().getWeight())

@@ -118,8 +118,8 @@ public class TaxPerTrainService {
 
                 List<UnitPriceEntity> unitPricesForSection = findUnitPricesForSection(trainTypeEntity, rowDataDto);
 
-                UnitPriceEntity unitPriceForTrainKilometers = unitPricesForSection.get(0);
-                UnitPriceEntity unitPriceForBruttoTonneKilometers = unitPricesForSection.get(1);
+                UnitPriceEntity unitPriceForTrainKilometers = unitPricesForSection.get(1);
+                UnitPriceEntity unitPriceForBruttoTonneKilometers = unitPricesForSection.get(0);
 
                 log.info("Unit price for TK for this section: " + unitPriceForTrainKilometers.toString());
                 log.info("Unit price for BTK for this section: " + unitPriceForTrainKilometers.toString());
@@ -154,7 +154,8 @@ public class TaxPerTrainService {
 
                 totalKilometers = totalKilometers.add(trainKilometersForSection);
                 totalBruttoTonneKilometers = totalBruttoTonneKilometers.add(bruttoTonneKilometersForSection);
-                records.add(getRecordForSection(rowDataDto, strategicCoefficientMultiplier, trainNumber, calendar, notes, trainLength, correlationId, trainTypeEntity, plusCharges));
+                records.add(getRecordForSection(rowDataDto,
+                        strategicCoefficientMultiplier, trainNumber, calendar, notes, trainLength, correlationId, trainTypeEntity, plusCharges));
 
                 totalTaxForTrainKilometers = totalTaxForTrainKilometers.add(trainKilometersPriceForSection);
                 totalTaxForBruttoTonneKilometers = totalTaxForBruttoTonneKilometers.add(bruttoTonneKilometersPriceForSection);
@@ -173,6 +174,7 @@ public class TaxPerTrainService {
         }
 
         this.taxPerTrainRepository.saveAll(records);
+        this.taxPerTrainRepository.flush();
 
         return CalculateFinalTaxPerTrainDto.builder()
                 .totalKilometers(totalKilometers)
@@ -237,13 +239,23 @@ public class TaxPerTrainService {
     private UnitPriceEntity getForCode(boolean isTrainKilometers, TrainTypeEntity trainTypeEntity,
                                        CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto) throws CodeNotFoundException {
 
-        LineTypeEntity lineTypeEntity =
-                lineTypeService.getByType(calculateTaxPerTrainRowDataDto.getSection().getTypeOfLine());
+        LineTypeEntity lineTypeEntity = lineTypeService.getByType(calculateTaxPerTrainRowDataDto.getSection().getTypeOfLine());
 
-        Integer lineCode = Integer.valueOf(lineTypeEntity.getCode());
-        Integer electrifiedCode = calculateTaxPerTrainRowDataDto.getSection().getIsElectrified() ? 1 : 0;
+        int lineCode = Integer.parseInt(lineTypeEntity.getCode());
+        int electrifiedCode = calculateTaxPerTrainRowDataDto.getSection().getIsElectrified() ? 1 : 0;
         Integer trainTypeCode = Integer.valueOf(trainTypeEntity.getCode());
         Integer kilometersCode = isTrainKilometers ? 0 : 1;
+
+        if ((lineTypeEntity.getLineType().equals(REGIONAL) || lineTypeEntity.getLineType().equals(HIGHWAY_LINE)) &&
+                electrifiedCode == 0) {
+
+            lineCode = 1;
+
+        } else if ((lineTypeEntity.getLineType().equals(REGIONAL) || lineTypeEntity.getLineType().equals(HIGHWAY_LINE)) &&
+                electrifiedCode == 1) {
+
+            lineCode = 0;
+        }
 
         String code = String.format("%d%d%d%d", lineCode, electrifiedCode, trainTypeCode, kilometersCode);
 

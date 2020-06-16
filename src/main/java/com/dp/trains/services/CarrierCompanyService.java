@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,6 +103,13 @@ public class CarrierCompanyService implements BaseImportService {
     public Collection<CarrierCompanyEntity> fetch(int offset, int limit) {
 
         return this.carrierCompanyRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<String> fetchNames() {
+
+        return this.carrierCompanyRepository.findAll().stream().map(CarrierCompanyEntity::getCarrierName)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Transactional

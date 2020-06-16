@@ -2,16 +2,15 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.*;
-import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.SectionEntity;
 import com.dp.trains.model.entities.SubSectionEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
-import com.dp.trains.model.viewmodels.StationViewModel;
+import com.dp.trains.model.viewmodels.RailStationViewModel;
+import com.dp.trains.repository.RailStationRepository;
 import com.dp.trains.repository.SectionRepository;
 import com.dp.trains.utils.mapper.impl.DefaultDtoEntityMapperService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("unchecked")
 public class SectionsService implements BaseImportService {
 
     private static final String nonKeyStationKeyFormat = "Nonkey station %d";
@@ -34,7 +34,7 @@ public class SectionsService implements BaseImportService {
 
     private final ObjectMapper defaultObjectMapper;
     private final SectionRepository sectionsRepository;
-    private final RailStationService railStationService;
+    private final RailStationRepository railStationRepository;
 
     @Qualifier("subSectionMapper")
     private final DefaultDtoEntityMapperService<SubSectionDto, SubSectionEntity> subSectionMapper;
@@ -172,85 +172,6 @@ public class SectionsService implements BaseImportService {
                 .collect(Collectors.toSet());
     }
 
-    @Transactional(readOnly = true)
-    public Set<SectionNeighboursDto> getDirectNeighboursForSource(StationViewModel source, boolean isFirst) {
-
-        if (source != null && !source.getIsKeyStation()) {
-
-            return this.getDirectNeighboursForNonKeyStation(source.getSelectedStation());
-        }
-
-        Set<SectionEntity> entities = source == null ? Sets.newHashSet(this.sectionsRepository.findAll()) :
-                this.sectionsRepository.findAllByFirstKeyPoint(source.getSelectedStation());
-
-        Set<SectionNeighboursDto> sectionNeighbourDtos = Sets.newHashSet();
-
-        for (SectionEntity sectionEntity : entities) {
-
-            SectionNeighboursDto rootDto = getSectionNeighboursDtoFromSectionEntity(sectionEntity, true);
-
-            sectionNeighbourDtos.add(rootDto);
-
-            if (isFirst) {
-
-                RailStationEntity first = railStationService.getByRailStationName(sectionEntity.getFirstKeyPoint());
-
-                SectionNeighboursDto firstDto = SectionNeighboursDto.builder()
-                        .isElectrified(sectionEntity.getIsElectrified())
-                        .lineNumber(sectionEntity.getLineNumber())
-                        .typeOfLine(sectionEntity.getLineType())
-                        .unitPrice(sectionEntity.getUnitPrice())
-                        .source(first)
-                        .destination(first)
-                        .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
-                        .isKeyStation(true)
-                        .build();
-
-                sectionNeighbourDtos.add(firstDto);
-            }
-
-            getSubSectionNeighbours(sectionNeighbourDtos, sectionEntity);
-        }
-
-        return sectionNeighbourDtos;
-    }
-
-    private Set<SectionNeighboursDto> getDirectNeighboursForNonKeyStation(String selectedStation) {
-
-        SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(selectedStation);
-        return Sets.newHashSet(getSectionNeighboursDtoFromSectionEntity(sectionEntity, true));
-    }
-
-    private void getSubSectionNeighbours(Set<SectionNeighboursDto> sectionNeighbourDtos, SectionEntity sectionEntity) {
-
-        for (SubSectionEntity subSectionEntity : sectionEntity.getSubSectionEntities()) {
-
-            SectionNeighboursDto sectionNeighboursDto = getSectionNeighboursDtoFromSectionEntity(sectionEntity, false);
-
-            Double kilometersBetweenStations = sectionEntity.getKilometersBetweenStations() - subSectionEntity.getKilometers();
-            sectionNeighboursDto.setKilometersBetweenStations(kilometersBetweenStations);
-            sectionNeighboursDto.setNonKeyStation(railStationService.getByRailStationName(subSectionEntity.getNonKeyStation()));
-
-            log.info("Adding non key station:" + sectionNeighboursDto.toString());
-
-            sectionNeighbourDtos.add(sectionNeighboursDto);
-        }
-    }
-
-    private SectionNeighboursDto getSectionNeighboursDtoFromSectionEntity(SectionEntity sectionEntity, boolean isKeyStation) {
-
-        return SectionNeighboursDto.builder()
-                .isElectrified(sectionEntity.getIsElectrified())
-                .lineNumber(sectionEntity.getLineNumber())
-                .typeOfLine(sectionEntity.getLineType())
-                .unitPrice(sectionEntity.getUnitPrice())
-                .source(railStationService.getByRailStationName(sectionEntity.getFirstKeyPoint()))
-                .destination(railStationService.getByRailStationName(sectionEntity.getLastKeyPoint()))
-                .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
-                .isKeyStation(isKeyStation)
-                .build();
-    }
-
     @Override
     @Transactional
     public void deleteAll() {
@@ -326,40 +247,114 @@ public class SectionsService implements BaseImportService {
         return getDisplayName();
     }
 
-    public Set<SectionNeighboursDto> getVisibleSectionNeighbourDtos(int rowIndex, boolean isFinalRow,
-                                                                    Collection<SectionNeighboursDto> neighbours) {
-        if (rowIndex == 1 || isFinalRow) {
 
-            return Sets.newHashSet(neighbours);
-        }
+    @Transactional(readOnly = true)
+    public Set<SectionEntity> findAllByFirstAndLastKeyPoint(String keyPoint) {
 
-        return neighbours.stream()
-                .filter(SectionNeighboursDto::getIsKeyStation)
-                .collect(Collectors.toSet());
+        Set<SectionEntity> sectionEntities;
+
+        Set<SectionEntity> allByFirstKeyPoint = this.sectionsRepository.findAllByFirstKeyPoint(keyPoint);
+        Set<SectionEntity> allByLastKeyPoint = this.sectionsRepository.findAllByLastKeyPoint(keyPoint);
+
+        sectionEntities = Sets.newHashSet(allByFirstKeyPoint);
+        sectionEntities.addAll(allByLastKeyPoint);
+
+        return sectionEntities;
     }
 
-    public SectionNeighboursDto getByStationAndLineNumber(SectionNeighboursDto value,
-                                                          Collection<SectionNeighboursDto> neighbours) {
+    @Transactional(readOnly = true)
+    public SectionEntity findByNonKeyStation(String selectedStation) {
 
-        Optional<SectionNeighboursDto> optionalSectionNeighboursDto = neighbours.stream()
-                .filter(x -> x.equals(value))
-                .findFirst();
-
-        if (!optionalSectionNeighboursDto.isPresent()) {
-
-            throw new IllegalStateException("Could not find station for target:" + value
-                    + " neighbours " + Joiner.on(",").join(neighbours));
-        }
-
-        return neighbours.stream()
-                .filter(x -> x.equals(value))
-                .findFirst().get();
+        return this.sectionsRepository.findBySubsectionNonKeyStation(selectedStation);
     }
 
-    public Set<Integer> getLineNumbersFromSectionNeighbourDtos(Collection<SectionNeighboursDto> sectionNeighboursDtos) {
+    @Transactional(readOnly = true)
+    public List<CalculateTaxPerTrainRowDataDto> findByRawDtos(List<CPPTRowDataDto> rawData) {
 
-        return sectionNeighboursDtos.stream()
-                .map(SectionNeighboursDto::getLineNumber)
-                .collect(Collectors.toSet());
+        List<CalculateTaxPerTrainRowDataDto> calculateTaxPerTrainRowDataDtos = Lists.newArrayList();
+
+        for (int i = 0; i < rawData.size(); i++) {
+
+            CPPTRowDataDto rowDataDto = rawData.get(i);
+
+            CPPTRowDataDto nextRowDataDto = rawData.get(i == rawData.size() - 1 ? i : i + 1);
+
+            SectionNeighboursDto sectionNeighboursDto = findSection(rowDataDto, nextRowDataDto, i);
+
+            CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto = new CalculateTaxPerTrainRowDataDto();
+
+            calculateTaxPerTrainRowDataDto.setTonnage(rowDataDto.getTonnage());
+            calculateTaxPerTrainRowDataDto.setLocomotiveWeight(rowDataDto.getLocomotiveWeight());
+            calculateTaxPerTrainRowDataDto.setLocomotiveSeries(rowDataDto.getLocomotiveSeries());
+            calculateTaxPerTrainRowDataDto.setServiceChargesPerTrainEntityList(rowDataDto.getServiceChargesPerTrainEntityList());
+            calculateTaxPerTrainRowDataDto.setSection(sectionNeighboursDto);
+
+            calculateTaxPerTrainRowDataDtos.add(calculateTaxPerTrainRowDataDto);
+        }
+
+        return calculateTaxPerTrainRowDataDtos;
+    }
+
+    @Transactional(readOnly = true)
+    public SectionNeighboursDto findSection(CPPTRowDataDto rowDataDto, CPPTRowDataDto nextRowDataDto, int i) {
+
+        SectionNeighboursDto sectionNeighboursDto = null;
+        RailStationViewModel firstRailStation = rowDataDto.getStationViewModel();
+        RailStationViewModel nextRailStation = nextRowDataDto.getStationViewModel();
+
+        if (rowDataDto.getStationViewModel().getIsKeyStation()) {
+
+            String firstRailStationName = firstRailStation.getRailStation();
+            String nextRailStationName = nextRailStation.getRailStation();
+
+            Set<SectionEntity> firstRailStationSectionsFirst = sectionsRepository.findAllByFirstKeyPoint(firstRailStationName);
+            Set<SectionEntity> firstRailStationSectionsLast = sectionsRepository.findAllByLastKeyPoint(firstRailStationName);
+
+            Set<SectionEntity> secondRailStationSectionsFirst = sectionsRepository.findAllByFirstKeyPoint(nextRailStationName);
+            Set<SectionEntity> secondRailStationSectionsLast = sectionsRepository.findAllByLastKeyPoint(nextRailStationName);
+
+            Set<SectionEntity> result = Sets.newHashSet(firstRailStationSectionsFirst);
+            result.addAll(firstRailStationSectionsLast);
+            result.addAll(secondRailStationSectionsFirst);
+            result.addAll(secondRailStationSectionsLast);
+
+            for (SectionEntity sectionEntity : result) {
+
+                if ((sectionEntity.getFirstKeyPoint().equals(firstRailStationName) || sectionEntity.getLastKeyPoint().equals(firstRailStationName))
+                        && sectionEntity.getFirstKeyPoint().equals(nextRailStationName) || sectionEntity.getLastKeyPoint().equals(nextRailStationName)) {
+
+                    return SectionNeighboursDto
+                            .builder()
+                            .source(railStationRepository.findByStation(sectionEntity.getFirstKeyPoint()))
+                            .destination(railStationRepository.findByStation(sectionEntity.getLastKeyPoint()))
+                            .isElectrified(sectionEntity.getIsElectrified())
+                            .isKeyStation(true)
+                            .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
+                            .lineNumber(sectionEntity.getLineNumber())
+                            .typeOfLine(sectionEntity.getLineType())
+                            .rowIndex(i + 1)
+                            .build();
+                }
+            }
+
+        } else if (!rowDataDto.getStationViewModel().getIsKeyStation()) {
+
+            SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(firstRailStation.getRailStation());
+
+            return SectionNeighboursDto
+                    .builder()
+                    .source(railStationRepository.findByStation(sectionEntity.getFirstKeyPoint()))
+                    .destination(railStationRepository.findByStation(sectionEntity.getLastKeyPoint()))
+                    .isElectrified(sectionEntity.getIsElectrified())
+                    .isKeyStation(true)
+                    .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
+                    .lineNumber(sectionEntity.getLineNumber())
+                    .typeOfLine(sectionEntity.getLineType())
+                    .rowIndex(i + 1)
+                    .build();
+
+        }
+
+        return sectionNeighboursDto;
     }
 }

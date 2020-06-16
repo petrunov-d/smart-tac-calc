@@ -73,18 +73,20 @@ public class TaxPerTrainEntityMerger {
 
             for (TaxPerTrainEntity taxPerTrainEntity : currentList) {
 
+                Double kmOnElectrifiedLinesDto = taxPerTrainReportDto.getKilometersOnElectrifiedLines() == null ? 0.0 : taxPerTrainReportDto.getKilometersOnElectrifiedLines();
+                Double kmOnElectrifiedLinesEntity = taxPerTrainEntity.getKilometersOnElectrifiedLines() == null ? 0.0 : taxPerTrainEntity.getKilometersOnElectrifiedLines();
+
+                Double kmOnNonElectrifiedHighwayAndRegionalLinesDto = taxPerTrainReportDto.getKilometersOnNonElectrifiedHighwayAndRegionalLines() == null ? 0.0 : taxPerTrainReportDto.getKilometersOnNonElectrifiedHighwayAndRegionalLines();
+                Double kmOnNonElectrifiedHighwayAndRegionalLinesEntity = taxPerTrainEntity.getKilometersOnNonElectrifiedHighwayAndRegionalLines() == null ? 0.0 : taxPerTrainEntity.getKilometersOnNonElectrifiedHighwayAndRegionalLines();
+
+                Double kmOnNonElectrifiedLocalLinesDto = taxPerTrainReportDto.getKilometersOnNonElectrifiedLocalLines() == null ? 0.0 : taxPerTrainReportDto.getKilometersOnNonElectrifiedLocalLines();
+                Double kmOnNonElectrifiedLocalLinesEntity = taxPerTrainEntity.getKilometersOnNonElectrifiedLocalLines() == null ? 0.0 : taxPerTrainEntity.getKilometersOnNonElectrifiedLocalLines();
+
                 taxPerTrainReportDto.setCalendarOfMovement(taxPerTrainEntity.getCalendarOfMovement());
                 taxPerTrainReportDto.setIsElectrified(taxPerTrainEntity.getIsElectrified());
-                taxPerTrainReportDto.setKilometersOnElectrifiedLines(
-                        taxPerTrainReportDto.getKilometersOnElectrifiedLines()
-                                + taxPerTrainEntity.getKilometersOnElectrifiedLines());
-                taxPerTrainReportDto.setKilometersOnNonElectrifiedHighwayAndRegionalLines(
-                        taxPerTrainReportDto.getKilometersOnNonElectrifiedHighwayAndRegionalLines()
-                                + taxPerTrainEntity.getKilometersOnNonElectrifiedHighwayAndRegionalLines()
-                );
-                taxPerTrainReportDto.setKilometersOnNonElectrifiedLocalLines(
-                        taxPerTrainReportDto.getKilometersOnNonElectrifiedLocalLines()
-                                + taxPerTrainEntity.getKilometersOnNonElectrifiedLocalLines());
+                taxPerTrainReportDto.setKilometersOnElectrifiedLines(kmOnElectrifiedLinesDto + kmOnElectrifiedLinesEntity);
+                taxPerTrainReportDto.setKilometersOnNonElectrifiedHighwayAndRegionalLines(kmOnNonElectrifiedHighwayAndRegionalLinesDto + kmOnNonElectrifiedHighwayAndRegionalLinesEntity);
+                taxPerTrainReportDto.setKilometersOnNonElectrifiedLocalLines(kmOnNonElectrifiedLocalLinesDto + kmOnNonElectrifiedLocalLinesEntity);
                 taxPerTrainReportDto.setLocomotiveSeries(taxPerTrainEntity.getLocomotiveSeries());
                 taxPerTrainReportDto.setLocomotiveWeight(taxPerTrainEntity.getLocomotiveWeight());
                 taxPerTrainReportDto.setNotes(taxPerTrainEntity.getNotes());

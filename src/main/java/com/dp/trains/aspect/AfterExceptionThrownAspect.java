@@ -11,6 +11,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -88,16 +89,22 @@ public class AfterExceptionThrownAspect {
         log.info("Method Signature: " + jp.getSignature());
         log.info("Exception: " + error);
 
-        ExceptionDto exceptionDto = ExceptionDto
-                .builder()
-                .timestamp(LocalDateTime.now())
-                .exceptionName(error.getClass().getSimpleName())
-                .methodName(jp.getSignature().getDeclaringType() + "." + jp.getSignature().getName())
-                .stackTrace(ExceptionUtils.getStackTrace(error))
-                .build();
+        if (error instanceof JpaSystemException) {
 
-        this.exceptionService.saveException(exceptionDto);
+            log.error("Got year filter exception, skipping...");
+        } else {
 
-        EventBusHolder.getEventBus().post(ExceptionRaisedEvent.builder().throwable(error).build());
+            ExceptionDto exceptionDto = ExceptionDto
+                    .builder()
+                    .timestamp(LocalDateTime.now())
+                    .exceptionName(error.getClass().getSimpleName())
+                    .methodName(jp.getSignature().getDeclaringType() + "." + jp.getSignature().getName())
+                    .stackTrace(ExceptionUtils.getStackTrace(error))
+                    .build();
+
+            this.exceptionService.saveException(exceptionDto);
+
+            EventBusHolder.getEventBus().post(ExceptionRaisedEvent.builder().throwable(error).build());
+        }
     }
 }

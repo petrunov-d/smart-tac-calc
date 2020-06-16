@@ -14,6 +14,10 @@ public interface SectionRepository extends JpaRepository<SectionEntity, Long> {
 
     Set<SectionEntity> findAllByFirstKeyPoint(String firstKeyPoint);
 
+    Set<SectionEntity> findAllByLastKeyPoint(String lastKeyPoint);
+
+    Set<SectionEntity> findAllByFirstKeyPointAndLastKeyPoint(String firstKeyPoint, String lastKeyPoint);
+
     int countByYear(int year);
 
     List<SectionEntity> findAllByYear(Integer previousYear);
