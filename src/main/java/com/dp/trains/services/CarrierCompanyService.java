@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -185,5 +182,17 @@ public class CarrierCompanyService implements BaseImportService {
                         .weight(x.getLocomotiveWeight())
                         .build())
                 .collect(Collectors.toSet());
+    }
+
+    @Transactional(readOnly = true)
+    public CarrierCompanyDto getByName(String carrierName) {
+
+        return carrierCompanyMapper.mapDtos(this.carrierCompanyRepository.findByCarrierName(carrierName)).stream().distinct().collect(Collectors.toList()).get(0);
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<CarrierCompanyDto> getDtos() {
+
+        return carrierCompanyMapper.mapDtos(this.carrierCompanyRepository.findAll().stream().distinct().collect(Collectors.toCollection(ArrayList::new)));
     }
 }

@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <vaadin.version>14.2.1</vaadin.version>
+        <vaadin.version>14.1.25</vaadin.version>
         <jasperreports.version>6.12.2</jasperreports.version>
         <commons.version>2.6</commons.version>
         <guava.version>29.0-jre</guava.version>

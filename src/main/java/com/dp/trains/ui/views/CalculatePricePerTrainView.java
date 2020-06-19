@@ -161,6 +161,8 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
         this.trainLength = new NumberField();
         this.trainLength.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TRAIN_LENGTH));
+        this.trainLength.setValueChangeMode(ValueChangeMode.EAGER);
+        this.trainLength.addValueChangeListener(event -> shouldEnableAddButton());
     }
 
     private void initializeCarrierCompanySelect() {
@@ -213,7 +215,9 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
     private void shouldEnableAddButton() {
 
-        if (trainNumber.getValue() != null && trainType.getValue() != null && tonnage.getValue() != null) {
+        if (trainNumber.getValue() != null && trainType.getValue() != null && tonnage.getValue() != null
+                && carrierCompanySelect.getValue() != null
+                && locomotiveSeriesDtoSelect.getValue() != null && this.trainLength.getValue() != null) {
 
             add.setEnabled(true);
         }
@@ -238,6 +242,7 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         HorizontalLayout finalTaxLayout = new HorizontalLayout();
 
         this.titleFinalTax = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
+        this.titleFinalTax.setVisible(false);
 
         finalTaxLayout.add(new VerticalLayout(titleFinalTax));
 
@@ -248,6 +253,9 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
         this.totalKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
         this.totalBruttoKilometersTitle = new H3(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
+
+        this.totalKilometersTitle.setVisible(false);
+        this.totalBruttoKilometersTitle.setVisible(false);
 
         HorizontalLayout kilometersSummaryFieldsLayout = new HorizontalLayout();
 
@@ -288,10 +296,11 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
         this.calculatePricePerTrainLayout.addRow(trainNumber.getValue(),
                 isFinal,
-                this.sectionsService,
                 this.railStationService,
                 this.serviceChargesPerTrainService,
+                this.carrierCompanyService,
                 this.tonnage.getValue(),
+                this.carrierCompanyService.getByName(this.carrierCompanySelect.getValue()),
                 this.locomotiveSeriesDtoSelect.getDataProvider().fetch(new Query<>()).collect(Collectors.toCollection(ArrayList::new)),
                 this.locomotiveSeriesDtoSelect.getValue(),
                 this.trainLength.getValue());
@@ -319,6 +328,9 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.totalKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS));
         this.totalBruttoKilometersTitle.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_BRUTTO_TONNE_KILOMETERS));
         this.titleFinalTax.setText(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_FINAL_TAX));
+        this.titleFinalTax.setVisible(false);
+        this.totalKilometersTitle.setVisible(false);
+        this.totalBruttoKilometersTitle.setVisible(false);
 
         toggleMainFields(true);
     }
@@ -411,8 +423,8 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         List<CalculateTaxPerTrainRowDataDto> calculateTaxPerTrainRowDataDtos =
                 this.sectionsService.findByRawDtos(this.calculatePricePerTrainLayout.gatherAllRowData());
 
-        CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto = this.taxPerTrainService
-                .calculateFinalTaxForTrain(calculateTaxPerTrainRowDataDtos,
+        CalculateFinalTaxPerTrainDto calculateFinalTaxPerTrainDto =
+                this.taxPerTrainService.calculateFinalTaxForTrain(calculateTaxPerTrainRowDataDtos,
                         strategicCoefficientSelect.getValue(),
                         trainNumber.getValue(),
                         calendar.getValue(),
@@ -428,6 +440,10 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
             dialog.open();
 
         } else {
+
+            this.titleFinalTax.setVisible(true);
+            this.totalKilometersTitle.setVisible(true);
+            this.totalBruttoKilometersTitle.setVisible(true);
 
             this.totalKilometersTitle.setText(String.format("%s %.3f",
                     getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TOTAL_KILOMETERS),

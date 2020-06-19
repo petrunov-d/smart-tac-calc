@@ -15,10 +15,12 @@ public class SectionNeighboursDto {
     private Integer rowIndex;
     private Integer lineNumber;
     private String typeOfLine;
-    private RailStationEntity source;
-    private RailStationEntity destination;
+    private RailStationEntity originalSource;
+    private RailStationEntity originalDestination;
     private Boolean isElectrified;
     private Double kilometersBetweenStations;
     private Boolean isKeyStation;
 
+    private RailStationEntity currentSource;
+    private RailStationEntity currentDestination;
 }

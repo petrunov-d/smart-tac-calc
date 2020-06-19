@@ -74,6 +74,7 @@ public class TaxPerTrainService {
         BigDecimal totalTaxForBruttoTonneKilometers = BigDecimal.ZERO;
         BigDecimal totalAdditionalCharges = BigDecimal.ZERO;
         BigDecimal partialKilometers = BigDecimal.valueOf(Long.MIN_VALUE);
+        String actualFirstStation = null;
 
         BigDecimal strategicCoefficientMultiplier = BigDecimal.ONE;
 
@@ -87,7 +88,9 @@ public class TaxPerTrainService {
 
             for (CalculateTaxPerTrainRowDataDto rowDataDto : allRowData) {
 
-                if (!rowDataDto.getSection().getDestination().getCountry().equals(CountryCode.RS.getAlpha3())) {
+                if (rowDataDto.getSection() == null || rowDataDto.getSection().getOriginalDestination() == null ||
+                        rowDataDto.getSection().getOriginalDestination().getCountry() == null ||
+                        !rowDataDto.getSection().getOriginalDestination().getCountry().equals(CountryCode.RS.getAlpha3())) {
 
                     log.info("Found a segment where country is not Serbia, skipping the whole thing -> " + rowDataDto.toString());
 
@@ -110,6 +113,7 @@ public class TaxPerTrainService {
                         partialKilometers = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations());
                     }
 
+                    actualFirstStation = rowDataDto.getSection().getCurrentSource().getStation();
                     log.info("Skipping start station -> " + rowDataDto.toString());
                     continue;
                 }
@@ -154,8 +158,9 @@ public class TaxPerTrainService {
 
                 totalKilometers = totalKilometers.add(trainKilometersForSection);
                 totalBruttoTonneKilometers = totalBruttoTonneKilometers.add(bruttoTonneKilometersForSection);
-                records.add(getRecordForSection(rowDataDto,
-                        strategicCoefficientMultiplier, trainNumber, calendar, notes, trainLength, correlationId, trainTypeEntity, plusCharges));
+
+                records.add(getRecordForSection(rowDataDto, strategicCoefficientMultiplier, trainNumber, calendar, notes, trainLength,
+                        correlationId, trainTypeEntity, plusCharges));
 
                 totalTaxForTrainKilometers = totalTaxForTrainKilometers.add(trainKilometersPriceForSection);
                 totalTaxForBruttoTonneKilometers = totalTaxForBruttoTonneKilometers.add(bruttoTonneKilometersPriceForSection);
@@ -173,7 +178,16 @@ public class TaxPerTrainService {
             stackTrace = ExceptionUtils.getStackTrace(e);
         }
 
-        this.taxPerTrainRepository.saveAll(records);
+        for (int i = 0; i < records.size(); i++) {
+
+            if (i == 0) {
+
+                records.get(i).setStartStation(actualFirstStation);
+            }
+
+            taxPerTrainRepository.save(records.get(i));
+        }
+
         this.taxPerTrainRepository.flush();
 
         return CalculateFinalTaxPerTrainDto.builder()
@@ -201,8 +215,8 @@ public class TaxPerTrainService {
                 .calendarOfMovement(calendar)
                 .correlationId(correlationId)
                 .isElectrified(isElectrified)
-                .startStation(rowDataDto.getSection().getSource().getStation())
-                .endStation(rowDataDto.getSection().getDestination().getStation())
+                .startStation(rowDataDto.getSection().getCurrentSource().getStation())
+                .endStation(rowDataDto.getSection().getCurrentDestination().getStation())
                 .strategicCoefficient(BigDecimal.ONE.equals(strategicCoefficientMultiplier) ? null : strategicCoefficientMultiplier)
                 .trainNumber(trainNumber)
                 .notes(notes)

@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collection;
 import java.util.Set;
 
+import static com.dp.trains.utils.LocaleKeys.*;
+
 @Slf4j
 public class UserPermissionsContainer extends BaseSmartTacCalcView {
 
@@ -23,13 +25,13 @@ public class UserPermissionsContainer extends BaseSmartTacCalcView {
 
         super();
 
-        calculatePricePerTrainViewAccess = new Checkbox("Access Calculate Price Per Train");
-        calculateSinglePriceViewAccess = new Checkbox("Access Calculate Single Price");
-        editDataViewAccess = new Checkbox("Access Data Editing");
-        importDataViewAccess = new Checkbox("Access Data Importing");
-        reportsViewAccess = new Checkbox("Access Reports");
-        serviceChargesForTrainNumberViewAccess = new Checkbox("Access Service Charges For Train");
-        viewSinglePriceViewAcccess = new Checkbox("Access View Single Price");
+        calculatePricePerTrainViewAccess = new Checkbox(getTranslation(USER_PERMISSION_CALCULATE_PRICE_PER_TRAIN));
+        calculateSinglePriceViewAccess = new Checkbox(getTranslation(USER_PERMISSION_CALCULATE_SINGLE_PRICE));
+        editDataViewAccess = new Checkbox(getTranslation(USER_PERMISSION_DATA_EDITING));
+        importDataViewAccess = new Checkbox(getTranslation(USER_PERMISSION_DATA_IMPORTING));
+        reportsViewAccess = new Checkbox(getTranslation(USER_PERMISSION_REPORTS));
+        serviceChargesForTrainNumberViewAccess = new Checkbox(getTranslation(USER_PERMISSION_SERVICE_CHARGES_PER_TRAIN));
+        viewSinglePriceViewAcccess = new Checkbox(getTranslation(USER_PERMISSION_VIEW_SINGLE_PRICE));
 
         if (!(userAccesses == null) && (!userAccesses.isEmpty())) {
 

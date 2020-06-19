@@ -329,4 +329,14 @@ public class LocaleKeys {
     public static final String REPORT_FREIGHT_TRAIN_SELECT = "report.freight.train.select";
     public static final String REPORT_GENERATE_EXCEL_FILE_BUTTON_LABEL = "report.button.generate.excel.file";
     public static final String CONFIRM_DELETE_UNIT_PRICE = "confirm.delete.unit.prices.for.current.year";
+
+    public static final String LABEL_CARRIER_COMPANY = "label.carrier.company";
+    public static final String USER_PERMISSION_CALCULATE_PRICE_PER_TRAIN = "user.access.calculate.price.per.train";
+    public static final String USER_PERMISSION_CALCULATE_SINGLE_PRICE = "user.access.calculate.single.price";
+    public static final String USER_PERMISSION_DATA_EDITING = "user.access.data.editing";
+    public static final String USER_PERMISSION_DATA_IMPORTING = "user.access.data.importing";
+    public static final String USER_PERMISSION_REPORTS = "user.access.reports";
+    public static final String USER_PERMISSION_SERVICE_CHARGES_PER_TRAIN = "user.access.service.charges.for.train";
+    public static final String USER_PERMISSION_VIEW_SINGLE_PRICE = "user.access.single.price";
+    public static final String MESSAGE_ERROR_CANT_VIEW_PAGE = "user.access.error.message";
 }

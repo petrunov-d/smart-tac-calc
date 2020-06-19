@@ -2,11 +2,12 @@ package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
 import com.dp.trains.model.dto.CPPTRowDataDto;
+import com.dp.trains.model.dto.CarrierCompanyDto;
 import com.dp.trains.model.dto.LocomotiveSeriesDto;
 import com.dp.trains.model.entities.ServiceChargesPerTrainEntity;
 import com.dp.trains.model.viewmodels.RailStationViewModel;
+import com.dp.trains.services.CarrierCompanyService;
 import com.dp.trains.services.RailStationService;
-import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.ui.components.dialogs.BasicInfoDialog;
 import com.dp.trains.ui.components.dialogs.ViewServiceChargesForTrainDialog;
@@ -21,30 +22,29 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
 
 @Slf4j
 public class CalculatePricePerTrainRow extends HorizontalLayout {
 
+    private final CarrierCompanyService carrierCompanyService;
     private int rowIndex;
     private Integer trainNumber;
     private final boolean isFinal;
     private RailStationViewModel selectedStation;
     private List<ServiceChargesPerTrainEntity> serviceChargesPerTrainEntityList = Lists.newArrayList();
 
-    private final SectionsService sectionsService;
     private final RailStationService railStationService;
 
     private final H5 rowTitle;
-    private final H5 serviceChargesLabel;
 
     private Button doneButton;
     private Button removeButton;
@@ -56,15 +56,17 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
     private Select<Integer> lineNumbers;
     private Select<RailStationViewModel> station;
     private Select<LocomotiveSeriesDto> locomotiveSeriesDtoSelect;
+    private Select<String> carrierCompanyDtoSelect;
 
     public CalculatePricePerTrainRow(int rowIndex,
                                      boolean isFinal,
                                      Integer trainNumber,
-                                     SectionsService sectionsService,
                                      RailStationService railStationService,
                                      ServiceChargesPerTrainService serviceChargesPerTrainService,
+                                     CarrierCompanyService carrierCompanyService,
                                      RailStationViewModel selectedStation,
                                      Double tonnageDouble,
+                                     CarrierCompanyDto selectedCarrierCompany,
                                      LocomotiveSeriesDto selectedLocomotiveSeriesDto,
                                      Collection<LocomotiveSeriesDto> locomotiveSeriesDtos,
                                      Double trainLengthDouble) {
@@ -75,8 +77,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.isFinal = isFinal;
         this.selectedStation = selectedStation;
         this.trainNumber = trainNumber;
-        this.sectionsService = sectionsService;
         this.railStationService = railStationService;
+        this.carrierCompanyService = carrierCompanyService;
 
         this.setRowIndex(rowIndex);
 
@@ -87,12 +89,10 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         initializeTonnageField(tonnageDouble);
         initializeTrainLength(trainLengthDouble);
         initializeLocomotiveSeriesDtoSelect(selectedLocomotiveSeriesDto, locomotiveSeriesDtos);
-
-        this.serviceChargesLabel = new H5();
-        this.serviceChargesLabel.setWidth("100%");
+        initialilizeCarrierCompanyDtoSelect(selectedCarrierCompany);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(rowTitle, station, lineNumbers, tonnage, trainLength, locomotiveSeriesDtoSelect);
+        horizontalLayout.add(rowTitle, station, lineNumbers, tonnage, trainLength, carrierCompanyDtoSelect, locomotiveSeriesDtoSelect);
 
         initializeRowButtons(serviceChargesPerTrainService);
 
@@ -103,7 +103,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         serviceLayout.setMargin(false);
         serviceLayout.setWidth("100%");
 
-        serviceLayout.add(serviceButton, doneButton, removeButton, serviceChargesLabel);
+        serviceLayout.add(serviceButton, doneButton, removeButton);
 
         VerticalLayout serviceButtonLayout = new VerticalLayout();
         serviceButtonLayout.add(serviceLayout);
@@ -133,6 +133,26 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
             checkRowDone();
         });
     }
+
+    private void initialilizeCarrierCompanyDtoSelect(CarrierCompanyDto selectedCarrierCompanyDto) {
+
+        this.carrierCompanyDtoSelect = new Select<>();
+        this.carrierCompanyDtoSelect.setLabel(getTranslation(LABEL_CARRIER_COMPANY));
+        this.carrierCompanyDtoSelect.setItems(this.carrierCompanyService.getDtos().stream().map(CarrierCompanyDto::getCarrierName).distinct().collect(Collectors.toList()));
+        this.carrierCompanyDtoSelect.setValue(selectedCarrierCompanyDto.getCarrierName());
+        this.carrierCompanyDtoSelect.addValueChangeListener(event -> {
+
+            EventBusHolder.getEventBus().post(CPPTCarrierCompanyChangedEvent.builder()
+                    .selectedDto(event.getValue())
+                    .build());
+
+            Collection<LocomotiveSeriesDto> newLocomotiveSeriesDto = this.carrierCompanyService
+                    .getByCarrierName(event.getValue());
+
+            locomotiveSeriesDtoSelect.setItems(newLocomotiveSeriesDto);
+        });
+    }
+
 
     private void initializeLocomotiveSeriesDtoSelect(LocomotiveSeriesDto selectedLocomotiveSeriesDto,
                                                      Collection<LocomotiveSeriesDto> locomotiveSeriesDtos) {
@@ -227,6 +247,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.doneButton.setEnabled(false);
         this.locomotiveSeriesDtoSelect.setEnabled(false);
         this.trainLength.setEnabled(false);
+        this.carrierCompanyDtoSelect.setEnabled(false);
 
         EventBusHolder.getEventBus().post(CPPTRowDoneEvent.builder()
                 .rowIndex(getRowIndex())
@@ -245,7 +266,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.removeButton.setEnabled(true);
         this.doneButton.setEnabled(true);
         this.locomotiveSeriesDtoSelect.setEnabled(true);
-        this.trainLength.setEnabled(false);
+        this.trainLength.setEnabled(true);
+        this.carrierCompanyDtoSelect.setEnabled(true);
     }
 
     private void initializeLineNumberSelect(Collection<RailStationViewModel> neighbours) {
@@ -253,15 +275,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         lineNumbers = new Select<>();
         lineNumbers.addValueChangeListener(event -> checkRowDone());
         lineNumbers.setLabel(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
-
-        if (this.selectedStation == null) {
-
-            lineNumbers.setItems(Sets.newHashSet());
-
-        } else {
-
-            lineNumbers.setItems(this.railStationService.getLineNumbersForRailStationNeighbours(neighbours));
-        }
+        lineNumbers.setItems(Sets.newHashSet());
     }
 
     private Set<RailStationViewModel> initializeStationsSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
@@ -287,23 +301,15 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
             if (this.selectedStation != null) {
 
-                if (lineNumbers.getDataProvider().size(new Query<>()) == 0) {
+                Collection<RailStationViewModel> newNeighbouringRailStations = this.railStationService
+                        .getNeighbouringRailStations(getRowIndex() + 1, getIsFinal(), this.selectedStation);
 
-                    Collection<RailStationViewModel> newNeighbouringRailStations = this.railStationService
-                            .getNeighbouringRailStations(getRowIndex(), getIsFinal(), selectedStation);
-
-                    lineNumbers.setItems(this.railStationService.getLineNumbersForRailStationNeighbours(newNeighbouringRailStations));
-                }
+                lineNumbers.setItems(this.railStationService.getLineNumbersForRailStationNeighbours(newNeighbouringRailStations));
 
                 if (this.trainNumber != null) {
 
                     this.serviceChargesPerTrainEntityList = serviceChargesPerTrainService
                             .findByTrainNumberAndRailRoadStation(trainNumber, this.selectedStation.getRailStation());
-
-                    serviceChargesLabel.setText(String.format("%s %.3f",
-                            getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_SERVICE_CHARGES_LBL),
-                            serviceChargesPerTrainService.getTotalServiceChargesForTrainNumberAndRailStation(
-                                    serviceChargesPerTrainEntityList)));
 
                     serviceButton.setEnabled(!this.serviceChargesPerTrainEntityList.isEmpty());
                 }

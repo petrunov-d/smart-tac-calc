@@ -1,10 +1,12 @@
 package com.dp.trains.repository;
 
+import com.dp.trains.model.dto.CarrierCompanyDto;
 import com.dp.trains.model.entities.CarrierCompanyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface CarrierCompanyRepository extends JpaRepository<CarrierCompanyEntity, Long> {
@@ -14,4 +16,6 @@ public interface CarrierCompanyRepository extends JpaRepository<CarrierCompanyEn
     Collection<CarrierCompanyEntity> findAllByYear(Integer previousYear);
 
     Collection<CarrierCompanyEntity> findAllByCarrierName(String carrierName);
+
+    List<CarrierCompanyEntity> findByCarrierName(String carrierName);
 }

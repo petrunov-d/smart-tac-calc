@@ -42,17 +42,18 @@
     "@vaadin/vaadin-tabs": "3.0.5",
     "@vaadin/vaadin-radio-button": "1.2.6",
     "@vaadin/vaadin-lumo-styles": "1.5.0",
-    "@vaadin/vaadin-material-styles": "1.2.3"
+    "@vaadin/vaadin-material-styles": "1.2.3",
+    "@vaadin/flow-deps": "./target/frontend"
   },
   "devDependencies": {
     "webpack": "4.42.0",
-    "webpack-cli": "3.3.11",
-    "webpack-dev-server": "3.10.3",
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.9.0",
     "webpack-babel-multi-target-plugin": "2.3.3",
-    "copy-webpack-plugin": "5.1.1",
-    "compression-webpack-plugin": "3.1.0",
+    "copy-webpack-plugin": "5.1.0",
+    "compression-webpack-plugin": "3.0.1",
     "webpack-merge": "4.2.2",
-    "raw-loader": "3.1.0",
+    "raw-loader": "3.0.0",
     "terser": "4.6.7",
     "chokidar": "^3.4.0"
   },
@@ -113,5 +114,6 @@
       "webpack-dev-server": "3.10.3"
     },
     "hash": "92033ddc5ea0cc64e73d3e79257b721d182cec94dc8d5fc3ca9b749486f3ec51"
-  }
+  },
+  "vaadinAppPackageHash": "6cfe83c4a52204d9abc2744f64cbd08173f90116e4608951bbb599aacb45286b"
 }

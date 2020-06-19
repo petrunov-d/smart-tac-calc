@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.dp.trains.utils.LocaleKeys.MESSAGE_ERROR_CANT_VIEW_PAGE;
+
 @Slf4j
 @UIScope
 @SpringComponent
@@ -51,7 +53,7 @@ public abstract class UserPermissionAwareView extends BaseSmartTacCalcView imple
                 !userAccess.contains(getViewUserAccessPermission().name())) {
 
             ConfirmDialog confirmDialog = new ConfirmDialog.Builder()
-                    .withTitle("You do not have access to this view. Contact an admin to view this webpage.")
+                    .withTitle(getTranslation(MESSAGE_ERROR_CANT_VIEW_PAGE))
                     .withOkButtonListener(e -> UI.getCurrent().navigate(UserManagementView.class))
                     .withCancelButtonListener(e -> UI.getCurrent().navigate(UserManagementView.class))
                     .build();

@@ -279,26 +279,34 @@ public class RailStationService implements BaseImportService {
 
             } else if (!selectedStation.getIsKeyStation()) {
 
+
                 SectionEntity sectionEntity = sectionsService.findByNonKeyStation(currentStation);
 
-                RailStationViewModel startKeyStation = RailStationViewModel.builder()
-                        .isKeyStation(true)
-                        .railStation(sectionEntity.getFirstKeyPoint())
-                        .lineNumber(sectionEntity.getLineNumber())
-                        .build();
+                if (sectionEntity != null) {
 
-                RailStationViewModel endKeyStation = RailStationViewModel.builder()
-                        .isKeyStation(true)
-                        .railStation(sectionEntity.getLastKeyPoint())
-                        .lineNumber(sectionEntity.getLineNumber())
-                        .build();
+                    RailStationViewModel startKeyStation = RailStationViewModel.builder()
+                            .isKeyStation(true)
+                            .railStation(sectionEntity.getFirstKeyPoint())
+                            .lineNumber(sectionEntity.getLineNumber())
+                            .build();
 
-                railStationViewModels.add(startKeyStation);
-                railStationViewModels.add(endKeyStation);
+                    RailStationViewModel endKeyStation = RailStationViewModel.builder()
+                            .isKeyStation(true)
+                            .railStation(sectionEntity.getLastKeyPoint())
+                            .lineNumber(sectionEntity.getLineNumber())
+                            .build();
+
+                    railStationViewModels.add(startKeyStation);
+                    railStationViewModels.add(endKeyStation);
+                } else {
+                    log.error("Found no section for non key station :" + currentStation);
+                }
+
             }
         }
 
         return railStationViewModels.stream()
+                .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(RailStationViewModel::getLineNumber))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }

@@ -2,10 +2,11 @@ package com.dp.trains.ui.components.cppt;
 
 import com.dp.trains.event.*;
 import com.dp.trains.model.dto.CPPTRowDataDto;
+import com.dp.trains.model.dto.CarrierCompanyDto;
 import com.dp.trains.model.dto.LocomotiveSeriesDto;
 import com.dp.trains.model.viewmodels.RailStationViewModel;
+import com.dp.trains.services.CarrierCompanyService;
 import com.dp.trains.services.RailStationService;
-import com.dp.trains.services.SectionsService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.collect.Lists;
@@ -30,6 +31,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
     private Double trainLength;
     private Collection<LocomotiveSeriesDto> locomotiveSeriesDtos;
     private LocomotiveSeriesDto selectedLocomotiveSeriesDto;
+    private String selectedCarrierCompany;
 
     private final List<CalculatePricePerTrainRow> calculatePricePerTrainRows;
 
@@ -52,10 +54,11 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
     public void addRow(Integer trainNumber,
                        boolean isFinal,
-                       SectionsService sectionsService,
                        RailStationService railStationService,
                        ServiceChargesPerTrainService serviceChargesPerTrainService,
+                       CarrierCompanyService carrierCompanyService,
                        Double tonnage,
+                       CarrierCompanyDto carrierCompanyDto,
                        Collection<LocomotiveSeriesDto> locomotiveSeriesDtos,
                        LocomotiveSeriesDto locomotiveSeriesDto,
                        Double trainLength) {
@@ -72,6 +75,11 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
             this.trainLength = trainLength;
         }
 
+        if (this.selectedCarrierCompany == null) {
+
+            this.selectedCarrierCompany = carrierCompanyDto.getCarrierName();
+        }
+
         if (this.selectedLocomotiveSeriesDto == null) {
 
             this.selectedLocomotiveSeriesDto = locomotiveSeriesDto;
@@ -81,11 +89,12 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
                 this.nextRowIdex,
                 isFinal,
                 trainNumber,
-                sectionsService,
                 railStationService,
                 serviceChargesPerTrainService,
+                carrierCompanyService,
                 this.currentStation,
                 this.tonnage,
+                carrierCompanyService.getByName(this.selectedCarrierCompany),
                 this.selectedLocomotiveSeriesDto,
                 this.locomotiveSeriesDtos,
                 this.trainLength);
@@ -105,6 +114,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         this.trainLength = null;
         this.locomotiveSeriesDtos = null;
         this.selectedLocomotiveSeriesDto = null;
+        this.selectedCarrierCompany = null;
         this.calculatePricePerTrainRows.clear();
     }
 
@@ -173,6 +183,13 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         this.tonnage = cpptTonnageChangedFromRowEvent.getTonnage();
         log.info("Tonnage set to:" + this.tonnage);
+    }
+
+    @Subscribe
+    public void carrierCompanyChangedFromRow(CPPTCarrierCompanyChangedEvent carrierCompanyChangedEvent) {
+
+        this.selectedCarrierCompany = carrierCompanyChangedEvent.getSelectedDto();
+        log.info("Carrier Company set to:" + this.tonnage);
     }
 
     @Subscribe

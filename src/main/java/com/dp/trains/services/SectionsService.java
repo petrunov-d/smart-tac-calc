@@ -2,6 +2,7 @@ package com.dp.trains.services;
 
 import com.dp.trains.annotation.YearAgnostic;
 import com.dp.trains.model.dto.*;
+import com.dp.trains.model.entities.RailStationEntity;
 import com.dp.trains.model.entities.SectionEntity;
 import com.dp.trains.model.entities.SubSectionEntity;
 import com.dp.trains.model.viewmodels.PreviousYearCopyingResultViewModel;
@@ -320,39 +321,90 @@ public class SectionsService implements BaseImportService {
 
             for (SectionEntity sectionEntity : result) {
 
-                if ((sectionEntity.getFirstKeyPoint().equals(firstRailStationName) || sectionEntity.getLastKeyPoint().equals(firstRailStationName))
-                        && sectionEntity.getFirstKeyPoint().equals(nextRailStationName) || sectionEntity.getLastKeyPoint().equals(nextRailStationName)) {
+                RailStationEntity railStationEntitySource = railStationRepository.findByStation(sectionEntity.getFirstKeyPoint());
+                RailStationEntity railStationEntityDestination = railStationRepository.findByStation(sectionEntity.getLastKeyPoint());
 
-                    return SectionNeighboursDto
-                            .builder()
-                            .source(railStationRepository.findByStation(sectionEntity.getFirstKeyPoint()))
-                            .destination(railStationRepository.findByStation(sectionEntity.getLastKeyPoint()))
-                            .isElectrified(sectionEntity.getIsElectrified())
-                            .isKeyStation(true)
-                            .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
-                            .lineNumber(sectionEntity.getLineNumber())
-                            .typeOfLine(sectionEntity.getLineType())
-                            .rowIndex(i + 1)
-                            .build();
+                RailStationEntity currentRailStationEntitySource;
+                RailStationEntity currentRailStationEntityDestination;
+
+                if (!(firstRailStationName.equals(nextRailStationName))) {
+
+                    if ((sectionEntity.getFirstKeyPoint().equals(firstRailStationName) || sectionEntity.getLastKeyPoint().equals(firstRailStationName)) &&
+                            (sectionEntity.getFirstKeyPoint().equals(nextRailStationName) || sectionEntity.getLastKeyPoint().equals(nextRailStationName))) {
+
+                        log.info("FirstRailStation: " + firstRailStationName + " SecondRailStation: " + nextRailStationName);
+
+                        if (firstRailStationName.equals(railStationEntitySource.getStation())) {
+
+                            currentRailStationEntitySource = railStationEntitySource;
+                            currentRailStationEntityDestination = railStationEntityDestination;
+
+                        } else {
+
+                            currentRailStationEntitySource = railStationEntityDestination;
+                            currentRailStationEntityDestination = railStationEntitySource;
+                        }
+
+                        return SectionNeighboursDto
+                                .builder()
+                                .originalSource(railStationEntitySource)
+                                .originalDestination(railStationEntityDestination)
+                                .currentSource(currentRailStationEntitySource)
+                                .currentDestination(currentRailStationEntityDestination)
+                                .isElectrified(sectionEntity.getIsElectrified())
+                                .isKeyStation(true)
+                                .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
+                                .lineNumber(sectionEntity.getLineNumber())
+                                .typeOfLine(sectionEntity.getLineType())
+                                .rowIndex(i + 1)
+                                .build();
+                    }
                 }
-            }
 
+            }
         } else if (!rowDataDto.getStationViewModel().getIsKeyStation()) {
 
             SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(firstRailStation.getRailStation());
 
+            log.info("rail station was non key.");
+
+            RailStationEntity railStationEntitySource = railStationRepository.findByStation(sectionEntity.getFirstKeyPoint());
+            RailStationEntity railStationEntityDestination = railStationRepository.findByStation(sectionEntity.getLastKeyPoint());
+
+            RailStationEntity currentRailStationEntitySource = null;
+            RailStationEntity currentRailStationEntityDestination = null;
+
+            if (firstRailStation.getRailStation().equals(railStationEntitySource.getStation())) {
+
+                currentRailStationEntitySource = railStationEntitySource;
+                currentRailStationEntityDestination = railStationEntityDestination;
+
+            } else if (firstRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
+
+                currentRailStationEntitySource = railStationEntityDestination;
+                currentRailStationEntityDestination = railStationEntitySource;
+
+            } else if (!firstRailStation.getRailStation().equals(railStationEntitySource.getStation()) &&
+                    !firstRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
+
+                currentRailStationEntitySource = railStationRepository.findByStation(firstRailStation.getRailStation());
+                currentRailStationEntityDestination = railStationEntitySource.getStation()
+                        .equals(nextRailStation.getRailStation()) ? railStationEntitySource : railStationEntityDestination;
+            }
+
             return SectionNeighboursDto
                     .builder()
-                    .source(railStationRepository.findByStation(sectionEntity.getFirstKeyPoint()))
-                    .destination(railStationRepository.findByStation(sectionEntity.getLastKeyPoint()))
+                    .originalSource(railStationEntitySource)
+                    .originalDestination(railStationEntityDestination)
                     .isElectrified(sectionEntity.getIsElectrified())
+                    .currentSource(currentRailStationEntitySource)
+                    .currentDestination(currentRailStationEntityDestination)
                     .isKeyStation(true)
                     .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
                     .lineNumber(sectionEntity.getLineNumber())
                     .typeOfLine(sectionEntity.getLineType())
                     .rowIndex(i + 1)
                     .build();
-
         }
 
         return sectionNeighboursDto;
