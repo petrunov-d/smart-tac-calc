@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -73,5 +74,10 @@ public class TacReportService extends BaseReportService {
     public Integer getCountByTrainNumber(Integer trainNumber) {
 
         return this.taxPerTrainService.getCountByTrainNumber(trainNumber);
+    }
+
+    public Set<Integer> getAllWithTax() {
+
+        return this.taxPerTrainService.getAllTrainNumbersWithCalculatedTaxes();
     }
 }

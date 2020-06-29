@@ -17,6 +17,7 @@ public class SectionNeighboursDto {
     private String typeOfLine;
     private RailStationEntity originalSource;
     private RailStationEntity originalDestination;
+    private RailStationEntity nonKeyStation;
     private Boolean isElectrified;
     private Double kilometersBetweenStations;
     private Boolean isKeyStation;

@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
@@ -26,16 +27,16 @@ public class ServiceChargesPerTrainReportContainer extends BaseReportView {
     private final Button viewReportAsPdf;
     private final Button downloadAsExcelButton;
 
-    private final IntegerField trainNumber;
+    private final Select<Integer> trainNumber;
 
     public ServiceChargesPerTrainReportContainer(ServiceChargesPerTrainReportService serviceChargesPerTrainReportService) {
 
         super();
 
-        this.trainNumber = new IntegerField();
+        this.trainNumber = new Select<>();
         this.trainNumber.setLabel(getTranslation(REPORT_TRAIN_NUMBER));
 
-        this.trainNumber.setValueChangeMode(ValueChangeMode.EAGER);
+        this.trainNumber.setItems(serviceChargesPerTrainReportService.getByTrainNumbers());
         this.trainNumber.addValueChangeListener(event -> toggleGenerateReportButton());
         this.trainNumber.setRequiredIndicatorVisible(true);
 

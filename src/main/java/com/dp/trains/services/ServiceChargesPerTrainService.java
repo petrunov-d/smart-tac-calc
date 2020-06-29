@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,6 +34,15 @@ public class ServiceChargesPerTrainService {
     public Integer getCountByTrainNumber(Integer trainNumber) {
 
         return serviceChargesPerTrainRepository.countAllByTrainNumber(trainNumber);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Integer> getAllTrainNumbersWithServiceCharges() {
+
+        return this.serviceChargesPerTrainRepository.findAll().stream()
+                .map(ServiceChargesPerTrainEntity::getTrainNumber)
+                .sorted()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Transactional(readOnly = true)

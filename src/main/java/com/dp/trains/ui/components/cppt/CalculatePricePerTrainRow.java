@@ -25,9 +25,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dp.trains.utils.LocaleKeys.*;
@@ -82,10 +80,8 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
         this.setRowIndex(rowIndex);
 
-        Set<RailStationViewModel> railStationViewModels =
-                initializeStationsSelect(trainNumber, serviceChargesPerTrainService, selectedStation);
-
-        initializeLineNumberSelect(railStationViewModels);
+        initializeStationsSelect(trainNumber, serviceChargesPerTrainService, selectedStation);
+        initializeLineNumberSelect();
         initializeTonnageField(tonnageDouble);
         initializeTrainLength(trainLengthDouble);
         initializeLocomotiveSeriesDtoSelect(selectedLocomotiveSeriesDto, locomotiveSeriesDtos);
@@ -208,10 +204,10 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
 
     private void initializeTonnageField(Double tonnageDouble) {
 
-        tonnage = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
-        tonnage.setValue(tonnageDouble);
-        tonnage.setValueChangeMode(ValueChangeMode.EAGER);
-        tonnage.addValueChangeListener(event -> {
+        this.tonnage = new NumberField(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_TONNAGE));
+        this.tonnage.setValue(tonnageDouble);
+        this.tonnage.setValueChangeMode(ValueChangeMode.EAGER);
+        this.tonnage.addValueChangeListener(event -> {
 
             EventBusHolder.getEventBus().post(CPPTTonnageChangedFromRowEvent.builder()
                     .tonnage(event.getValue())
@@ -270,19 +266,22 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         this.carrierCompanyDtoSelect.setEnabled(true);
     }
 
-    private void initializeLineNumberSelect(Collection<RailStationViewModel> neighbours) {
+    private void initializeLineNumberSelect() {
 
-        lineNumbers = new Select<>();
-        lineNumbers.addValueChangeListener(event -> checkRowDone());
-        lineNumbers.setLabel(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
-        lineNumbers.setItems(Sets.newHashSet());
+        this.lineNumbers = new Select<>();
+        this.lineNumbers.addValueChangeListener(event -> checkRowDone());
+        this.lineNumbers.setLabel(getTranslation(GRID_SERVICE_COLUMN_HEADER_LINE_NUMBER));
+        this.lineNumbers.setItems(Sets.newHashSet());
     }
 
     private Set<RailStationViewModel> initializeStationsSelect(Integer trainNumber, ServiceChargesPerTrainService serviceChargesPerTrainService,
                                                                RailStationViewModel selectedStation) {
 
-        Set<RailStationViewModel> neighbouringRailStations =
-                this.railStationService.getNeighbouringRailStations(getRowIndex(), getIsFinal(), selectedStation);
+        Set<RailStationViewModel> neighbouringRailStations = this.railStationService
+                .getNeighbouringRailStations(getRowIndex(), getIsFinal(), selectedStation)
+                .stream()
+                .sorted(Comparator.comparing(RailStationViewModel::getRailStation))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         this.station = new Select<>();
         this.station.setLabel(getTranslation(CALCULATE_PRICE_PER_TRAIN_ROW_STATION));

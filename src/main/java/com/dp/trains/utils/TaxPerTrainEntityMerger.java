@@ -19,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 public class TaxPerTrainEntityMerger {
 
-    private Map<Long, List<TaxPerTrainEntity>> backingMap = Maps.newLinkedHashMap();
+    private final Map<Long, List<TaxPerTrainEntity>> backingMap = Maps.newLinkedHashMap();
 
     public TaxPerTrainEntityMerger(List<TaxPerTrainEntity> entities) {
 
@@ -35,6 +35,8 @@ public class TaxPerTrainEntityMerger {
             }
 
             Long currentHash = getHashForEntity(currentEntity);
+
+            log.info("Current entity: " + currentEntity.toString() + " prev hash: " + previousHash + " curr hash: " + currentHash);
 
             if (Objects.equals(currentHash, previousHash) && i > 0) {
 
@@ -52,6 +54,8 @@ public class TaxPerTrainEntityMerger {
 
             previousHash = currentHash;
         }
+
+        log.info("Constructed map for report: " + backingMap.toString());
     }
 
     public List<TaxPerTrainReportDto> getReportDtos() {
@@ -109,6 +113,8 @@ public class TaxPerTrainEntityMerger {
             result.add(taxPerTrainReportDto);
         }
 
+        log.info("Constructed map for report: " + result.toString());
+
         return result;
     }
 
@@ -129,6 +135,12 @@ public class TaxPerTrainEntityMerger {
         HashCode hashCode = hashFunction.newHasher()
                 .putObject(taxPerTrainEntity, (Funnel<TaxPerTrainEntity>) (from, into) ->
                         into.putString(from.getTrainType(), Charsets.UTF_8)
+                                .putDouble(from.getTotalTrainWeight())
+                                .putInt(from.getTrainNumber())
+                                .putString(from.getTrainType(), Charsets.UTF_8)
+                                .putBoolean(from.getIsElectrified())
+                                .putDouble(from.getLocomotiveWeight())
+                                .putDouble(from.getTrainWeightWithoutLocomotive())
                                 .putDouble(from.getTotalTrainWeight())
                                 .putString(from.getLocomotiveSeries(), Charsets.UTF_8)).hash();
 

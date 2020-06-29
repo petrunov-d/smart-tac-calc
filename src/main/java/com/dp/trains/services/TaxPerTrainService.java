@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,11 +33,13 @@ public class TaxPerTrainService {
 
     private final LineTypeService lineTypeService;
     private final UnitPriceService unitPriceService;
+    private final SectionsService sectionsService;
 
     @Transactional
     public void deleteByTrainNumber(Integer trainNumber) {
 
         this.taxPerTrainRepository.deleteAllByTrainNumber(trainNumber);
+        this.taxPerTrainRepository.flush();
     }
 
     @Transactional(readOnly = true)
@@ -73,8 +78,6 @@ public class TaxPerTrainService {
         BigDecimal totalTaxForTrainKilometers = BigDecimal.ZERO;
         BigDecimal totalTaxForBruttoTonneKilometers = BigDecimal.ZERO;
         BigDecimal totalAdditionalCharges = BigDecimal.ZERO;
-        BigDecimal partialKilometers = BigDecimal.valueOf(Long.MIN_VALUE);
-        String actualFirstStation = null;
 
         BigDecimal strategicCoefficientMultiplier = BigDecimal.ONE;
 
@@ -93,31 +96,16 @@ public class TaxPerTrainService {
                         !rowDataDto.getSection().getOriginalDestination().getCountry().equals(CountryCode.RS.getAlpha3())) {
 
                     log.info("Found a segment where country is not Serbia, skipping the whole thing -> " + rowDataDto.toString());
-
                     continue;
                 }
 
-                BigDecimal sumOfAdditionalChargesForRow = BigDecimal.valueOf(rowDataDto
-                        .getServiceChargesPerTrainEntityList().stream()
-                        .map(x -> x.getServiceEntity().getUnitPrice() * x.getServiceCount())
-                        .mapToDouble(x -> x).sum());
+                BigDecimal sumOfAdditionalChargesForRow = getSumOfAdditionalChargesForRow(rowDataDto);
 
                 log.info("Adding additional charges for row:" + sumOfAdditionalChargesForRow);
 
                 totalAdditionalCharges = totalAdditionalCharges.add(sumOfAdditionalChargesForRow);
 
-                if (rowDataDto.getSection().getRowIndex() == 1) {
-
-                    if (!rowDataDto.getSection().getIsKeyStation()) {
-
-                        partialKilometers = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations());
-                    }
-
-                    actualFirstStation = rowDataDto.getSection().getCurrentSource().getStation();
-                    log.info("Skipping start station -> " + rowDataDto.toString());
-                    continue;
-                }
-
+                log.info("Skipping start station -> " + rowDataDto.toString());
                 log.info("Row Data:" + rowDataDto.toString());
 
                 List<UnitPriceEntity> unitPricesForSection = findUnitPricesForSection(trainTypeEntity, rowDataDto);
@@ -131,20 +119,10 @@ public class TaxPerTrainService {
                 BigDecimal trainKilometersForSection;
                 BigDecimal bruttoTonneKilometersForSection;
 
-                if (!partialKilometers.equals(BigDecimal.valueOf(Long.MIN_VALUE))) {
+                Double kilometersBetweenStations = rowDataDto.getSection().getKilometersBetweenStations();
 
-                    Double partialKms = rowDataDto.getSection().getKilometersBetweenStations() - partialKilometers.doubleValue();
-
-                    trainKilometersForSection = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations() - partialKms);
-                    bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * (rowDataDto.getSection().getKilometersBetweenStations() - partialKms));
-
-                    partialKilometers = BigDecimal.valueOf(Long.MIN_VALUE);
-
-                } else {
-
-                    trainKilometersForSection = BigDecimal.valueOf(rowDataDto.getSection().getKilometersBetweenStations());
-                    bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * rowDataDto.getSection().getKilometersBetweenStations());
-                }
+                trainKilometersForSection = BigDecimal.valueOf(kilometersBetweenStations);
+                bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * kilometersBetweenStations);
 
                 log.info("BTK for section:" + bruttoTonneKilometersForSection.toString());
                 log.info("TK for section:" + trainKilometersForSection.toString());
@@ -159,8 +137,11 @@ public class TaxPerTrainService {
                 totalKilometers = totalKilometers.add(trainKilometersForSection);
                 totalBruttoTonneKilometers = totalBruttoTonneKilometers.add(bruttoTonneKilometersForSection);
 
-                records.add(getRecordForSection(rowDataDto, strategicCoefficientMultiplier, trainNumber, calendar, notes, trainLength,
-                        correlationId, trainTypeEntity, plusCharges));
+                TaxPerTrainEntity recordForSection = getRecordForSection(rowDataDto, strategicCoefficientMultiplier,
+                        trainNumber, calendar, notes, trainLength,
+                        correlationId, trainTypeEntity, kilometersBetweenStations, plusCharges);
+
+                records.add(recordForSection);
 
                 totalTaxForTrainKilometers = totalTaxForTrainKilometers.add(trainKilometersPriceForSection);
                 totalTaxForBruttoTonneKilometers = totalTaxForBruttoTonneKilometers.add(bruttoTonneKilometersPriceForSection);
@@ -178,15 +159,7 @@ public class TaxPerTrainService {
             stackTrace = ExceptionUtils.getStackTrace(e);
         }
 
-        for (int i = 0; i < records.size(); i++) {
-
-            if (i == 0) {
-
-                records.get(i).setStartStation(actualFirstStation);
-            }
-
-            taxPerTrainRepository.save(records.get(i));
-        }
+        taxPerTrainRepository.saveAll(records);
 
         this.taxPerTrainRepository.flush();
 
@@ -198,6 +171,15 @@ public class TaxPerTrainService {
                 .build();
     }
 
+    private BigDecimal getSumOfAdditionalChargesForRow(CalculateTaxPerTrainRowDataDto rowDataDto) {
+
+        return BigDecimal.valueOf(rowDataDto
+                .getServiceChargesPerTrainEntityList()
+                .stream()
+                .map(x -> x.getServiceEntity().getUnitPrice() * x.getServiceCount())
+                .mapToDouble(x -> x).sum());
+    }
+
     private TaxPerTrainEntity getRecordForSection(CalculateTaxPerTrainRowDataDto rowDataDto,
                                                   BigDecimal strategicCoefficientMultiplier,
                                                   Integer trainNumber,
@@ -206,11 +188,12 @@ public class TaxPerTrainService {
                                                   Double trainLength,
                                                   UUID correlationId,
                                                   TrainTypeEntity trainTypeEntity,
+                                                  Double kilometersBetweenStations,
                                                   BigDecimal tax) {
 
         Boolean isElectrified = rowDataDto.getSection().getIsElectrified();
 
-        return TaxPerTrainEntity
+        TaxPerTrainEntity taxPerTrainEntity = TaxPerTrainEntity
                 .builder()
                 .calendarOfMovement(calendar)
                 .correlationId(correlationId)
@@ -227,10 +210,22 @@ public class TaxPerTrainService {
                 .trainWeightWithoutLocomotive(rowDataDto.getTonnage())
                 .locomotiveSeries(rowDataDto.getLocomotiveSeries())
                 .totalTrainWeight(rowDataDto.getLocomotiveWeight() + rowDataDto.getTonnage())
-                .kilometersOnElectrifiedLines(isElectrified ? rowDataDto.getSection().getKilometersBetweenStations() : null)
-                .kilometersOnNonElectrifiedHighwayAndRegionalLines(HIGHWAY_LINE.equals(rowDataDto.getSection().getTypeOfLine()) ? rowDataDto.getSection().getKilometersBetweenStations() : null)
-                .kilometersOnNonElectrifiedLocalLines(LOCAL_LINE.equals(rowDataDto.getSection().getTypeOfLine()) ? rowDataDto.getSection().getKilometersBetweenStations() : null)
                 .build();
+
+        if (isElectrified) {
+
+            taxPerTrainEntity.setKilometersOnElectrifiedLines(kilometersBetweenStations);
+
+        } else if (HIGHWAY_LINE.equals(rowDataDto.getSection().getTypeOfLine())) {
+
+            taxPerTrainEntity.setKilometersOnNonElectrifiedHighwayAndRegionalLines(kilometersBetweenStations);
+
+        } else if (LOCAL_LINE.equals(rowDataDto.getSection().getTypeOfLine())) {
+
+            taxPerTrainEntity.setKilometersOnNonElectrifiedLocalLines(kilometersBetweenStations);
+        }
+
+        return taxPerTrainEntity;
     }
 
     private List<UnitPriceEntity> findUnitPricesForSection(TrainTypeEntity trainTypeEntity,
@@ -283,5 +278,14 @@ public class TaxPerTrainService {
         }
 
         return unitPriceService.findByCode(code);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Integer> getAllTrainNumbersWithCalculatedTaxes() {
+
+        return this.taxPerTrainRepository.findAll().stream()
+                .map(TaxPerTrainEntity::getTrainNumber)
+                .sorted()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

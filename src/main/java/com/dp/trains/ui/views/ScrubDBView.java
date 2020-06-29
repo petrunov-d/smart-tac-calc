@@ -5,6 +5,7 @@ import com.dp.trains.ui.layout.MainLayout;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -21,10 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ScrubDBView extends Composite<Div> {
 
     static final String NAV_SECRET_DB_SCRUBBER = "scrub_db";
-    private String masterPassword = "KosovoESerbia2020";
+    private static final String masterPassword = "KosovoJeSrbija2020";
 
     private final DBScrubService dbScrubService;
-    private final Button scrubDb;
     private final TextArea masterPasswordTextArea;
 
     public ScrubDBView(@Autowired DBScrubService dbScrubService) {
@@ -33,8 +33,8 @@ public class ScrubDBView extends Composite<Div> {
 
         this.masterPasswordTextArea = new TextArea();
 
-        this.scrubDb = new Button();
-        this.scrubDb.addClickListener(clickEvent -> {
+        Button scrubDb = new Button("Do Magic", VaadinIcon.MAGIC.create());
+        scrubDb.addClickListener(clickEvent -> {
 
             if (masterPasswordTextArea.getValue().equals(masterPassword)) {
 
@@ -43,6 +43,7 @@ public class ScrubDBView extends Composite<Div> {
         });
 
         VerticalLayout verticalLayout = new VerticalLayout();
+
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         verticalLayout.add(masterPasswordTextArea);

@@ -514,7 +514,7 @@
                                     <font fontName="DejaVu Sans" size="8" pdfFontName="DejaVu Sans"
                                           pdfEncoding="Identity-H"/>
                                 </textElement>
-                                <text><![CDATA[Стратешки коефицијент]]></text>
+                                <text><![CDATA[коефицијент маркупс]]></text>
                             </staticText>
                         </jr:tableHeader>
                         <jr:detailCell style="Table_TD" height="140">

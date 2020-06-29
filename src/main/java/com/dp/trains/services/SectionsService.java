@@ -270,6 +270,18 @@ public class SectionsService implements BaseImportService {
     }
 
     @Transactional(readOnly = true)
+    public Collection<SectionEntity> findByFirstKeyPoint(String selectedStation) {
+
+        return this.sectionsRepository.findAllByFirstKeyPoint(selectedStation);
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<SectionEntity> findByLastKeyPoint(String selectedStation) {
+
+        return this.sectionsRepository.findAllByLastKeyPoint(selectedStation);
+    }
+
+    @Transactional(readOnly = true)
     public List<CalculateTaxPerTrainRowDataDto> findByRawDtos(List<CPPTRowDataDto> rawData) {
 
         List<CalculateTaxPerTrainRowDataDto> calculateTaxPerTrainRowDataDtos = Lists.newArrayList();
@@ -370,26 +382,39 @@ public class SectionsService implements BaseImportService {
 
             RailStationEntity railStationEntitySource = railStationRepository.findByStation(sectionEntity.getFirstKeyPoint());
             RailStationEntity railStationEntityDestination = railStationRepository.findByStation(sectionEntity.getLastKeyPoint());
+            RailStationEntity nonKeyStation = railStationRepository.findByStation(rowDataDto.getStationViewModel().getRailStation());
 
             RailStationEntity currentRailStationEntitySource = null;
             RailStationEntity currentRailStationEntityDestination = null;
+            Double kilometersBetweenStations = null;
 
             if (firstRailStation.getRailStation().equals(railStationEntitySource.getStation())) {
 
                 currentRailStationEntitySource = railStationEntitySource;
                 currentRailStationEntityDestination = railStationEntityDestination;
+                kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), true);
 
             } else if (firstRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
 
                 currentRailStationEntitySource = railStationEntityDestination;
                 currentRailStationEntityDestination = railStationEntitySource;
+                kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), false);
 
             } else if (!firstRailStation.getRailStation().equals(railStationEntitySource.getStation()) &&
                     !firstRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
 
                 currentRailStationEntitySource = railStationRepository.findByStation(firstRailStation.getRailStation());
-                currentRailStationEntityDestination = railStationEntitySource.getStation()
-                        .equals(nextRailStation.getRailStation()) ? railStationEntitySource : railStationEntityDestination;
+
+                if (railStationEntitySource.getStation().equals(nextRailStation.getRailStation())) {
+
+                    currentRailStationEntityDestination = railStationEntitySource;
+                    kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), false);
+
+                } else {
+
+                    currentRailStationEntityDestination = railStationEntityDestination;
+                    kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), true);
+                }
             }
 
             return SectionNeighboursDto
@@ -399,8 +424,9 @@ public class SectionsService implements BaseImportService {
                     .isElectrified(sectionEntity.getIsElectrified())
                     .currentSource(currentRailStationEntitySource)
                     .currentDestination(currentRailStationEntityDestination)
-                    .isKeyStation(true)
-                    .kilometersBetweenStations(sectionEntity.getKilometersBetweenStations())
+                    .nonKeyStation(nonKeyStation)
+                    .isKeyStation(false)
+                    .kilometersBetweenStations(kilometersBetweenStations)
                     .lineNumber(sectionEntity.getLineNumber())
                     .typeOfLine(sectionEntity.getLineType())
                     .rowIndex(i + 1)
@@ -408,5 +434,25 @@ public class SectionsService implements BaseImportService {
         }
 
         return sectionNeighboursDto;
+    }
+
+    private Double findPartialKilometers(SectionEntity sectionEntity, String targetStation, boolean isStationOrderPreserved) {
+
+        Double distanceFromSource = 0.0;
+        double distanceToDestination;
+
+        for (SubSectionEntity subSectionEntity : sectionEntity.getSubSectionEntities()) {
+
+            if (subSectionEntity.getNonKeyStation().equals(targetStation)) {
+
+                break;
+            }
+
+            distanceFromSource += subSectionEntity.getKilometers();
+        }
+
+        distanceToDestination = sectionEntity.getKilometersBetweenStations() - distanceFromSource;
+
+        return isStationOrderPreserved ? distanceFromSource : distanceToDestination;
     }
 }
