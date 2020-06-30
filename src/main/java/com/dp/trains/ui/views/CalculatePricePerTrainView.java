@@ -366,8 +366,8 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
     @Subscribe
     public void handleFinalRowRemovedEvent(CPPTFinalRowRemovedEvent cpptFinalRowRemovedEvent) {
 
-        this.add.setEnabled(true);
-        this.finalize.setEnabled(true);
+        this.add.setEnabled(false);
+        this.finalize.setEnabled(false);
     }
 
     @Subscribe

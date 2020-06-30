@@ -33,7 +33,6 @@ public class TaxPerTrainService {
 
     private final LineTypeService lineTypeService;
     private final UnitPriceService unitPriceService;
-    private final SectionsService sectionsService;
 
     @Transactional
     public void deleteByTrainNumber(Integer trainNumber) {
@@ -122,7 +121,7 @@ public class TaxPerTrainService {
                 Double kilometersBetweenStations = rowDataDto.getSection().getKilometersBetweenStations();
 
                 trainKilometersForSection = BigDecimal.valueOf(kilometersBetweenStations);
-                bruttoTonneKilometersForSection = BigDecimal.valueOf(rowDataDto.getTonnage() * kilometersBetweenStations);
+                bruttoTonneKilometersForSection = BigDecimal.valueOf((rowDataDto.getTonnage() + rowDataDto.getLocomotiveWeight()) * kilometersBetweenStations);
 
                 log.info("BTK for section:" + bruttoTonneKilometersForSection.toString());
                 log.info("TK for section:" + trainKilometersForSection.toString());

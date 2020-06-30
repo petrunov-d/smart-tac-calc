@@ -374,6 +374,7 @@ public class SectionsService implements BaseImportService {
                 }
 
             }
+
         } else if (!rowDataDto.getStationViewModel().getIsKeyStation()) {
 
             SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(firstRailStation.getRailStation());
