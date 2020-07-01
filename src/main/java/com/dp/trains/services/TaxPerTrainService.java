@@ -215,7 +215,8 @@ public class TaxPerTrainService {
 
             taxPerTrainEntity.setKilometersOnElectrifiedLines(kilometersBetweenStations);
 
-        } else if (HIGHWAY_LINE.equals(rowDataDto.getSection().getTypeOfLine())) {
+        } else if (HIGHWAY_LINE.equals(rowDataDto.getSection().getTypeOfLine()) ||
+                REGIONAL.equals(rowDataDto.getSection().getTypeOfLine())) {
 
             taxPerTrainEntity.setKilometersOnNonElectrifiedHighwayAndRegionalLines(kilometersBetweenStations);
 

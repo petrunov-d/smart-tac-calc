@@ -107,14 +107,12 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         initializeCalendar();
         initializeCarrierCompanySelect();
         initializeLocomotiveSeriesDtoSelect();
+        initializeStrategicCoefficientsSelect();
 
         baseParametersLayout.add(trainNumber, carrierCompanySelect, locomotiveSeriesDtoSelect,
                 trainType, tonnage, trainLength, calendar, note);
 
-        initializeStrategicCoefficientsSelect();
-
-        VerticalLayout footerContainer = new VerticalLayout(strategicCoefficientSelect,
-                getKilometersSummaryLayout(), getFinalTaxLayout());
+        VerticalLayout footerContainer = new VerticalLayout(getKilometersSummaryLayout(), getFinalTaxLayout());
 
         footerContainer.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
@@ -267,7 +265,7 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         return kilometersSummaryFieldsLayout;
     }
 
-    private HorizontalLayout getButtonOptionsBar() {
+    private VerticalLayout getButtonOptionsBar() {
 
         this.add = new Button(getTranslation(CALCULATE_PRICE_PER_TRAIN_VIEW_BUTTON_ADD), VaadinIcon.PLUS.create());
         this.add.setEnabled(false);
@@ -289,7 +287,13 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         this.calculateFinalTax.addClickListener(event -> calculateFinalTax());
         doNewCalculation.addClickListener(e -> resetPageState());
 
-        return buttonLayout;
+        VerticalLayout verticalLayout = new VerticalLayout(buttonLayout, strategicCoefficientSelect);
+        verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        verticalLayout.setMargin(false);
+        verticalLayout.setPadding(false);
+        verticalLayout.setSpacing(false);
+
+        return verticalLayout;
     }
 
     private void addRow(boolean isFinal) {

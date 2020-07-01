@@ -9,12 +9,15 @@ import com.dp.trains.ui.components.reports.ServiceChargesPerTrainReportContainer
 import com.dp.trains.ui.components.reports.SinglePriceReportContainer;
 import com.dp.trains.ui.components.reports.TacReportContainer;
 import com.dp.trains.ui.layout.MainLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -26,7 +29,7 @@ import static com.dp.trains.utils.LocaleKeys.*;
 @UIScope
 @SpringComponent
 @Route(value = ReportsView.NAV_REPORTS_VIEW, layout = MainLayout.class)
-public class ReportsView extends UserPermissionAwareView {
+public class ReportsView extends UserPermissionAwareView implements BeforeLeaveObserver {
 
     private final UnitPriceReportService unitPriceReportService;
     private final TacReportService tacReportService;
@@ -110,5 +113,15 @@ public class ReportsView extends UserPermissionAwareView {
     public UserAccess getViewUserAccessPermission() {
 
         return UserAccess.REPORTS;
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
+
+        beforeLeaveEvent.postpone();
+
+        UI.getCurrent().getPage().reload();
+
+        beforeLeaveEvent.getContinueNavigationAction().proceed();
     }
 }
