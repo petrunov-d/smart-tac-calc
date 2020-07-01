@@ -62,8 +62,7 @@ public class MainLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive
 
         final LeftLayouts.LeftResponsiveHybrid appLayout = AppLayoutBuilder.get(LeftLayouts.LeftResponsiveHybrid.class)
                 .withTitle(getTranslation(SHARED_APP_TITLE) + " " + getTranslation(MAIN_LAYOUT_YEAR_SELECTOR_LABEL)
-                        + " " + SelectedYearPerUserHolder
-                        .getForUser(SecurityContextHolder.getContext().getAuthentication().getName()))
+                        + " " + SelectedYearPerUserHolder.getForUser(SecurityContextHolder.getContext().getAuthentication().getName()))
                 .withIconComponent(img)
                 .withAppMenu(appMenu())
                 .withAppBar(getAppBar())

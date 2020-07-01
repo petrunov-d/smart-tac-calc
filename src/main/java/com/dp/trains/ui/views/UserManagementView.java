@@ -50,7 +50,10 @@ public class UserManagementView extends BaseSmartTacCalcView {
         VerticalLayout verticalLayout;
 
         Set<String> grantedAuthorities = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
 
         if (grantedAuthorities.contains(Authority.ADMIN.getName())) {
 

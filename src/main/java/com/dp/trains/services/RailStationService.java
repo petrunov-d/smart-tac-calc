@@ -214,7 +214,20 @@ public class RailStationService implements BaseImportService {
 
         } else if (isFinalRow) {
 
-            Set<SectionEntity> sectionEntities = this.sectionsService.findAllByFirstAndLastKeyPoint(currentStation);
+            Set<SectionEntity> sectionEntities = Sets.newLinkedHashSet();
+
+            if (!selectedStation.getIsKeyStation()) {
+
+                SectionEntity sectionEntity = sectionsService.findByNonKeyStation(currentStation);
+
+                if (sectionEntity != null) {
+
+                    sectionEntities.add(sectionEntity);
+                }
+            } else {
+
+                sectionEntities = this.sectionsService.findAllByFirstAndLastKeyPoint(currentStation);
+            }
 
             for (SectionEntity sectionEntity : sectionEntities) {
 
@@ -316,7 +329,8 @@ public class RailStationService implements BaseImportService {
         return getDisplayName();
     }
 
-    public Collection<Integer> getLineNumbersForRailStationNeighbours(Collection<RailStationViewModel> newNeighbouringRailStations) {
+    public Collection<Integer> getLineNumbersForRailStationNeighbours
+            (Collection<RailStationViewModel> newNeighbouringRailStations) {
 
         return newNeighbouringRailStations.stream()
                 .map(RailStationViewModel::getLineNumber)

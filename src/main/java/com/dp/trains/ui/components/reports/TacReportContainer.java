@@ -11,8 +11,6 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 
@@ -55,6 +53,7 @@ public class TacReportContainer extends BaseReportView {
 
                 BasicInfoDialog basicInfoDialog = new BasicInfoDialog(getTranslation(REPORT_PARAMETERS_NO_DATA));
                 basicInfoDialog.open();
+
             } else {
 
                 Dialog reportGenerationInProgressDialog = new ReportGenerationInProgressDialog();
@@ -86,7 +85,9 @@ public class TacReportContainer extends BaseReportView {
 
                 BasicInfoDialog basicInfoDialog = new BasicInfoDialog(getTranslation(REPORT_PARAMETERS_NO_DATA));
                 basicInfoDialog.open();
+
             } else {
+
                 Dialog d = new ReportGenerationInProgressDialog();
                 d.open();
 

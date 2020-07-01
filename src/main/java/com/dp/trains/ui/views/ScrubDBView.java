@@ -45,7 +45,6 @@ public class ScrubDBView extends Composite<Div> {
         VerticalLayout verticalLayout = new VerticalLayout();
 
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
-
         verticalLayout.add(masterPasswordTextArea);
         verticalLayout.add(scrubDb);
 

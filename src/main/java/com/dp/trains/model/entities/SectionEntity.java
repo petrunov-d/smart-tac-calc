@@ -45,6 +45,6 @@ public class SectionEntity extends YearDiscriminatingEntity {
     private Double unitPrice;
 
     @ToString.Exclude
-    @OneToMany(cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "sectionEntity")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "sectionEntity")
     private List<SubSectionEntity> subSectionEntities;
 }

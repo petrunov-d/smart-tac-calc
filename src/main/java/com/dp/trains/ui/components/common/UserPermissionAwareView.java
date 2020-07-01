@@ -45,12 +45,17 @@ public abstract class UserPermissionAwareView extends BaseSmartTacCalcView imple
                 .loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 
         Set<String> grantedAuthorities = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
 
-        List<String> userAccess = userEntity.getUserAccesses().stream().map(UserAccessEntitiy::getUserAccess).collect(Collectors.toList());
+        List<String> userAccess = userEntity.getUserAccesses()
+                .stream()
+                .map(UserAccessEntitiy::getUserAccess)
+                .collect(Collectors.toList());
 
-        if (!grantedAuthorities.contains(Authority.ADMIN.getName()) &&
-                !userAccess.contains(getViewUserAccessPermission().name())) {
+        if (!grantedAuthorities.contains(Authority.ADMIN.getName()) && !userAccess.contains(getViewUserAccessPermission().name())) {
 
             ConfirmDialog confirmDialog = new ConfirmDialog.Builder()
                     .withTitle(getTranslation(MESSAGE_ERROR_CANT_VIEW_PAGE))

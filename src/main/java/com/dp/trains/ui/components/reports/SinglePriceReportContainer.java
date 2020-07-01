@@ -38,8 +38,7 @@ public class SinglePriceReportContainer extends BaseReportView {
 
         super();
 
-        downloadAsExcelButton = new Button(getTranslation(REPORT_GENERATE_EXCEL_FILE_BUTTON_LABEL),
-                VaadinIcon.DOWNLOAD.create());
+        downloadAsExcelButton = new Button(getTranslation(REPORT_GENERATE_EXCEL_FILE_BUTTON_LABEL), VaadinIcon.DOWNLOAD.create());
         downloadAsExcelButton.setEnabled(false);
 
         viewReportAsPdf = new Button(getTranslation(REPORTS_BUTTON_VIEW_REPORT), VaadinIcon.EYE.create());
@@ -69,6 +68,7 @@ public class SinglePriceReportContainer extends BaseReportView {
 
                 Dialog dialog = new BasicInfoDialog(getTranslation(REPORTS_SINGLE_PRICE_REPORT_MISSING_UNIT_PRICE));
                 dialog.open();
+
             } else {
 
                 Dialog reportGenerationInProgressDialog = new ReportGenerationInProgressDialog();

@@ -21,8 +21,7 @@ public class LocalizedDatePicker extends DatePicker {
                 .setToday(getTranslation(DATE_PICKER_TODAY))
                 .setCancel(getTranslation(DATE_PICKER_CANCEL))
                 .setFirstDayOfWeek(1)
-                .setMonthNames(Arrays.asList(
-                        getTranslation(DATE_PICKER_JANUARY),
+                .setMonthNames(Arrays.asList(getTranslation(DATE_PICKER_JANUARY),
                         getTranslation(DATE_PICKER_FEBRUARY),
                         getTranslation(DATE_PICKER_MARCH),
                         getTranslation(DATE_PICKER_APRIL),
@@ -34,16 +33,14 @@ public class LocalizedDatePicker extends DatePicker {
                         getTranslation(DATE_PICKER_OCTOBER),
                         getTranslation(DATE_PICKER_NOVEMBER),
                         getTranslation(DATE_PICKER_DECEMBER)))
-                .setWeekdays(Arrays.asList(
-                        getTranslation(DATE_PICKER_MONDAY),
+                .setWeekdays(Arrays.asList(getTranslation(DATE_PICKER_MONDAY),
                         getTranslation(DATE_PICKER_TUESDAY),
                         getTranslation(DATE_PICKER_WEDNESDAY),
                         getTranslation(DATE_PICKER_THURSDAY),
                         getTranslation(DATE_PICKER_FRIDAY),
                         getTranslation(DATE_PICKER_SATURDAY),
                         getTranslation(DATE_PICKER_SUNDAY)))
-                .setWeekdaysShort(Arrays.asList(
-                        getTranslation(DATE_PICKER_SHORT_MONDAY),
+                .setWeekdaysShort(Arrays.asList(getTranslation(DATE_PICKER_SHORT_MONDAY),
                         getTranslation(DATE_PICKER_SHORT_TUESDAY),
                         getTranslation(DATE_PICKER_SHORT_WEDNESDAY),
                         getTranslation(DATE_PICKER_SHORT_THURSDAY),

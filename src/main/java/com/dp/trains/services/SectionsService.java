@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class SectionsService implements BaseImportService {
 
-    private static final String nonKeyStationKeyFormat = "Nonkey station %d";
-    private static final String nonKeyStationKeyKilometersFormat = "Kilometres for nonkey station %d to first key station";
+    private static final String nonKeyStationKeyFormat = "nonkeystation%d";
+    private static final String nonKeyStationKeyKilometersFormat = "kilometresfornonkeystation%dtofirstkeystation";
 
     private final ObjectMapper defaultObjectMapper;
     private final SectionRepository sectionsRepository;
@@ -100,7 +100,9 @@ public class SectionsService implements BaseImportService {
                 Map<String, String> normalizedMap = rawExcelSectionDto.getUnknownCells()
                         .entrySet()
                         .stream()
-                        .collect(Collectors.toMap(e -> StringUtils.normalizeSpace(e.getKey()), Map.Entry::getValue));
+                        .collect(Collectors.toMap(e ->
+                                        StringUtils.normalizeSpace(e.getKey()).replaceAll("\\s", "").toLowerCase(),
+                                Map.Entry::getValue));
 
                 List<SubSectionDto> subSectionDtos = Lists.newArrayList();
 
@@ -125,7 +127,7 @@ public class SectionsService implements BaseImportService {
             sectionEntities.add(sectionEntity);
         });
 
-        this.add(sectionEntities);
+        sectionEntities.forEach(this.sectionsRepository::saveAndFlush);
     }
 
     @Transactional
@@ -162,7 +164,7 @@ public class SectionsService implements BaseImportService {
     @Transactional
     public void add(Collection<SectionEntity> sectionEntities) {
 
-        sectionEntities.forEach(this.sectionsRepository::save);
+        sectionEntities.forEach(this.sectionsRepository::saveAndFlush);
     }
 
     @Transactional(readOnly = true)
@@ -289,10 +291,10 @@ public class SectionsService implements BaseImportService {
         for (int i = 0; i < rawData.size(); i++) {
 
             CPPTRowDataDto rowDataDto = rawData.get(i);
-
             CPPTRowDataDto nextRowDataDto = rawData.get(i == rawData.size() - 1 ? i : i + 1);
+            CPPTRowDataDto previousRowDataDto = rawData.get(i == 0 ? i : i - 1);
 
-            SectionNeighboursDto sectionNeighboursDto = findSection(rowDataDto, nextRowDataDto, i);
+            SectionNeighboursDto sectionNeighboursDto = findSection(previousRowDataDto, rowDataDto, nextRowDataDto, i);
 
             CalculateTaxPerTrainRowDataDto calculateTaxPerTrainRowDataDto = new CalculateTaxPerTrainRowDataDto();
 
@@ -305,19 +307,20 @@ public class SectionsService implements BaseImportService {
             calculateTaxPerTrainRowDataDtos.add(calculateTaxPerTrainRowDataDto);
         }
 
-        return calculateTaxPerTrainRowDataDtos;
+        return calculateTaxPerTrainRowDataDtos.stream().filter(x -> x.getSection() != null).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public SectionNeighboursDto findSection(CPPTRowDataDto rowDataDto, CPPTRowDataDto nextRowDataDto, int i) {
+    public SectionNeighboursDto findSection(CPPTRowDataDto previousRowDataDto, CPPTRowDataDto currentRowDataDto, CPPTRowDataDto nextRowDataDto, int i) {
 
         SectionNeighboursDto sectionNeighboursDto = null;
-        RailStationViewModel firstRailStation = rowDataDto.getStationViewModel();
+        RailStationViewModel previousRailStation = previousRowDataDto.getStationViewModel();
+        RailStationViewModel currentRailStation = currentRowDataDto.getStationViewModel();
         RailStationViewModel nextRailStation = nextRowDataDto.getStationViewModel();
 
-        if (rowDataDto.getStationViewModel().getIsKeyStation()) {
+        if (currentRowDataDto.getStationViewModel().getIsKeyStation()) {
 
-            String firstRailStationName = firstRailStation.getRailStation();
+            String firstRailStationName = currentRailStation.getRailStation();
             String nextRailStationName = nextRailStation.getRailStation();
 
             Set<SectionEntity> firstRailStationSectionsFirst = sectionsRepository.findAllByFirstKeyPoint(firstRailStationName);
@@ -372,49 +375,66 @@ public class SectionsService implements BaseImportService {
                                 .build();
                     }
                 }
-
             }
 
-        } else if (!rowDataDto.getStationViewModel().getIsKeyStation()) {
+        } else if (!currentRowDataDto.getStationViewModel().getIsKeyStation()) {
 
-            SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(firstRailStation.getRailStation());
+            SectionEntity sectionEntity = this.sectionsRepository.findBySubsectionNonKeyStation(currentRailStation.getRailStation());
 
             log.info("rail station was non key.");
 
             RailStationEntity railStationEntitySource = railStationRepository.findByStation(sectionEntity.getFirstKeyPoint());
             RailStationEntity railStationEntityDestination = railStationRepository.findByStation(sectionEntity.getLastKeyPoint());
-            RailStationEntity nonKeyStation = railStationRepository.findByStation(rowDataDto.getStationViewModel().getRailStation());
+            RailStationEntity nonKeyStation = railStationRepository.findByStation(currentRowDataDto.getStationViewModel().getRailStation());
 
             RailStationEntity currentRailStationEntitySource = null;
             RailStationEntity currentRailStationEntityDestination = null;
             Double kilometersBetweenStations = null;
 
-            if (firstRailStation.getRailStation().equals(railStationEntitySource.getStation())) {
+            if (currentRailStation.getRailStation().equals(railStationEntitySource.getStation())) {
 
                 currentRailStationEntitySource = railStationEntitySource;
                 currentRailStationEntityDestination = railStationEntityDestination;
-                kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), true);
+                kilometersBetweenStations = findPartialKilometers(sectionEntity, currentRowDataDto.getStationViewModel().getRailStation(), true);
 
-            } else if (firstRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
+            } else if (currentRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
 
                 currentRailStationEntitySource = railStationEntityDestination;
                 currentRailStationEntityDestination = railStationEntitySource;
-                kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), false);
+                kilometersBetweenStations = findPartialKilometers(sectionEntity, currentRowDataDto.getStationViewModel().getRailStation(), false);
 
-            } else if (!firstRailStation.getRailStation().equals(railStationEntitySource.getStation()) &&
-                    !firstRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
+            } else if (!currentRailStation.getRailStation().equals(railStationEntitySource.getStation()) &&
+                    !currentRailStation.getRailStation().equals(railStationEntityDestination.getStation())) {
 
-                currentRailStationEntitySource = railStationRepository.findByStation(firstRailStation.getRailStation());
+                if (i == 0) {
 
-                if (railStationEntitySource.getStation().equals(nextRailStation.getRailStation())) {
+                    currentRailStationEntitySource = railStationRepository.findByStation(currentRailStation.getRailStation());
 
-                    currentRailStationEntityDestination = railStationEntitySource;
-                    kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), false);
+                    if (nextRailStation.getRailStation().equals(sectionEntity.getFirstKeyPoint())) {
+
+                        currentRailStationEntityDestination = railStationEntitySource;
+                        kilometersBetweenStations = findPartialKilometers(sectionEntity, currentRowDataDto.getStationViewModel().getRailStation(), true);
+
+                    } else if (nextRailStation.getRailStation().equals(sectionEntity.getLastKeyPoint())) {
+
+                        currentRailStationEntityDestination = railStationEntityDestination;
+                        kilometersBetweenStations = findPartialKilometers(sectionEntity, currentRowDataDto.getStationViewModel().getRailStation(), false);
+                    }
 
                 } else {
 
-                    currentRailStationEntityDestination = railStationEntityDestination;
-                    kilometersBetweenStations = findPartialKilometers(sectionEntity, rowDataDto.getStationViewModel().getRailStation(), true);
+                    currentRailStationEntityDestination = railStationRepository.findByStation(currentRailStation.getRailStation());
+
+                    if (previousRailStation.getRailStation().equals(sectionEntity.getFirstKeyPoint())) {
+
+                        currentRailStationEntitySource = railStationEntitySource;
+                        kilometersBetweenStations = findPartialKilometers(sectionEntity, currentRowDataDto.getStationViewModel().getRailStation(), true);
+
+                    } else if (previousRailStation.getRailStation().equals(sectionEntity.getLastKeyPoint())) {
+
+                        currentRailStationEntitySource = railStationEntityDestination;
+                        kilometersBetweenStations = findPartialKilometers(sectionEntity, currentRowDataDto.getStationViewModel().getRailStation(), false);
+                    }
                 }
             }
 
@@ -439,21 +459,18 @@ public class SectionsService implements BaseImportService {
 
     private Double findPartialKilometers(SectionEntity sectionEntity, String targetStation, boolean isStationOrderPreserved) {
 
-        Double distanceFromSource = 0.0;
-        double distanceToDestination;
-
         for (SubSectionEntity subSectionEntity : sectionEntity.getSubSectionEntities()) {
 
-            if (subSectionEntity.getNonKeyStation().equals(targetStation)) {
+            if (subSectionEntity.getNonKeyStation().equals(targetStation) && isStationOrderPreserved) {
 
-                break;
+                return subSectionEntity.getKilometers();
+
+            } else if (subSectionEntity.getNonKeyStation().equals(targetStation) && !isStationOrderPreserved) {
+
+                return sectionEntity.getKilometersBetweenStations() - subSectionEntity.getKilometers();
             }
-
-            distanceFromSource += subSectionEntity.getKilometers();
         }
 
-        distanceToDestination = sectionEntity.getKilometersBetweenStations() - distanceFromSource;
-
-        return isStationOrderPreserved ? distanceFromSource : distanceToDestination;
+        return -1.0;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public class DialogRegistry {
 
     private static DialogRegistry dialogRegistry;
-    private List<Dialog> openDialogs;
+    private final List<Dialog> openDialogs;
 
     private DialogRegistry() {
 

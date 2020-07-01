@@ -25,7 +25,7 @@ import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
 @Slf4j
 public class CalculatePricePerTrainLayout extends VerticalLayout {
 
-    private int nextRowIdex = 1;
+    private int nextRowIndex = 1;
     private RailStationViewModel currentStation;
     private Double tonnage;
     private Double trainLength;
@@ -86,7 +86,7 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         }
 
         CalculatePricePerTrainRow calculatePricePerTrainRow = new CalculatePricePerTrainRow(
-                this.nextRowIdex,
+                this.nextRowIndex,
                 isFinal,
                 trainNumber,
                 railStationService,
@@ -102,13 +102,13 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
         this.add(calculatePricePerTrainRow);
         this.calculatePricePerTrainRows.add(calculatePricePerTrainRow);
 
-        nextRowIdex++;
+        nextRowIndex++;
     }
 
     public void resetContainer() {
 
         this.getChildren().filter(x -> x instanceof CalculatePricePerTrainRow).forEach(this::remove);
-        this.nextRowIdex = 1;
+        this.nextRowIndex = 1;
         this.currentStation = null;
         this.tonnage = null;
         this.trainLength = null;
@@ -137,12 +137,12 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         this.remove(toRemove);
 
-        this.nextRowIdex = 1;
+        this.nextRowIndex = 1;
 
         for (CalculatePricePerTrainRow row : calculatePricePerTrainRows) {
 
-            row.setRowIndex(nextRowIdex);
-            this.nextRowIdex++;
+            row.setRowIndex(nextRowIndex);
+            this.nextRowIndex++;
         }
 
         if (this.calculatePricePerTrainRows.size() > 0) {

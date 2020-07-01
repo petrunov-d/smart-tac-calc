@@ -105,6 +105,7 @@ public class ServiceChargesForTrainNumberView extends UserPermissionAwareView {
                                 + Joiner.on(", ").join(validationErrors));
 
                 basicInfoDialog.open();
+
             } else {
 
                 ServiceChargesPerTrainEntity serviceChargesPerTrainEntity = new ServiceChargesPerTrainEntity();

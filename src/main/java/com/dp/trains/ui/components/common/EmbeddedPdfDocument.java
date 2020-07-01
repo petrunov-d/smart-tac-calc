@@ -29,4 +29,3 @@ public class EmbeddedPdfDocument extends Component implements HasSize {
         setSizeFull();
     }
 }
-

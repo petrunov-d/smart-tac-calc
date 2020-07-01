@@ -98,7 +98,6 @@ public class UserPermissionsContainer extends BaseSmartTacCalcView {
         if (serviceChargesForTrainNumberViewAccess.getValue()) {
             newAccesses.add(UserAccess.ADD_SERVICE_CHARGE_FOR_TRAIN);
         }
-
         if (viewSinglePriceViewAcccess.getValue()) {
             newAccesses.add(UserAccess.ADD_SERVICE_CHARGE_FOR_TRAIN);
         }

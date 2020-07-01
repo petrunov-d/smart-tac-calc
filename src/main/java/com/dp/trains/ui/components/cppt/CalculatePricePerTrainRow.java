@@ -85,7 +85,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         initializeTonnageField(tonnageDouble);
         initializeTrainLength(trainLengthDouble);
         initializeLocomotiveSeriesDtoSelect(selectedLocomotiveSeriesDto, locomotiveSeriesDtos);
-        initialilizeCarrierCompanyDtoSelect(selectedCarrierCompany);
+        initializeCarrierCompanyDtoSelect(selectedCarrierCompany);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.add(rowTitle, station, lineNumbers, tonnage, trainLength, carrierCompanyDtoSelect, locomotiveSeriesDtoSelect);
@@ -130,7 +130,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         });
     }
 
-    private void initialilizeCarrierCompanyDtoSelect(CarrierCompanyDto selectedCarrierCompanyDto) {
+    private void initializeCarrierCompanyDtoSelect(CarrierCompanyDto selectedCarrierCompanyDto) {
 
         this.carrierCompanyDtoSelect = new Select<>();
         this.carrierCompanyDtoSelect.setLabel(getTranslation(LABEL_CARRIER_COMPANY));
@@ -148,7 +148,6 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
             locomotiveSeriesDtoSelect.setItems(newLocomotiveSeriesDto);
         });
     }
-
 
     private void initializeLocomotiveSeriesDtoSelect(LocomotiveSeriesDto selectedLocomotiveSeriesDto,
                                                      Collection<LocomotiveSeriesDto> locomotiveSeriesDtos) {
@@ -296,7 +295,10 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
             EventBusHolder.getEventBus().post(CPPTStationChangedEvent.builder().selectedStation(newStation)
                     .isKeyStation(isKeyStation).lineNumber(event.getValue().getLineNumber()).build());
 
-            this.selectedStation = RailStationViewModel.builder().railStation(newStation).isKeyStation(isKeyStation).build();
+            this.selectedStation = RailStationViewModel.builder()
+                    .railStation(newStation)
+                    .lineNumber(event.getValue().getLineNumber())
+                    .isKeyStation(isKeyStation).build();
 
             if (this.selectedStation != null) {
 
