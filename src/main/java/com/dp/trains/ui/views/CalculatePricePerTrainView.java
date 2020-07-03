@@ -20,6 +20,7 @@ import com.dp.trains.utils.EventBusHolder;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -54,6 +55,8 @@ import static com.dp.trains.utils.LocaleKeys.*;
 public class CalculatePricePerTrainView extends UserPermissionAwareView implements BeforeLeaveObserver {
 
     static final String NAV_CALCULATE_PRICE_PER_TRAIN = "calculate_price_per_train";
+
+    private H1 headerText;
 
     private H3 totalKilometersTitle;
     private H3 totalBruttoKilometersTitle;
@@ -95,6 +98,8 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
 
         super();
 
+        headerText = new H1(getTranslation(SHARED_APP_TITLE));
+
         this.calculatePricePerTrainLayout = new CalculatePricePerTrainLayout();
 
         HorizontalLayout baseParametersLayout = new HorizontalLayout();
@@ -112,14 +117,13 @@ public class CalculatePricePerTrainView extends UserPermissionAwareView implemen
         baseParametersLayout.add(trainNumber, carrierCompanySelect, locomotiveSeriesDtoSelect,
                 trainType, tonnage, trainLength, calendar, note);
 
-        VerticalLayout footerContainer = new VerticalLayout(getKilometersSummaryLayout(), getFinalTaxLayout());
+        VerticalLayout headerContainer = new VerticalLayout(headerText, getButtonOptionsBar(), baseParametersLayout);
+        headerContainer.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
+        VerticalLayout footerContainer = new VerticalLayout(getKilometersSummaryLayout(), getFinalTaxLayout());
         footerContainer.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
-        calculatePricePerTrainLayout.add(getButtonOptionsBar());
-        calculatePricePerTrainLayout.add(baseParametersLayout);
-
-        this.add(calculatePricePerTrainLayout, footerContainer);
+        this.add(headerContainer, calculatePricePerTrainLayout, footerContainer);
 
         this.sectionsService = sectionsService;
         this.trainTypeService = trainTypeService;

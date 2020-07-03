@@ -8,12 +8,12 @@ import com.dp.trains.model.viewmodels.RailStationViewModel;
 import com.dp.trains.services.CarrierCompanyService;
 import com.dp.trains.services.RailStationService;
 import com.dp.trains.services.ServiceChargesPerTrainService;
+import com.dp.trains.ui.components.common.ScrollableVerticalLayout;
 import com.dp.trains.utils.EventBusHolder;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static com.dp.trains.utils.LocaleKeys.SHARED_APP_TITLE;
 
 @Slf4j
-public class CalculatePricePerTrainLayout extends VerticalLayout {
+public class CalculatePricePerTrainLayout extends ScrollableVerticalLayout {
 
     private int nextRowIndex = 1;
     private RailStationViewModel currentStation;
@@ -39,9 +39,6 @@ public class CalculatePricePerTrainLayout extends VerticalLayout {
 
         calculatePricePerTrainRows = Lists.newArrayList();
 
-        H1 headerText = new H1(getTranslation(SHARED_APP_TITLE));
-
-        this.add(headerText);
         this.setSizeFull();
 
         this.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);

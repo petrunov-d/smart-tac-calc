@@ -279,6 +279,7 @@ public class CalculatePricePerTrainRow extends HorizontalLayout {
         Set<RailStationViewModel> neighbouringRailStations = this.railStationService
                 .getNeighbouringRailStations(getRowIndex(), getIsFinal(), selectedStation)
                 .stream()
+                .filter(x -> x.getRailStation() != null)
                 .sorted(Comparator.comparing(RailStationViewModel::getRailStation))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
