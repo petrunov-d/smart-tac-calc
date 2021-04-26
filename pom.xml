@@ -18,7 +18,7 @@
         <java.version>1.8</java.version>
         <vaadin.version>14.1.25</vaadin.version>
         <jasperreports.version>6.12.2</jasperreports.version>
-        <commons.version>2.6</commons.version>
+        <commons.version>2.7</commons.version>
         <guava.version>29.0-jre</guava.version>
         <poiji.version>2.7.0</poiji.version>
         <app.layout.version>4.0.0.rc1</app.layout.version>
